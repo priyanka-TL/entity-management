@@ -1,1 +1,2 @@
-# entity-test
+# elevate-entity-service
+Elevate entity service
