@@ -6,14 +6,14 @@
  */
 
 // Dependencies
-const entitiesHelper = require(MODULES_BASE_PATH + "/entities/helper");
+const entitiesHelper = require(MODULES_BASE_PATH + "/entities/helper")
 
 /**
    * entities
    * @class
 */
 
-module.exports = class entities extends Abstract {
+module.exports = class Entities extends Abstract {
 
   /**
    * @apiDefine errorBody
@@ -28,11 +28,11 @@ module.exports = class entities extends Abstract {
    */
 
   constructor() {
-    super("entities");
+    super("entities")
   }
 
   static get name() {
-    return "entities";
+    return "entities"
   }
 
   /**
@@ -68,17 +68,17 @@ module.exports = class entities extends Abstract {
     return new Promise(async (resolve, reject) => {
       try {
 
-        let result = await entitiesHelper.list("all", { name: 1 });
+        let result = await entitiesHelper.list("all", { name: 1 })
 
-        return resolve(result);
+        return resolve(result)
 
       } catch (error) {
         return reject({
           status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
           message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
           errorObject: error
-        });
+        })
       }
     })
   }
-};
+}

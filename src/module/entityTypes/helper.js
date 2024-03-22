@@ -8,11 +8,11 @@
 // Dependencies
 
 
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid')
 
-// const entitiesHelper = require(MODULES_BASE_PATH + "/entities/helper");
-const _ = require("lodash");
-// const programUsersQueries = require(DB_QUERY_BASE_PATH + "/programUsers");
+// const entitiesHelper = require(MODULES_BASE_PATH + "/entities/helper")
+const _ = require("lodash")
+// const programUsersQueries = require(DB_QUERY_BASE_PATH + "/programUsers")
 
 /**
     * UserProjectsHelper
@@ -48,7 +48,7 @@ module.exports = class UserProjectsHelper {
     //                     "updatedAt",
     //                     "userRoleInformation",
     //                     "__v"
-    //                 ]);
+    //                 ])
 
     //             if (!projectDetails.length > 0) {
 
@@ -65,14 +65,14 @@ module.exports = class UserProjectsHelper {
     //                         _id: projectId
     //                     },{
     //                         $set: {userRoleInformation: userRoleInformation}
-    //                     });
+    //                     })
     //                 }
     //             }
 
-    //             let result = await _projectInformation(projectDetails[0]);
+    //             let result = await _projectInformation(projectDetails[0])
 
     //             if (!result.success) {
-    //                 return resolve(result);
+    //                 return resolve(result)
     //             }
 
 
@@ -80,7 +80,7 @@ module.exports = class UserProjectsHelper {
     //                 success: true,
     //                 message: CONSTANTS.apiResponses.PROJECT_DETAILS_FETCHED,
     //                 data: result.data
-    //             });
+    //             })
 
     //         } catch (error) {
     //             return resolve({
@@ -90,12 +90,12 @@ module.exports = class UserProjectsHelper {
     //                 success: false,
     //                 message: error.message,
     //                 data: []
-    //             });
+    //             })
     //         }
     //     })
     // }
 
-};
+}
 
 
 

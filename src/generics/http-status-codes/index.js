@@ -188,4 +188,4 @@ module.exports = {
     status: 507,
     message: "Insufficient Storage"
   }
-};
+}

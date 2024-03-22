@@ -5,7 +5,7 @@
  * Description : All utility functions.
 */
 // Dependencies
-// const {validate : uuidValidate,v4 : uuidV4} = require('uuid');
+// const {validate : uuidValidate,v4 : uuidV4} = require('uuid')
 /**
   * convert camel case to title case.
   * @function
@@ -29,10 +29,10 @@ function camelCaseToTitleCase(in_camelCaseString) {
     // Note: the next two regexes use {2,} instead of + to add space on phrases like Room26A and 26ABCs but not on phrases like R2D2 and C3PO"
     .replace(/([A-Z]{2,})([0-9]{2,})/g, "$1 $2") // "To Get Your GED In Time A Song About The 26ABCs Is Of The Essence But A Personal ID Card For User 456 In Room 26A Containing ABC 26 Times Is Not As Easy As 123 For C3PO Or R2D2 Or 2R2D"
     .replace(/([0-9]{2,})([A-Z]{2,})/g, "$1 $2") // "To Get Your GED In Time A Song About The 26 ABCs Is Of The Essence But A Personal ID Card For User 456 In Room 26A Containing ABC 26 Times Is Not As Easy As 123 For C3PO Or R2D2 Or 2R2D"
-    .trim();
+    .trim()
 
   // capitalize the first letter
-  return result.charAt(0).toUpperCase() + result.slice(1);
+  return result.charAt(0).toUpperCase() + result.slice(1)
 }
 
 /**
@@ -44,7 +44,7 @@ function camelCaseToTitleCase(in_camelCaseString) {
 */
 
 function hyphenCaseToCamelCase(string) {
-  return string.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+  return string.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase() })
 }
 
 /**
@@ -72,9 +72,9 @@ function checkIfStringIsUrl(str) {
     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
     '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
     '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-    '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-  return pattern.test(str);
+    '(\\?[&a-z\\d%_.~+=-]*)?' + // query string
+    '(\\#[-a-z\\d_]*)?$', 'i') // fragment locator
+  return pattern.test(str)
 }
 
 /**
@@ -113,8 +113,8 @@ function valueParser(dataToBeParsed) {
    */
 
 function convertStringToBoolean(stringData) {
-  let stringToBoolean = (stringData === "TRUE" || stringData === "true" || stringData === true);
-  return stringToBoolean;
+  let stringToBoolean = (stringData === "TRUE" || stringData === "true" || stringData === true)
+  return stringToBoolean
 }
 
 
@@ -127,7 +127,7 @@ function convertStringToBoolean(stringData) {
 */
 
 function isValidMongoId(id) {
-  return ObjectId.isValid(id) && new ObjectId(id).toString() === id;
+  return ObjectId.isValid(id) && new ObjectId(id).toString() === id
 }
 
 /**
@@ -138,9 +138,9 @@ function isValidMongoId(id) {
 */
 
 function epochTime() {
-  var currentDate = new Date();
-  currentDate = currentDate.getTime();
-  return currentDate;
+  var currentDate = new Date()
+  currentDate = currentDate.getTime()
+  return currentDate
 }
 
 /**
@@ -153,17 +153,17 @@ function epochTime() {
 
 function checkValidUUID(uuids) {
 
-  var validateUUID = true;
+  var validateUUID = true
   if (Array.isArray(uuids)) {
-    for (var i = 0; uuids.length > i; i++) {
+    for (var i = 0 uuids.length > i i++) {
       if (!uuidValidate(uuids[i])) {
         validateUUID = false
       }
     }
   } else {
-    validateUUID = uuidValidate(uuids);
+    validateUUID = uuidValidate(uuids)
   }
-  return validateUUID;
+  return validateUUID
 }
 
 /**
@@ -177,21 +177,21 @@ function checkValidUUID(uuids) {
 
 function noOfElementsInArray(data, filter = {}) {
   if (!filter || !Object.keys(filter).length > 0) {
-    return data.length;
+    return data.length
   }
   if (!data.length > 0) {
-    return 0;
+    return 0
   } else {
     if (filter.value == "all") {
-      return data.length;
+      return data.length
     } else {
-      let count = 0;
-      for (let attachment = 0; attachment < data.length; attachment++) {
+      let count = 0
+      for (let attachment = 0 attachment < data.length attachment++) {
         if (data[attachment][filter.key] == filter.value) {
           count++
         }
       }
-      return count;
+      return count
     }
   }
 }
@@ -207,7 +207,7 @@ function noOfElementsInArray(data, filter = {}) {
 
 function operatorValidation(valueLhs, valueRhs, operator) {
   return new Promise(async (resolve, reject) => {
-    let result = false;
+    let result = false
     if (operator == "==") {
       result = (valueLhs == valueRhs) ? true : false
     } else if (operator == "!=") {
@@ -233,7 +233,7 @@ function operatorValidation(valueLhs, valueRhs, operator) {
   */
 
 function generateUniqueId() {
-  return uuidV4();
+  return uuidV4()
 }
 
 module.exports = {
@@ -249,4 +249,4 @@ module.exports = {
   noOfElementsInArray: noOfElementsInArray,
   operatorValidation: operatorValidation,
   generateUniqueId: generateUniqueId
-};
+}

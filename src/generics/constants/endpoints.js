@@ -7,4 +7,4 @@
 
 module.exports = {
     // GET_IMPROVEMENT_PROJECTS : "/v1/template/getImprovementProjects", // Unnati service
-};
+}

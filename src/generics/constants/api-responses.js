@@ -6,6 +6,5 @@
  */
 
 module.exports = {
-    // "PROJECT_CATEGORIES_FETCHED": "Project categories fetched successfully",
-    // "DOWNLOADABLE_URL_GENERATED" : "Downloadable Url generated"
-};
+    UPDATE_QUERY_REQUIRED: "UPDATE_QUERY_REQUIRED"
+}

@@ -6,8 +6,8 @@
 */
 
 // Dependencies
-const mongodb = require("./mongodb");
-const { v1: uuidv1 } = require('uuid');
+const mongodb = require("./mongodb")
+const { v1: uuidv1 } = require('uuid')
 
 const obj = {
     MONGO_DB: {
@@ -21,27 +21,27 @@ const obj = {
 
 let health_check = async function (req, res) {
 
-    let checks = [];
-    let mongodbConnection = await mongodb.health_check();
-    checks.push(singleCheckObj("MONGO_DB", mongodbConnection));
+    let checks = []
+    let mongodbConnection = await mongodb.health_check()
+    checks.push(singleCheckObj("MONGO_DB", mongodbConnection))
 
 
-    let checkServices = checks.filter(check => check.healthy === false);
+    let checkServices = checks.filter(check => check.healthy === false)
 
     let result = {
         name: obj.NAME,
         version: obj.API_VERSION,
         healthy: checkServices.length > 0 ? false : true,
         checks: checks
-    };
+    }
 
-    let responseData = response(req, result);
-    res.status(200).json(responseData);
+    let responseData = response(req, result)
+    res.status(200).json(responseData)
 }
 
 let healthCheckStatus = function (req, res) {
-    let responseData = response(req);
-    res.status(200).json(responseData);
+    let responseData = response(req)
+    res.status(200).json(responseData)
 }
 
 let singleCheckObj = function (serviceName, isHealthy) {

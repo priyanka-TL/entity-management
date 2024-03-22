@@ -5,9 +5,9 @@
  * Description : Health check Root file.
 */
 
-let healthCheckService = require("./health-check");
+let healthCheckService = require("./health-check")
 
 module.exports = function (app) {
-    app.get("/health",healthCheckService.health_check)
-    app.get("/healthCheckStatus",healthCheckService.healthCheckStatus);
+    app.get("/health", healthCheckService.health_check)
+    app.get("/healthCheckStatus", healthCheckService.healthCheckStatus)
 }

@@ -17,7 +17,7 @@ module.exports = (req) => {
     }
 
     if (entitiesValidator[req.params.method]) {
-        entitiesValidator[req.params.method]();
+        entitiesValidator[req.params.method]()
     }
 
-};
+}

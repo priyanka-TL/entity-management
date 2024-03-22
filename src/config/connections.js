@@ -13,16 +13,16 @@
 */
 
 const mongodb_connect = function () {
-  global.database = require("./db/mongodb")();
-  global.ObjectId = database.ObjectId;
-  global.Abstract = require("../generics/abstract");
-};
+  global.database = require("./db/mongodb")()
+  global.ObjectId = database.ObjectId
+  global.Abstract = require("../generics/abstract")
+}
 
 // Configuration data.
 const configuration = {
   name: "entity-api"
-};
+}
 
-mongodb_connect();
+mongodb_connect()
 
-module.exports = configuration;
+module.exports = configuration
