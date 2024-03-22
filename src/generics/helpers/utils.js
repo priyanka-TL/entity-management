@@ -243,7 +243,6 @@ module.exports = {
   hyphenCaseToCamelCase: hyphenCaseToCamelCase,
   valueParser: valueParser,
   convertStringToBoolean: convertStringToBoolean,
-  getAllBooleanDataFromModels: getAllBooleanDataFromModels,
   epochTime: epochTime,
   isValidMongoId: isValidMongoId,
   checkValidUUID: checkValidUUID,
