@@ -155,7 +155,7 @@ function checkValidUUID(uuids) {
 
   var validateUUID = true
   if (Array.isArray(uuids)) {
-    for (var i = 0 uuids.length > i i++) {
+    for (var i = 0; uuids.length > i; i++) {
       if (!uuidValidate(uuids[i])) {
         validateUUID = false
       }
@@ -186,7 +186,7 @@ function noOfElementsInArray(data, filter = {}) {
       return data.length
     } else {
       let count = 0
-      for (let attachment = 0 attachment < data.length attachment++) {
+      for (let attachment = 0; attachment < data.length; attachment++) {
         if (data[attachment][filter.key] == filter.value) {
           count++
         }
