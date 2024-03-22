@@ -42,7 +42,7 @@ app.use(bodyParser.urlencoded({ limit: "50MB", extended: false }));
 app.use(express.static("public"));
 
 app.all('*', (req, res, next) => {
-  console.log({"Debugging ML Projects Service": true});
+  console.log({"Debugging Entity Service": true});
   console.log("<------------Request log starts here------------------>");
   console.log("Request URL: ", req.url);
   console.log("Request Headers: ", JSON.stringify(req.headers));

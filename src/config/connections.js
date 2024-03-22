@@ -20,7 +20,7 @@ const mongodb_connect = function () {
 
 // Configuration data.
 const configuration = {
-  name: "ml-project-api"
+  name: "entity-api"
 };
 
 mongodb_connect();

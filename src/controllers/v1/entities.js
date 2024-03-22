@@ -9,11 +9,11 @@
 const entitiesHelper = require(MODULES_BASE_PATH + "/entities/helper");
 
 /**
-   * entityType
+   * entities
    * @class
 */
 
-module.exports = class entityTypes extends Abstract {
+module.exports = class entities extends Abstract {
 
   /**
    * @apiDefine errorBody
@@ -28,11 +28,11 @@ module.exports = class entityTypes extends Abstract {
    */
 
   constructor() {
-    super("entityTypes");
+    super("entities");
   }
 
   static get name() {
-    return "entityTypes";
+    return "entities";
   }
 
   /**
