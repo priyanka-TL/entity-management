@@ -10,13 +10,16 @@ module.exports = {
     schema: {
         name: {
             type: String,
-            index: true
+            index: true,
+            unique : true
         },
         profileForm: Array,
         profileFields: Array,
         types: Array,
         callResponseTypes: Array,
+        registryname:String,
         isObservable: Boolean,
+        immediateChildrenEntityType:Array,
         toBeMappedToParentEntities: Boolean,
         isDeleted: Boolean,
         createdBy: {

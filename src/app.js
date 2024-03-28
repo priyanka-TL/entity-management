@@ -10,7 +10,8 @@ require("dotenv").config()
 // express
 const express = require("express")
 const app = express()
-
+const fileUpload = require("express-fileupload");
+var fs = require("fs");
 // Health check
 require("./healthCheck")(app)
 
@@ -35,11 +36,14 @@ const expressValidator = require('express-validator')
 //To enable cors
 app.use(cors())
 app.use(expressValidator())
-
+app.use(fileUpload());
 app.use(bodyParser.json({ limit: "50MB" }))
 app.use(bodyParser.urlencoded({ limit: "50MB", extended: false }))
 
 app.use(express.static("public"))
+
+// Middleware for handling file uploads
+
 
 app.all('*', (req, res, next) => {
   console.log({ "Debugging Entity Service": true })

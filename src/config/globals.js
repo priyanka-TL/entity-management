@@ -10,6 +10,7 @@
 const fs = require("fs")
 const path = require("path")
 const requireAll = require("require-all")
+gen = Object.assign(global, {});
 
 module.exports = function () {
   global.async = require("async")
@@ -20,6 +21,7 @@ module.exports = function () {
   global.GENERIC_HELPERS_PATH = GENERICS_FILES_PATH + "/helpers"
   global._ = require("lodash")
   global.UTILS = require(GENERIC_HELPERS_PATH + "/utils")
+  gen.utils = require("../generics/helpers/utils");
 
   global.CSV_FILE_STREAM = require(PROJECT_ROOT_DIRECTORY + "/generics/file-stream")
   require("./connections")

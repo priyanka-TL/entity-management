@@ -69,3 +69,5 @@ config/credentials/*
 *.DS_Store
 
 package-lock.json
+
+src/public/reports/*
