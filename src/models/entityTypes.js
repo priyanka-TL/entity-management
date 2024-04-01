@@ -11,13 +11,13 @@ module.exports = {
         name: {
             type: String,
             index: true,
-            unique : true
+            unique: true
         },
         profileForm: Array,
         profileFields: Array,
         types: Array,
         callResponseTypes: Array,
-        registryname:String,
+        registryDetails:Object,
         isObservable: Boolean,
         immediateChildrenEntityType:Array,
         toBeMappedToParentEntities: Boolean,
@@ -33,4 +33,5 @@ module.exports = {
         }
     },
 }
+
 

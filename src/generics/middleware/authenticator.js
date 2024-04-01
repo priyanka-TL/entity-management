@@ -41,7 +41,7 @@ module.exports = async function (req, res, next, token = '') {
 	if (!req.rspObj) req.rspObj = {}
 	var rspObj = req.rspObj
 
-	let internalAccessApiPaths = ['/entityTypes/bulkCreate', '/entityTypes/bulkUpdate', '/entityTypes/list','/entityTypes/find']
+	let internalAccessApiPaths = CONSTANTS.common.API_ENDPOINTS
 	let performInternalAccessTokenCheck = false
 	await Promise.all(
 		internalAccessApiPaths.map(async function (path) {

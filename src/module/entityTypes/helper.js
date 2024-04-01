@@ -25,15 +25,16 @@ module.exports = class UserProjectsHelper {
 				const entityTypesUploadedData = await Promise.all(
 					entityTypesCSVData.map(async (entityType) => {
 						try {
-							entityType = gen.utils.valueParser(entityType)
-							entityType.regsitryDetails = {}
+							entityType = UTILS.valueParser(entityType)
+							entityType.registryDetails = {}
 							let removedKeys = []
 							Object.keys(entityType).forEach(function (eachKey) {
 								if (eachKey.startsWith('registry-')) {
 									let newKey = eachKey.replace('registry-', '')
-									entityType.regsitryDetails[newKey] = entityType[eachKey]
+									entityType.registryDetails[newKey] = entityType[eachKey]
 									removedKeys.push(entityType[eachKey])
 								}
+								removedKeys.forEach((key) => delete entityType[key])
 							})
 							if (entityType.profileFields) {
 								entityType.profileFields = entityType.profileFields.split(',') || []
@@ -53,10 +54,10 @@ module.exports = class UserProjectsHelper {
 							}
 
 							if (entityType.isObservable) {
-								entityType.isObservable = gen.utils.convertStringToBoolean(entityType.isObservable)
+								entityType.isObservable = UTILS.convertStringToBoolean(entityType.isObservable)
 							}
 							if (entityType.toBeMappedToParentEntities) {
-								entityType.toBeMappedToParentEntities = gen.utils.convertStringToBoolean(
+								entityType.toBeMappedToParentEntities = UTILS.convertStringToBoolean(
 									entityType.toBeMappedToParentEntities
 								)
 							}
@@ -70,28 +71,26 @@ module.exports = class UserProjectsHelper {
 									}
 								}
 							}
-							let uniqId
-							if (userDetails && userDetails.id) {
-								uniqId = userDetails.id.toString()
-							} else {
-								uniqId = 'SYSTEM'
-							}
+							const userId =
+								userDetails && userDetails.id
+									? userDetails && userDetails.id
+									: CONSTANTS.apiResponses.SYSTEM
 							let newEntityType = await database.models.entityTypes.create(
 								_.merge(
 									{
 										isDeleted: false,
-										updatedBy: uniqId,
-										createdBy: uniqId,
+										updatedBy: userId,
+										createdBy: userId,
 									},
 									entityType
 								)
 							)
 
-							delete entityType.regsitryDetails
+							delete entityType.registryDetails
 
 							if (newEntityType._id) {
 								entityType['_SYSTEM_ID'] = newEntityType._id
-								entityType.status = 'Success'
+								entityType.status = CONSTANTS.apiResponses.SUCCESS
 							} else {
 								entityType['_SYSTEM_ID'] = ''
 								entityType.status = 'Failed'
@@ -118,13 +117,13 @@ module.exports = class UserProjectsHelper {
 				const entityTypesUploadedData = await Promise.all(
 					entityTypesCSVData.map(async (entityType) => {
 						try {
-							entityType = gen.utils.valueParser(entityType)
-							entityType.regsitryDetails = {}
+							entityType = UTILS.valueParser(entityType)
+							entityType.registryDetails = {}
 							let removedKeys = []
 							Object.keys(entityType).forEach(function (eachKey) {
 								if (eachKey.startsWith('registry-')) {
 									let newKey = eachKey.replace('registry-', '')
-									entityType.regsitryDetails[newKey] = entityType[eachKey]
+									entityType.registryDetails[newKey] = entityType[eachKey]
 									removedKeys.push(entityType[eachKey])
 								}
 							})
@@ -144,10 +143,10 @@ module.exports = class UserProjectsHelper {
 							}
 
 							if (entityType.isObservable) {
-								entityType.isObservable = gen.utils.convertStringToBoolean(entityType.isObservable)
+								entityType.isObservable = UTILS.convertStringToBoolean(entityType.isObservable)
 							}
 							if (entityType.toBeMappedToParentEntities) {
-								entityType.toBeMappedToParentEntities = gen.utils.convertStringToBoolean(
+								entityType.toBeMappedToParentEntities = UTILS.convertStringToBoolean(
 									entityType.toBeMappedToParentEntities
 								)
 							}
@@ -161,12 +160,10 @@ module.exports = class UserProjectsHelper {
 									}
 								}
 							}
-							let uniqId
-							if (userDetails && userDetails.id) {
-								uniqId = userDetails.id.toString()
-							} else {
-								uniqId = 'SYSTEM'
-							}
+							const userId =
+								userDetails && userDetails.id
+									? userDetails && userDetails.id
+									: CONSTANTS.apiResponses.SYSTEM
 							let updateEntityType = await database.models.entityTypes.findOneAndUpdate(
 								{
 									_id: ObjectId(entityType._SYSTEM_ID),
@@ -174,17 +171,17 @@ module.exports = class UserProjectsHelper {
 
 								_.merge(
 									{
-										updatedBy: uniqId,
+										updatedBy: userId,
 									},
 									entityType
 								)
 							)
 
-							delete entityType.regsitryDetails
+							delete entityType.registryDetails
 
 							if (updateEntityType._id) {
 								entityType['_SYSTEM_ID'] = updateEntityType._id
-								entityType.status = 'Success'
+								entityType.status = CONSTANTS.apiResponses.SUCCESS
 							} else {
 								entityType['_SYSTEM_ID'] = ''
 								entityType.status = 'Failed'
@@ -206,6 +203,7 @@ module.exports = class UserProjectsHelper {
 	}
 
 	static list(queryParameter = 'all', projection = {}) {
+		console.log(projection, "line no 206");
 		return new Promise(async (resolve, reject) => {
 			try {
 				if (queryParameter === 'all') {
@@ -213,83 +211,13 @@ module.exports = class UserProjectsHelper {
 				}
 
 				let entityTypeData = await database.models.entityTypes.find(queryParameter, projection).lean()
-                console.log(entityTypeData, "line no 216");
-				return resolve(entityTypeData)
+				return resolve({
+					message: CONSTANTS.apiResponses.ENTITY_TYPES_FETCHED,
+					result: entityTypeData,
+				})
 			} catch (error) {
 				return reject(error)
 			}
 		})
 	}
 }
-// /**
-//  * Project details.
-//  * @method
-//  * @name details
-//  * @param {String} projectId - project id.
-//  * @returns {Object}
-// */
-
-// static details(projectId, userId,userRoleInformation = {}) {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-
-//             const projectDetails = await projectQueries.projectDocument({
-//                 _id: projectId,
-//                 userId: userId
-//             }, "all",
-//                 [
-//                     "taskReport",
-//                     "projectTemplateId",
-//                     "projectTemplateExternalId",
-//                     "userId",
-//                     "createdBy",
-//                     "updatedBy",
-//                     "createdAt",
-//                     "updatedAt",
-//                     "userRoleInformation",
-//                     "__v"
-//                 ])
-
-//             if (!projectDetails.length > 0) {
-
-//                 throw {
-//                     status: HTTP_STATUS_CODE["bad_request"].status,
-//                     message: CONSTANTS.apiResponses.PROJECT_NOT_FOUND
-//                 }
-//             }
-
-//             if (Object.keys(userRoleInformation).length > 0) {
-
-//                 if (!projectDetails[0].userRoleInformation || !Object.keys(projectDetails[0].userRoleInformation).length > 0) {
-//                     await projectQueries.findOneAndUpdate({
-//                         _id: projectId
-//                     },{
-//                         $set: {userRoleInformation: userRoleInformation}
-//                     })
-//                 }
-//             }
-
-//             let result = await _projectInformation(projectDetails[0])
-
-//             if (!result.success) {
-//                 return resolve(result)
-//             }
-
-//             return resolve({
-//                 success: true,
-//                 message: CONSTANTS.apiResponses.PROJECT_DETAILS_FETCHED,
-//                 data: result.data
-//             })
-
-//         } catch (error) {
-//             return resolve({
-//                 status:
-//                     error.status ?
-//                         error.status : HTTP_STATUS_CODE['internal_server_error'].status,
-//                 success: false,
-//                 message: error.message,
-//                 data: []
-//             })
-//         }
-//     })
-// }

@@ -8,7 +8,7 @@
 // Dependencies
 const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
 const csv = require('csvtojson')
-const FileStream = require('../../generics/file-stream')
+const FileStream = require(PROJECT_ROOT_DIRECTORY + '/generics/file-stream')
 
 /**
  * entityType
@@ -65,46 +65,53 @@ module.exports = class EntityTypes extends Abstract {
 	 * @returns {JSON} - List of all entity types.
 	 */
 
-	list() {
+	async list() {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let result = await entityTypesHelper.list('all', { name: 1 })
 
-				return resolve({
-					message: CONSTANTS.apiResponses.ENTITY_TYPES_FETCHED,
-					result: result,
-				})
+				return resolve(result)
 			} catch (error) {
 				return reject({
-					status: error.status || httpStatusCode.internal_server_error.status,
-					message: error.message || httpStatusCode.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
 					errorObject: error,
 				})
 			}
 		})
 	}
 
-	find(req) {
+	/**
+	 * Find all the entity types.
+	 * @method
+	 * @name find
+	 * @returns {JSON} - List of all entity types.
+	 */
+	async find(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let result = await entityTypesHelper.list(req.body.query, req.body.projection, req.body.skipFields)
 
-				return resolve({
-					message: CONSTANTS.apiResponses.ENTITY_TYPES_FETCHED,
-					result: result,
-				})
+				return resolve(result)
 			} catch (error) {
 				return reject({
-					status: error.status || httpStatusCode.internal_server_error.status,
-					message: error.message || httpStatusCode.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
 					errorObject: error,
 				})
 			}
 		})
 	}
 
+	/**
+	 * Bulk create Entity Types.
+	 * @method
+	 * @name bulkCreate
+	 * @param {Object} req -request data.
+	 * @param {Object} req.files.entityTypes -entityTypes data.
+	 * @returns {CSV} Bulk create entity Types data.
+	 */
 	async bulkCreate(req) {
-		console.log(req.files, 'line no 117')
 		return new Promise(async (resolve, reject) => {
 			try {
 				let entityTypesCSVData = await csv().fromString(req.files.entityTypes.data.toString())
@@ -134,7 +141,7 @@ module.exports = class EntityTypes extends Abstract {
 
 					input.push(null)
 				} else {
-					throw CONSTANTS.apiResponses.PROJECT_NOT_FOUND
+					throw CONSTANTS.apiResponses.PROJECT_NOT_CREATED
 				}
 			} catch (error) {
 				return reject({
@@ -146,8 +153,15 @@ module.exports = class EntityTypes extends Abstract {
 		})
 	}
 
+	/**
+	 * Bulk update Entity Types.
+	 * @method
+	 * @name bulkUpdate
+	 * @param {Object} req -request data.
+	 * @param {Object} req.files.entityTypes -entityTypes data.
+	 * @returns {CSV} Bulk update entity Types data.
+	 */
 	async bulkUpdate(req) {
-		console.log(req.files, 'line no 132')
 		return new Promise(async (resolve, reject) => {
 			try {
 				let entityTypesCSVData = await csv().fromString(req.files.entityTypes.data.toString())
@@ -177,7 +191,7 @@ module.exports = class EntityTypes extends Abstract {
 
 					input.push(null)
 				} else {
-					throw CONSTANTS.apiResponses.PROJECT_NOT_FOUND
+					throw CONSTANTS.apiResponses.PROJECT_NOT_UPDATED
 				}
 			} catch (error) {
 				return reject({
