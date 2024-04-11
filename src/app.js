@@ -50,7 +50,7 @@ app.all('*', (req, res, next) => {
   console.log("Request URL: ", req.url)
   console.log("Request Headers: ", JSON.stringify(req.headers))
   console.log("Request Body: ", JSON.stringify(req.body))
-  // console.log("Request Files: ", req.files)
+  console.log("Request Files: ", req.files)
   console.log("<---------------Request log ends here------------------>")
   next()
 })

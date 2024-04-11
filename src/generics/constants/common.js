@@ -7,6 +7,6 @@
 
 module.exports = {
     "ACTIVE_STATUS" : "active",
-    API_ENDPOINTS:['/entityTypes/bulkCreate', '/entityTypes/bulkUpdate', '/entityTypes/list','/entityTypes/find','/entities/bulkCreate','/entities/listByEntityType']
-	
+    INTERNAL_ACCESS_URLS:['/entityTypes/bulkCreate', '/entityTypes/bulkUpdate', '/entityTypes/list','/entityTypes/find','/entities/bulkCreate','/entities/listByEntityType'],
+	SYSTEM:"SYSTEM",
 }

@@ -15,9 +15,9 @@ module.exports = {
         },
         groups: Object,
         metaInformation: {
-            externalId: { type: String, index: true },
+            externalId: { type: String, index: true ,unique:true},
             name: { type: String, index: true },
-        },
+        },	
         childHierarchyPath: Array,
         userId: {
             type: String,

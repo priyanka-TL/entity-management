@@ -8,6 +8,7 @@
 // Dependencies
 const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
 const csv = require('csvtojson')
+const { bulkAdd } = require('../../module/entityTypes/helper')
 const FileStream = require(PROJECT_ROOT_DIRECTORY + '/generics/file-stream')
 
 /**
@@ -102,6 +103,61 @@ module.exports = class EntityTypes extends Abstract {
 			}
 		})
 	}
+
+		/**
+	 *  create Entity Types.
+	 * @method
+	 * @name bulkCreate
+	 * @param {Object} req -request data.
+	 * @param {Object} req.files.entityTypes -entityTypes data.
+	 * @returns {CSV}  create single  entity Types data.
+	 */
+
+	async create(req) {
+		console.log(req.body, 'line no 108')
+		return new Promise(async (resolve, reject) => {
+			try {
+				let result = await entityTypesHelper.create(req.body, req.userDetails)
+				return resolve({
+					message: CONSTANTS.apiResponses.ENTITY_ADDED,
+					result: result,
+				})
+			} catch (error) {
+				console.log(error, 'line no 129')
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+	update(req) {
+		console.log(req.params._id,"line no 138");
+		console.log(req.body, "line no 139");
+		return new Promise(async (resolve, reject) => {
+		  try {
+			let result = await entityTypesHelper.update( req.params._id, req.body);
+	
+			return resolve({
+			  message: CONSTANTS.apiResponses.ENTITY_INFORMATION_UPDATE,
+			  result: result
+			});
+	
+		  } catch (error) {
+	
+			return reject({
+			  status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+			  message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+			  errorObject: error
+			})
+	
+		  }
+	
+	
+		})
+	  }
 
 	/**
 	 * Bulk create Entity Types.
