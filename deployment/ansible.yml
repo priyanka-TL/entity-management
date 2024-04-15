@@ -11,7 +11,7 @@
     #- debug: msg="{{ slurpfile['content'] | b64decode }}"
     #- debug: msg="the value of foo.txt is {{ contents }}"
     - name: Get vault credentials
-      shell: "curl --location --request GET '{{ vaultAddress }}users' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data' > '{{ project_path 
+      shell: "curl --location --request GET '{{ vaultAddress }}entity-management' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data' > '{{ project_path 
 }}/data2.json'"
       register: credentials
     - debug: msg="{{ credentials }}"
@@ -23,9 +23,9 @@
     - name: Set some variable
       set_fact:
         release_path: "{{ project_path }}/releases/{{ lookup('pipe','date +%Y%m%d%H%M%S') }}"
-        current_path: "{{ project_path }}/entity"
+        current_path: "{{ project_path }}/entity-management"
     - name: Retrieve current release folder
-      command: readlink -f users
+      command: readlink -f entity-management
       register: current_release_path
       ignore_errors: yes
       args:
@@ -38,7 +38,7 @@
         state=directory
     - name: Clone the repository
       git:
-        repo: https://github.com/ELEVATE-Project/entity.git
+        repo: https://github.com/ELEVATE-Project/entity-management.git
         dest: "{{ release_path }}"
         clone: yes
         update: yes
@@ -47,7 +47,7 @@
       shell: cd {{release_path}}/src && npm i && npm i redoc-cli 
     
     - name: Delete Old Folder 
-      shell: rm -rf {{ current_path }} &&  cd {{ project_path }} && mkdir entity
+      shell: rm -rf {{ current_path }} &&  cd {{ project_path }} && mkdir entity-management
     
     - name: Move code
       shell: mv "{{ release_path }}"/* {{ current_path }}/
@@ -66,20 +66,20 @@
       register: envConfig 
     - debug: msg=" cred {{ envConfig }} "
 
-    - name: generate api-doc 
-      shell: cd {{current_path}}/src && redoc-cli build -o ./api-doc/index.html ./api-doc/api-doc.yaml
-      register: apiDocResponse 
-    - debug: msg=" Api-doc {{ apiDocResponse }} "
+    # - name: generate api-doc 
+    #   shell: cd {{current_path}}/src && redoc-cli build -o ./api-doc/index.html ./api-doc/api-doc.yaml
+    #   register: apiDocResponse 
+    # - debug: msg=" Api-doc {{ apiDocResponse }} "
 
     - name: Delete old pm2 process
-      command: pm2 delete elevate-entity
+      command: pm2 delete elevate-entity-management
       ignore_errors: yes
 
     - name: Delete release folder
       shell: rm -rf  {{ release_path }}
 
     - name: Start pm2
-      command: "chdir={{current_path}}/src pm2 start app.js -i 2 --name elevate-entity"
+      command: "chdir={{current_path}}/src pm2 start app.js -i 2 --name elevate-entity-management"
       register: pm2Info
 
     - name: debug info

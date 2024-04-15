@@ -23,7 +23,7 @@ services:
     volumes:
       - mongo-data:/data/db
       - logs:/var/log/mongodb
-  entity_elevate:
+  entity-mangement:
     build: '../'
     volumes:
       - ../src/:/var/src
@@ -32,7 +32,7 @@ services:
     command: [ 'nodemon', 'app.js' ]
     environment:
       - REDIS_HOST=redis://redis:6379
-      - MONGODB_URL=mongodb://mongo:27017/elevate-diksha
+      - MONGODB_URL=mongodb://mongo:27017/elevate-project
     env_file:
       - integration_test.env
     depends_on:
