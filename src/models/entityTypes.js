@@ -18,7 +18,11 @@ module.exports = {
         types: Array,
         callResponseTypes: Array,
         registryDetails:Object,
-        isObservable: Boolean,
+        isObservable: {
+            type: Boolean,
+            default: true
+   
+        },
         immediateChildrenEntityType:Array,
         toBeMappedToParentEntities: Boolean,
         isDeleted: Boolean,

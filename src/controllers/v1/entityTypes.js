@@ -8,7 +8,6 @@
 // Dependencies
 const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
 const csv = require('csvtojson')
-const { bulkAdd } = require('../../module/entityTypes/helper')
 const FileStream = require(PROJECT_ROOT_DIRECTORY + '/generics/file-stream')
 
 /**
@@ -114,16 +113,11 @@ module.exports = class EntityTypes extends Abstract {
 	 */
 
 	async create(req) {
-		console.log(req.body, 'line no 108')
 		return new Promise(async (resolve, reject) => {
 			try {
 				let result = await entityTypesHelper.create(req.body, req.userDetails)
-				return resolve({
-					message: CONSTANTS.apiResponses.ENTITY_ADDED,
-					result: result,
-				})
+				return resolve(result)
 			} catch (error) {
-				console.log(error, 'line no 129')
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
 					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
@@ -133,17 +127,25 @@ module.exports = class EntityTypes extends Abstract {
 		})
 	}
 
+
+		 /**
+   * Update entityType information.
+   * @method
+   * @name update
+   * @param {Object} req - requested entityType data.
+   * @param {String} req.query.type - entityType type.
+   * @param {String} req.params._id - entityType id.
+   * @param {Object} req.body - entityType information that need to be updated.       
+   * @returns {JSON} - Updated entityType information.
+   */
+
 	update(req) {
-		console.log(req.params._id,"line no 138");
 		console.log(req.body, "line no 139");
 		return new Promise(async (resolve, reject) => {
 		  try {
 			let result = await entityTypesHelper.update( req.params._id, req.body);
 	
-			return resolve({
-			  message: CONSTANTS.apiResponses.ENTITY_INFORMATION_UPDATE,
-			  result: result
-			});
+			return resolve(result);
 	
 		  } catch (error) {
 	
@@ -172,7 +174,7 @@ module.exports = class EntityTypes extends Abstract {
 			try {
 				let entityTypesCSVData = await csv().fromString(req.files.entityTypes.data.toString())
 				if (!entityTypesCSVData || entityTypesCSVData.length < 1) {
-					throw CONSTANTS.apiResponses.PROJECT_NOT_FOUND
+					throw CONSTANTS.apiResponses.PROJECT_NOT_CREATED
 				}
 				const newEntityTypeData = await entityTypesHelper.bulkCreate(entityTypesCSVData, req.userDetails)
 
@@ -222,7 +224,7 @@ module.exports = class EntityTypes extends Abstract {
 			try {
 				let entityTypesCSVData = await csv().fromString(req.files.entityTypes.data.toString())
 				if (!entityTypesCSVData || entityTypesCSVData.length < 1) {
-					throw CONSTANTS.apiResponses.PROJECT_NOT_FOUND
+					throw CONSTANTS.apiResponses.ENTITYTYPE_NOT_UPDATED
 				}
 				let newEntityTypeData = await entityTypesHelper.bulkUpdate(entityTypesCSVData, req.userDetails)
 
@@ -247,7 +249,7 @@ module.exports = class EntityTypes extends Abstract {
 
 					input.push(null)
 				} else {
-					throw CONSTANTS.apiResponses.PROJECT_NOT_UPDATED
+					throw CONSTANTS.apiResponses.ENTITYTYPE_NOT_UPDATED
 				}
 			} catch (error) {
 				return reject({

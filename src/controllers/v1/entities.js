@@ -70,9 +70,54 @@ module.exports = class Entities extends Abstract {
 			try {
 				let entityData = await entitiesHelper.entityDocuments(req.body.query, req.body.projection)
 
+				return resolve(entityData)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+	relatedEntities(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let result = {}
+				let projection = [
+					'metaInformation.externalId',
+					'metaInformation.name',
+					'metaInformation.addressLine1',
+					'metaInformation.addressLine2',
+					'metaInformation.administration',
+					'metaInformation.city',
+					'metaInformation.country',
+					'entityTypeId',
+					'entityType',
+				]
+				let entityDocument = await entitiesHelper.entityDocuments({ _id: req.params._id }, projection)
+
+				if (entityDocument.length < 1) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
+
+				let relatedEntities = await entitiesHelper.relatedEntities(
+					entityDocument[0]._id,
+					entityDocument[0].entityTypeId,
+					entityDocument[0].entityType,
+					projection
+				)
+				console.log(relatedEntities, 'line no 104')
+				_.merge(result, entityDocument[0])
+				result['relatedEntities'] = relatedEntities.length > 0 ? relatedEntities : []
+
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_FETCHED,
-					result: entityData,
+					result: result,
 				})
 			} catch (error) {
 				return reject({
@@ -84,49 +129,155 @@ module.exports = class Entities extends Abstract {
 		})
 	}
 
+	mappingUpload(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let entityCSVData = await csv().fromString(req.files.entityMap.data.toString())
+
+				let entityMappingUploadResponse = await entitiesHelper.processEntityMappingUploadData(entityCSVData)
+				if (!entityMappingUploadResponse.success) {
+					throw new Error(CONSTANTS.apiResponses.SOMETHING_WENT_WRONG)
+				}
+
+				return resolve({
+					message: CONSTANTS.apiResponses.ENTITY_INFORMATION_UPDATE,
+				})
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+	/**
+	 * details of the entities.
+	 * @method
+	 * @name details
+	 * @returns {JSON} - provide the details.
+	 */
 
 	details(req) {
-		console.log(req.query.type,"line no 89");
-		console.log(req.params._id,"line no 90");
+		console.log(req.params, 'line no 164')
+
 		return new Promise(async (resolve, reject) => {
-	
-		  try {
-	
-			let result = await entitiesHelper.details(
-			  req.query.type, 
-			  req.params._id
-			);
-	
-			return resolve({
-			  message: CONSTANTS.apiResponses.ENTITY_INFORMATION_FETCHED,
-			  result: result
-			});
-	
-		  } catch (error) {
-	
-			return reject({
-			  status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-			  message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-			  errorObject: error
-			})
-	
-		  }
-	
-	
+			try {
+				let result = await entitiesHelper.details(
+					req.params._id ? req.params._id : '',
+					req.body ? req.body : {}
+				)
+
+				return resolve(result)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
 		})
-	  }
-	
+	}
+	// details(req) {
+	// 	return new Promise(async (resolve, reject) => {
+	// 		try {
+	// 			let result = await entitiesHelper.details(req.params._id, req.query.type)
+
+	// 			return resolve({
+	// 				message: CONSTANTS.apiResponses.ENTITY_INFORMATION_FETCHED,
+	// 				result: result,
+	// 			})
+	// 		} catch (error) {
+	// 			return reject({
+	// 				status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+	// 				message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+	// 				errorObject: error,
+	// 			})
+	// 		}
+	// 	})
+	// }
+
+	/**
+	 * create entities.
+	 * @method
+	 * @name add
+	 * @param {Object} req - All requested Data.
+	 * @param {Object} req.files - requested files.
+	 * @returns {JSON} - Added entities information.
+	 */
 
 	async create(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let result = await entitiesHelper.create(req.body, req.userDetails)
+				let queryParams = {
+					parentEntityId: req.query.parentEntityId,
+				}
+				let result = await entitiesHelper.create(req.body, req.userDetails, queryParams)
+				return resolve(result)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+	/**
+	 * Update entity information.
+	 * @method
+	 * @name update
+	 * @param {Object} req - requested entity data.
+	 * @param {String} req.query.type - entity type.
+	 * @param {String} req.params._id - entity id.
+	 * @param {Object} req.body - entity information that need to be updated.
+	 * @returns {JSON} - Updated entity information.
+	 */
+
+	update(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let result = await entitiesHelper.update(req.params._id, req.body)
+
+				return resolve(result)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+	/**
+	 * Add entities.
+	 * @method
+	 * @name add
+	 * @param {Object} req - All requested Data.
+	 * @param {Object} req.files - requested files.
+	 * @returns {JSON} - Added entities information.
+	 */
+
+	add(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let queryParams = {
+					type: req.query.type,
+					// programId: req.query.programId,
+					//   solutionId: req.query.solutionId,
+					parentEntityId: req.query.parentEntityId,
+				}
+				let result = await entitiesHelper.add(queryParams, req.body, req.userDetails)
+
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_ADDED,
 					result: result,
 				})
 			} catch (error) {
-				console.log(error,"line no 130");
+				console.error(error)
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
 					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
@@ -136,30 +287,14 @@ module.exports = class Entities extends Abstract {
 		})
 	}
 
-
-	update(req) {
-		return new Promise(async (resolve, reject) => {
-		  try {
-			let result = await entitiesHelper.update( req.params._id, req.body);
-	
-			return resolve({
-			  message: CONSTANTS.apiResponses.ENTITY_INFORMATION_UPDATE,
-			  result: result
-			});
-	
-		  } catch (error) {
-	
-			return reject({
-			  status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-			  message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-			  errorObject: error
-			})
-	
-		  }
-	
-	
-		})
-	  }
+	/**
+	 * List of entities by entityType.
+	 * @method
+	 * @name listByEntityType
+	 * @param {Object} req - requested data.
+	 * @param {String} req.params._id - requested entity type.
+	 * @returns {JSON} - Array of entities.
+	 */
 	listByEntityType(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
@@ -170,11 +305,10 @@ module.exports = class Entities extends Abstract {
 					'registryDetails.locationId',
 				]
 
-
 				let skippingValue = req.pageSize * (req.pageNo - 1)
 				let entityDocuments = await entitiesHelper.entityDocuments(
 					{
-						entityTypeId : ObjectId(req.params._id) ,
+						entityTypeId: ObjectId(req.params._id),
 					},
 					projection,
 					req.pageSize,
@@ -202,10 +336,7 @@ module.exports = class Entities extends Abstract {
 					}
 				})
 
-				return resolve({
-					message: CONSTANTS.apiResponses.ENTITY_FETCHED,
-					result: entityDocuments,
-				})
+				return resolve(entityDocuments)
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
@@ -215,6 +346,20 @@ module.exports = class Entities extends Abstract {
 			}
 		})
 	}
+
+	/**
+	 * List entities.
+	 * @method
+	 * @name list
+	 * @param {Object} req - requested entity information.
+	 * @param {String} req.query.type - type of entity requested.
+	 * @param {String} req.params._id - requested entity id.
+	 * @param {Number} req.pageSize - total size of the page.
+	 * @param {Number} req.pageNo - page number.
+	 * @param {string} req.query.schoolTypes - comma seperated school types.
+	 * @param {string} req.query.administrationTypes - comma seperated administration types.
+	 * @returns {JSON} - Listed entity details.
+	 */
 
 	list(req) {
 		return new Promise(async (resolve, reject) => {
@@ -238,6 +383,18 @@ module.exports = class Entities extends Abstract {
 			}
 		})
 	}
+
+	/**
+	 * Bulk create entities.
+	 * @method
+	 * @name bulkCreate
+	 * @param {Object} req - requested data.
+	 * @param {String} req.query.type - requested entity type.
+	 * @param {Object} req.userDetails - logged in user details.
+	 * @param {Object} req.files.entities - entities data.
+	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
+	 * public/reports/currentDate
+	 */
 
 	bulkCreate(req) {
 		return new Promise(async (resolve, reject) => {
@@ -275,6 +432,7 @@ module.exports = class Entities extends Abstract {
 					throw CONSTANTS.apiResponses.SOMETHING_WENT_WRONG
 				}
 			} catch (error) {
+				console.log(error, 'lineeeeeeee')
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
 					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
@@ -284,53 +442,54 @@ module.exports = class Entities extends Abstract {
 		})
 	}
 
-bulkUpdate(req) {
-    return new Promise(async (resolve, reject) => {
+	/**
+	 * Bulk update entities.
+	 * @method
+	 * @name bulkUpdate
+	 * @param {Object} req - requested data.
+	 * @param {Object} req.userDetails - logged in user details.
+	 * @param {Object} req.files.entities - entities data.
+	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
+	 * public/reports/currentDate
+	 */
 
-      try {
+	bulkUpdate(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let entityCSVData = await csv().fromString(req.files.entityTypes.data.toString())
 
-        let entityCSVData = await csv().fromString(req.files.entityTypes.data.toString());
-        
-        let newEntityData = await entitiesHelper.bulkUpdate(
-          req.userDetails, 
-          entityCSVData
-        );
+				let newEntityData = await entitiesHelper.bulkUpdate(req.userDetails, entityCSVData)
 
-        if (newEntityData.length > 0) {
+				if (newEntityData.length > 0) {
+					const fileName = `Entity-Upload`
+					let fileStream = new FileStream(fileName)
+					let input = fileStream.initStream()
 
-          const fileName = `Entity-Upload`;
-          let fileStream = new FileStream(fileName);
-          let input = fileStream.initStream();
+					;(async function () {
+						await fileStream.getProcessorPromise()
+						return resolve({
+							isResponseAStream: true,
+							fileNameWithPath: fileStream.fileNameWithPath(),
+						})
+					})()
 
-          (async function () {
-            await fileStream.getProcessorPromise();
-            return resolve({
-              isResponseAStream: true,
-              fileNameWithPath: fileStream.fileNameWithPath()
-            });
-          }());
+					await Promise.all(
+						newEntityData.map(async (newEntity) => {
+							input.push(newEntity)
+						})
+					)
 
-          await Promise.all(newEntityData.map(async newEntity => {
-            input.push(newEntity);
-          }))
-
-          input.push(null);
-
-        } else {
-          throw new Error(CONSTANTS.apiResponses.SOMETHING_WENT_WRONG);
-        }
-
-      } catch (error) {
-
-        return reject({
-          status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-          message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-          errorObject: error
-        })
-
-      }
-
-
-    })
-}
+					input.push(null)
+				} else {
+					throw new Error(CONSTANTS.apiResponses.SOMETHING_WENT_WRONG)
+				}
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
 }

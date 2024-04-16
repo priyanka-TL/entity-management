@@ -18,6 +18,14 @@ module.exports = (req, res) => {
 				req.checkBody('entityTypes').exists().withMessage('EntityTypes file is required')
 			}
 		},
+		update: function () {
+			if (!req.params || !req.params._id) {
+				req.checkBody('._id').exists().withMessage('EntityTypes file is required')
+			}
+		},
+		// create: function () {
+		// 	req.checkBody('params').exists().withMessage('query is required')
+		// },
 		// find: function () {
 		// 	req.checkBody('query').exists().withMessage('query is required')
 		// },

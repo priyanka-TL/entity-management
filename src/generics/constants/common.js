@@ -7,6 +7,8 @@
 
 module.exports = {
     "ACTIVE_STATUS" : "active",
-    INTERNAL_ACCESS_URLS:['/entityTypes/bulkCreate', '/entityTypes/bulkUpdate', '/entityTypes/list','/entityTypes/find','/entities/bulkCreate','/entities/listByEntityType'],
+    INTERNAL_ACCESS_URLS:['/entityTypes/bulkCreate', '/entityTypes/bulkUpdate','/entityTypes/find','/entities/bulkCreate'],
 	SYSTEM:"SYSTEM",
+    SUCCESS:"SUCCESS",
+    FAILURE:"FAILURE",
 }

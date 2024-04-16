@@ -6,12 +6,9 @@
  */
 
 // Dependencies
-
-const { v4: uuidv4 } = require('uuid')
+const entityTypeQueries = require('../../databaseQueries/entityTypes')
 
 // const entitiesHelper = require(MODULES_BASE_PATH + "/entities/helper")
-const _ = require('lodash')
-const { resolve } = require('path')
 // const programUsersQueries = require(DB_QUERY_BASE_PATH + "/programUsers")
 
 /**
@@ -21,7 +18,6 @@ const { resolve } = require('path')
 
 module.exports = class UserProjectsHelper {
 	static bulkCreate(entityTypesCSVData, userDetails) {
-		console.log(entityTypesCSVData, 'line no 24')
 		return new Promise(async (resolve, reject) => {
 			try {
 				const entityTypesUploadedData = await Promise.all(
@@ -74,10 +70,8 @@ module.exports = class UserProjectsHelper {
 								}
 							}
 							const userId =
-								userDetails && userDetails.id
-									? userDetails && userDetails.id
-									: CONSTANTS.common.SYSTEM
-							let newEntityType = await database.models.entityTypes.create(
+								userDetails && userDetails.id ? userDetails && userDetails.id : CONSTANTS.common.SYSTEM
+							let newEntityType = await entityTypeQueries.create(
 								_.merge(
 									{
 										isDeleted: false,
@@ -87,7 +81,7 @@ module.exports = class UserProjectsHelper {
 									entityType
 								)
 							)
-									
+
 							delete entityType.registryDetails
 
 							if (newEntityType._id) {
@@ -95,7 +89,7 @@ module.exports = class UserProjectsHelper {
 								entityType.status = CONSTANTS.apiResponses.SUCCESS
 							} else {
 								entityType['_SYSTEM_ID'] = ''
-								entityType.status = 'Failed'
+								entityType.status = CONSTANTS.apiResponses.FAILURE
 							}
 						} catch (error) {
 							entityType['_SYSTEM_ID'] = ''
@@ -113,43 +107,48 @@ module.exports = class UserProjectsHelper {
 		})
 	}
 
+	/**
+	 * create single entity.
+	 * @method
+	 * @name create
+	 * @param {Object} data - requested entity data.
+	 * @param {Object} userDetails - Logged in user information.
+	 * @returns {JSON} - create single entity.
+	 */
 	static create(body, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let entityType = body;
-	
+				let entityType = body
+
 				try {
 					if (entityType.profileFields) {
-						entityType.profileFields = entityType.profileFields.split(',') || [];
+						entityType.profileFields = entityType.profileFields.split(',') || []
 					}
-	
+
 					if (
 						entityType.immediateChildrenEntityType != '' &&
 						entityType.immediateChildrenEntityType != undefined
 					) {
-						let entityTypeImmediateChildren = entityType.immediateChildrenEntityType.split(',');
-						entityTypeImmediateChildren = _.uniq(entityTypeImmediateChildren);
-	
-						entityType.immediateChildrenEntityType = new Array();
+						let entityTypeImmediateChildren = entityType.immediateChildrenEntityType.split(',')
+						entityTypeImmediateChildren = _.uniq(entityTypeImmediateChildren)
+
+						entityType.immediateChildrenEntityType = new Array()
 						entityTypeImmediateChildren.forEach((immediateChildren) => {
-							entityType.immediateChildrenEntityType.push(immediateChildren);
-						});
+							entityType.immediateChildrenEntityType.push(immediateChildren)
+						})
 					}
-	
+
 					if (entityType.isObservable) {
-						entityType.isObservable = UTILS.convertStringToBoolean(entityType.isObservable);
+						entityType.isObservable = UTILS.convertStringToBoolean(entityType.isObservable)
 					}
 					if (entityType.toBeMappedToParentEntities) {
 						entityType.toBeMappedToParentEntities = UTILS.convertStringToBoolean(
 							entityType.toBeMappedToParentEntities
-						);
+						)
 					}
-	
-					const userId =
-						userDetails && userDetails.id
-							? userDetails.id
-							: CONSTANTS.common.SYSTEM;
-					let newEntityType = await database.models.entityTypes.create(
+
+					const userId = userDetails && userDetails.id ? userDetails.id : CONSTANTS.common.SYSTEM
+					let newEntityType = await entityTypeQueries.create(
 						_.merge(
 							{
 								isDeleted: false,
@@ -158,44 +157,51 @@ module.exports = class UserProjectsHelper {
 							},
 							entityType
 						)
-					);
-					delete entityType.registryDetails;
-	
+					)
+					delete entityType.registryDetails
+
 					if (newEntityType._id) {
-						entityType.status = CONSTANTS.apiResponses.SUCCESS;
+						entityType.status = CONSTANTS.common.SUCCESS
 					} else {
-						entityType.status = CONSTANTS.apiResponses.FAILURE;
+						entityType.status = CONSTANTS.common.FAILURE
 					}
 				} catch (error) {
-					entityType.status = error && error.message ? error.message : error;
+					entityType.status = error && error.message ? error.message : error
 				}
-				return resolve(entityType);
+				return resolve(entityType)
 			} catch (error) {
-				return reject(error);
+				return reject(error)
 			}
-		});
+		})
 	}
-	
+	/**
+	 * update single entity.
+	 * @method
+	 * @name update
+	 * @param {Object} data - requested entity data.
+	 * @param {Object} userDetails - Logged in user information.
+	 * @returns {JSON} - update single entity.
+	 */
+
 	static update(entityTypeId, bodyData) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let entityInformation = await database.models.entityTypes.findOneAndUpdate(
+				let entityInformation = await entityTypeQueries.findOneAndUpdate(
 					{ _id: ObjectId(entityTypeId) },
 					bodyData,
 					{ new: true }
-				);
-		
+				)
+
 				if (!entityInformation) {
-					return reject({ status: 404, message:CONSTANTS.apiResponses.ENTITY_NOT_FOUND });
+					return reject({ status: 404, message: CONSTANTS.apiResponses.ENTITYTYPE_NOT_FOUND })
 				}
-		
-				resolve(entityInformation);
+
+				resolve(entityInformation)
 			} catch (error) {
-				reject(error);
+				reject(error)
 			}
-		});
-	}		
-	
+		})
+	}
 
 	static bulkUpdate(entityTypesCSVData, userDetails) {
 		return new Promise(async (resolve, reject) => {
@@ -247,10 +253,8 @@ module.exports = class UserProjectsHelper {
 								}
 							}
 							const userId =
-								userDetails && userDetails.id
-									? userDetails && userDetails.id
-									: CONSTANTS.common.SYSTEM
-							let updateEntityType = await database.models.entityTypes.findOneAndUpdate(
+								userDetails && userDetails.id ? userDetails && userDetails.id : CONSTANTS.common.SYSTEM
+							let updateEntityType = await entityTypeQueries.findOneAndUpdate(
 								{
 									_id: ObjectId(entityType._SYSTEM_ID),
 								},
@@ -267,10 +271,10 @@ module.exports = class UserProjectsHelper {
 
 							if (updateEntityType._id) {
 								entityType['_SYSTEM_ID'] = updateEntityType._id
-								entityType.status = CONSTANTS.apiResponses.SUCCESS
+								entityType.status = CONSTANTS.common.SUCCESS
 							} else {
 								entityType['_SYSTEM_ID'] = ''
-								entityType.status = 'Failed'
+								entityType.status = CONSTANTS.common.FAILURE
 							}
 						} catch (error) {
 							entityType['_SYSTEM_ID'] = ''
@@ -294,8 +298,9 @@ module.exports = class UserProjectsHelper {
 				if (queryParameter === 'all') {
 					queryParameter = {}
 				}
+				// let entityTypeData = await entityTypeQueries.find(
 
-				let entityTypeData = await database.models.entityTypes.find(queryParameter, projection).lean()
+				let entityTypeData = await entityTypeQueries.find(queryParameter, projection)
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_TYPES_FETCHED,
 					result: entityTypeData,
