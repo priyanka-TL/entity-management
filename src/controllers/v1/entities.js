@@ -9,6 +9,7 @@
 const entitiesHelper = require(MODULES_BASE_PATH + '/entities/helper')
 const csv = require('csvtojson')
 const FileStream = require(PROJECT_ROOT_DIRECTORY + '/generics/file-stream')
+const entitiesQueries = require('../../databaseQueries/entities')
 
 /**
  * entities
@@ -68,9 +69,12 @@ module.exports = class Entities extends Abstract {
 	find(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let entityData = await entitiesHelper.entityDocuments(req.body.query, req.body.projection)
-
-				return resolve(entityData)
+				let entityData = await entitiesQueries.entityDocuments(req.body.query, req.body.projection)
+				return resolve({
+					success: true,
+					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
+					result: entityData,
+				})
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
@@ -85,34 +89,8 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let result = {}
-				let projection = [
-					'metaInformation.externalId',
-					'metaInformation.name',
-					'metaInformation.addressLine1',
-					'metaInformation.addressLine2',
-					'metaInformation.administration',
-					'metaInformation.city',
-					'metaInformation.country',
-					'entityTypeId',
-					'entityType',
-				]
-				let entityDocument = await entitiesHelper.entityDocuments({ _id: req.params._id }, projection)
 
-				if (entityDocument.length < 1) {
-					throw {
-						status: HTTP_STATUS_CODE.not_found.status,
-						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
-					}
-				}
-
-				let relatedEntities = await entitiesHelper.relatedEntities(
-					entityDocument[0]._id,
-					entityDocument[0].entityTypeId,
-					entityDocument[0].entityType,
-					projection
-				)
-				console.log(relatedEntities, 'line no 104')
-				_.merge(result, entityDocument[0])
+				let relatedEntities = await entitiesHelper.relatedEntities(req.params._id)
 				result['relatedEntities'] = relatedEntities.length > 0 ? relatedEntities : []
 
 				return resolve({
@@ -141,6 +119,7 @@ module.exports = class Entities extends Abstract {
 
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_INFORMATION_UPDATE,
+					result: entityMappingUploadResponse,
 				})
 			} catch (error) {
 				return reject({
@@ -160,8 +139,6 @@ module.exports = class Entities extends Abstract {
 	 */
 
 	details(req) {
-		console.log(req.params, 'line no 164')
-
 		return new Promise(async (resolve, reject) => {
 			try {
 				let result = await entitiesHelper.details(
@@ -169,51 +146,6 @@ module.exports = class Entities extends Abstract {
 					req.body ? req.body : {}
 				)
 
-				return resolve(result)
-			} catch (error) {
-				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-					errorObject: error,
-				})
-			}
-		})
-	}
-	// details(req) {
-	// 	return new Promise(async (resolve, reject) => {
-	// 		try {
-	// 			let result = await entitiesHelper.details(req.params._id, req.query.type)
-
-	// 			return resolve({
-	// 				message: CONSTANTS.apiResponses.ENTITY_INFORMATION_FETCHED,
-	// 				result: result,
-	// 			})
-	// 		} catch (error) {
-	// 			return reject({
-	// 				status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-	// 				message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-	// 				errorObject: error,
-	// 			})
-	// 		}
-	// 	})
-	// }
-
-	/**
-	 * create entities.
-	 * @method
-	 * @name add
-	 * @param {Object} req - All requested Data.
-	 * @param {Object} req.files - requested files.
-	 * @returns {JSON} - Added entities information.
-	 */
-
-	async create(req) {
-		return new Promise(async (resolve, reject) => {
-			try {
-				let queryParams = {
-					parentEntityId: req.query.parentEntityId,
-				}
-				let result = await entitiesHelper.create(req.body, req.userDetails, queryParams)
 				return resolve(result)
 			} catch (error) {
 				return reject({
@@ -268,7 +200,7 @@ module.exports = class Entities extends Abstract {
 					type: req.query.type,
 					// programId: req.query.programId,
 					//   solutionId: req.query.solutionId,
-					parentEntityId: req.query.parentEntityId,
+					// parentEntityId: req.query.parentEntityId,
 				}
 				let result = await entitiesHelper.add(queryParams, req.body, req.userDetails)
 
@@ -277,11 +209,79 @@ module.exports = class Entities extends Abstract {
 					result: result,
 				})
 			} catch (error) {
-				console.error(error)
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
 					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
 					errorObject: error,
+				})
+			}
+		})
+	}
+
+	/**
+	 * List of entities by location ids.
+	 * @method
+	 * @name listByLocationIds
+	 * @param {Object} req - requested data.
+	 * @param {Object} req.body.locationIds - registry data.
+	 * @returns {Object} -
+	 */
+
+	listByLocationIds(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let entitiesData = await entitiesHelper.listByLocationIds(req.body.locationIds)
+
+				entitiesData.result = entitiesData.data
+
+				return resolve(entitiesData)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+	/**
+	 * Entities child hierarchy path
+	 * @method
+	 * @name subEntitiesRoles
+	 * @param {String} req.params._id - entityId.
+	 * @returns {JSON} - Entities child hierarchy path
+	 */
+
+	subEntityListBasedOnRoleAndLocation(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let currentMaximumCountOfRequiredEntities = 0
+				let subEntityTypeListData = new Array()
+				let data = req.userDetails.userInformation.entityTypes
+				for (let roleCount = 0; roleCount < data.split(',').length; roleCount++) {
+					const eachRole = data.split(',')[roleCount]
+					const entityTypeMappingData = await entitiesHelper.subEntityListBasedOnRoleAndLocation(
+						req.params._id,
+						eachRole
+					)
+
+					if (
+						entityTypeMappingData.result &&
+						entityTypeMappingData.result.length > currentMaximumCountOfRequiredEntities
+					) {
+						currentMaximumCountOfRequiredEntities = entityTypeMappingData.result.length
+						subEntityTypeListData = entityTypeMappingData
+						subEntityTypeListData.result = entityTypeMappingData.result
+					}
+				}
+
+				resolve(subEntityTypeListData)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE['internal_server_error'].status,
+
+					message: error.message || HTTP_STATUS_CODE['internal_server_error'].message,
 				})
 			}
 		})
@@ -306,7 +306,7 @@ module.exports = class Entities extends Abstract {
 				]
 
 				let skippingValue = req.pageSize * (req.pageNo - 1)
-				let entityDocuments = await entitiesHelper.entityDocuments(
+				let entityDocuments = await entitiesQueries.entityDocuments(
 					{
 						entityTypeId: ObjectId(req.params._id),
 					},
@@ -323,7 +323,6 @@ module.exports = class Entities extends Abstract {
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
 					}
 				}
-
 				entityDocuments = entityDocuments.map((entityDocument) => {
 					return {
 						externalId: entityDocument.metaInformation.externalId,
@@ -336,7 +335,11 @@ module.exports = class Entities extends Abstract {
 					}
 				})
 
-				return resolve(entityDocuments)
+				return resolve({
+					success: true,
+					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
+					result: entityDocuments,
+				})
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
@@ -432,7 +435,6 @@ module.exports = class Entities extends Abstract {
 					throw CONSTANTS.apiResponses.SOMETHING_WENT_WRONG
 				}
 			} catch (error) {
-				console.log(error, 'lineeeeeeee')
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
 					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
@@ -456,9 +458,11 @@ module.exports = class Entities extends Abstract {
 	bulkUpdate(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let entityCSVData = await csv().fromString(req.files.entityTypes.data.toString())
-
-				let newEntityData = await entitiesHelper.bulkUpdate(req.userDetails, entityCSVData)
+				let entityCSVData = await csv().fromString(req.files.entities.data.toString())
+				if (!entityCSVData || entityCSVData.length < 1) {
+					throw CONSTANTS.apiResponses.ENTITY_TYPE_NOT_UPDATED
+				}
+				let newEntityData = await entitiesHelper.bulkUpdate(entityCSVData, req.userDetails)
 
 				if (newEntityData.length > 0) {
 					const fileName = `Entity-Upload`

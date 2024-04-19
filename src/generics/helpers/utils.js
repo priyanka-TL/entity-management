@@ -5,7 +5,7 @@
  * Description : All utility functions.
 */
 // Dependencies
-// const {validate : uuidValidate,v4 : uuidV4} = require('uuid')
+const {validate : uuidValidate,v4 : uuidV4} = require('uuid')
 /**
   * convert camel case to title case.
   * @function
@@ -152,7 +152,6 @@ function epochTime() {
 */
 
 function checkValidUUID(uuids) {
-
   var validateUUID = true
   if (Array.isArray(uuids)) {
     for (var i = 0; uuids.length > i; i++) {
@@ -162,6 +161,7 @@ function checkValidUUID(uuids) {
     }
   } else {
     validateUUID = uuidValidate(uuids)
+    console.log(validateUUID,"line no 166");
   }
   return validateUUID
 }

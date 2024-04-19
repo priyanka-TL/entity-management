@@ -1,11 +1,11 @@
 /**
- * name : entityTypes.js
+ * name : .js
  * author : Priyanka Pradeep
  * created-date : 21-Mar-2024
  * Description : EntityTypes helper for DB interactions.
  */
 
-// Dependencies
+// DependenciesentityTypes
 
 /**
  * entityTypes
@@ -14,7 +14,7 @@
 
 module.exports = class EntityTypes {
 	/**
-	 * Solution details.
+	 * entityTypesDocument details.
 	 * @method
 	 * @name entityTypesDocument
 	 * @param {Array} [filterData = "all"] - entityTypes filter query.
@@ -29,11 +29,16 @@ module.exports = class EntityTypes {
 				let queryObject = filterData != 'all' ? filterData : {}
 				let projection = {}
 
-				if (fieldsArray != 'all') {
-					fieldsArray.forEach((field) => {
-						projection[field] = 1
-					})
+                if (fieldsArray !== 'all') {
+					if (typeof fieldsArray === 'object' && !Array.isArray(fieldsArray)) {
+						projection = fieldsArray
+					} else if (Array.isArray(fieldsArray)) {
+						fieldsArray.forEach((field) => {
+							projection[field] = 1
+						})
+					}
 				}
+
 
 				if (skipFields !== 'none') {
 					skipFields.forEach((field) => {
@@ -50,17 +55,17 @@ module.exports = class EntityTypes {
 	}
 
 	/**
-	 * Create project documents.
+	 * Create entityTypes documents.
 	 * @method
 	 * @name create
-	 * @param {Object} [projectData] - project Data.
-	 * @returns {Array} - Project data.
+	 * @param {Object} [projectData] - entityTypes Data.
+	 * @returns {Array} - entityTypes data.
 	 */
 
-	static create(projectData) {
+	static create(entityTypeData) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let entityData = await database.models.entityTypes.create(projectData)
+				let entityData = await database.models.entityTypes.create(entityTypeData)
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
@@ -73,59 +78,20 @@ module.exports = class EntityTypes {
 	}
 
 	/**
-	 * Solution details.
-	 * @method
-	 * @name solutionsDocument
-	 * @param {Array} [filterData = "all"] - solutions filter query.
-	 * @param {Array} [fieldsArray = "all"] - projected fields.
-	 * @param {Array} [skipFields = "none"] - field not to include
-	 * @returns {Array} solutions details.
-	 */
-
-	static find(filterData = 'all', fieldsArray = 'all', skipFields = 'none') {
-		return new Promise(async (resolve, reject) => {
-			try {
-				let queryObject = filterData != 'all' ? filterData : {}
-				let projection = {}
-				if (fieldsArray !== 'all') {
-					Object.entries(fieldsArray).forEach(([key]) => {
-						projection[key] = 1
-					})
-				}
-
-				if (skipFields !== 'none') {
-					skipFields.forEach((field) => {
-						projection[field] = 0
-					})
-				}
-				let listDoc = await database.models.entityTypes.find(queryObject, projection).lean()
-
-				return resolve(listDoc)
-			} catch (error) {
-				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-					errorObject: error,
-				})
-			}
-		})
-	}
-
-	/**
-	 * Update project documents.
+	 * Update entityTypes documents.
 	 * @method
 	 * @name findOneAndUpdate
 	 * @param {Object} [filterQuery] - filtered Query.
 	 * @param {Object} [updateData] - update data.
-	 * @returns {Object} - Project data.
+	 * @returns {Object} - entityTypes data.
 	 */
 
-	static findOneAndUpdate(findQuery, UpdateObject, returnData = {}) {
+	static findOneAndUpdate(findQuery, updateObject, returnData = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let entityTypeData = await database.models.entityTypes.findOneAndUpdate(
 					findQuery,
-					UpdateObject,
+					updateObject,
 					returnData
 				)
 				return resolve(entityTypeData)
@@ -152,11 +118,11 @@ module.exports = class EntityTypes {
 		return new Promise(async (resolve, reject) => {
 			try {
 				if (Object.keys(query).length == 0) {
-					throw new Error(messageConstants.apiResponses.UPDATE_QUERY_REQUIRED)
+					throw new Error(CONSTANTS.apiResponses.UPDATE_QUERY_REQUIRED)
 				}
 
 				if (Object.keys(updateObject).length == 0) {
-					throw new Error(messageConstants.apiResponses.UPDATE_OBJECT_REQUIRED)
+					throw new Error(CONSTANTS.apiResponses.UPDATE_OBJECT_REQUIRED)
 				}
 
 				let updateResponse = await database.models.entityTypes.updateOne(query, updateObject)

@@ -7,6 +7,7 @@
 
 // dependencies
 const jwt = require('jsonwebtoken')
+const EntityTypes = require('../../databaseQueries/entityTypes')
 
 var respUtil = function (resp) {
 	return {
@@ -92,10 +93,9 @@ module.exports = async function (req, res, next, token = '') {
 			userName: decodedToken.data.name,
 			// email : decodedToken.data.email, //email is removed from token
 			firstName: decodedToken.data.name,
-			roles : decodedToken.data.roles[0].title
+			roles : decodedToken.data.roles.map(role => role.title),
+			entityTypes : "state"
 		},
 	}
-
-	console.log(req.userDetails, 'req.userDetails')
 	next()
 }

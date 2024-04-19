@@ -1,10 +1,10 @@
 module.exports = class entities {
 	/**
-	 * Get Aggregate of Project documents.
+	 * Get Aggregate of entities documents.
 	 * @method
 	 * @name getAggregate
 	 * @param {Object} [aggregateData] - aggregate Data.
-	 * @returns {Array} - Project data.
+	 * @returns {Array} - entities data.
 	 */
 
 	static getAggregate(aggregateData) {
@@ -23,12 +23,12 @@ module.exports = class entities {
 	}
 
 	/**
-	 * Update project documents.
+	 * Update entities documents.
 	 * @method
 	 * @name findOneAndUpdate
 	 * @param {Object} [filterQuery] - filtered Query.
 	 * @param {Object} [updateData] - update data.
-	 * @returns {Object} - Project data.
+	 * @returns {Object} - entities data.
 	 */
 
 	static findOneAndUpdate(findQuery, UpdateObject, returnData = {}) {
@@ -47,17 +47,17 @@ module.exports = class entities {
 	}
 
 	/**
-	 * Create project documents.
+	 * Create entities documents.
 	 * @method
 	 * @name create
 	 * @param {Object} [projectData] - project Data.
-	 * @returns {Array} - Project data.
+	 * @returns {Array} - entities data.
 	 */
 
-	static create(projectData) {
+	static create(entitiesData) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let entityData = await database.models.entities.create(projectData)
+				let entityData = await database.models.entities.create(entitiesData)
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
@@ -70,12 +70,12 @@ module.exports = class entities {
 	}
 
 	/**
-	 * update Many project categories documents.
+	 * update Many entities categories documents.
 	 * @method
 	 * @name updateMany
 	 * @param {Object} [filterQuery] - filtered Query.
 	 * @param {Object} [updateData] - update data.
-	 * @returns {Array} - Library project categories data.
+	 * @returns {Array} - Library entities categories data.
 	 */
 
 	static updateMany(filterQuery, updateData) {
@@ -102,7 +102,6 @@ module.exports = class entities {
 
 				if (fieldsArray !== 'all') {
 					if (typeof fieldsArray === 'object' && !Array.isArray(fieldsArray)) {
-						// Convert fieldsArray object to projection object
 						projection = fieldsArray
 					} else if (Array.isArray(fieldsArray)) {
 						fieldsArray.forEach((field) => {
@@ -110,19 +109,18 @@ module.exports = class entities {
 						})
 					}
 				}
-
+				
 				if (skipFields !== 'none' && Array.isArray(skipFields)) {
 					skipFields.forEach((field) => {
 						projection[field] = 0
 					})
 				}
-
-				let document = await database.models.entityTypes.findOne(queryObject, projection).lean()
-
+				
+				let document = await database.models.entities.findOne(queryObject, projection).lean()
 				if (!document) {
 					return reject({
 						status: 404,
-						message: 'Document not found',
+						message: CONSTANTS.apiResponses.DOCUMENT_NOT_FOUND,
 					})
 				}
 
@@ -138,18 +136,17 @@ module.exports = class entities {
 	}
 
 	/**
-	 * Lists of projects document.
+	 * Lists of entities document.
 	 * @method
 	 * @name projectDocument
-	 * @param {Array} [filterData = "all"] - project filter query.
+	 * @param {Array} [filterData = "all"] - entities filter query.
 	 * @param {Array} [fieldsArray = "all"] - projected fields.
 	 * @param {Array} [skipFields = "none"] - field not to include
-	 * @returns {Array} Lists of projects.
+	 * @returns {Array} Lists of entities.
 	 */
 
-	static entityDocuments(findQuery = 'all', fields = 'all', limitingValue = '', skippingValue = '', sortedData = '') {
+	static entityDocuments(findQuery = 'all', fields = '', limitingValue = '', skippingValue = '', sortedData = '') {
 		return new Promise(async (resolve, reject) => {
-			console.log(limitingValue, 'line no 15333333333')
 			try {
 				let queryObject = {}
 
@@ -157,13 +154,14 @@ module.exports = class entities {
 					queryObject = findQuery
 				}
 				let projectionObject = {}
+			
 
 				if (fields != 'all') {
 					fields.forEach((element) => {
 						projectionObject[element] = 1
 					})
 				}
-
+				
 				let entitiesDocuments
 
 				if (sortedData !== '') {

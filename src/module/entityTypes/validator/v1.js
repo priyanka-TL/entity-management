@@ -19,16 +19,20 @@ module.exports = (req, res) => {
 			}
 		},
 		update: function () {
-			if (!req.params || !req.params._id) {
-				req.checkBody('._id').exists().withMessage('EntityTypes file is required')
-			}
+			req.checkParams('_id').exists().withMessage('required type')
+			req.checkBody('name').exists().withMessage('required name')
 		},
-		// create: function () {
-		// 	req.checkBody('params').exists().withMessage('query is required')
-		// },
-		// find: function () {
-		// 	req.checkBody('query').exists().withMessage('query is required')
-		// },
+		add: function () {
+			req.checkQuery('type').exists().withMessage('required type')
+			req.checkBody('data').exists().withMessage('required data')
+		},
+		create: function () {
+			req.checkBody('name').exists().withMessage('required name')
+		},
+
+		find: function () {
+			req.checkBody('query.name').exists().withMessage('required name')
+		},
 	}
 
 	if (entityTypesValidator[req.params.method]) {

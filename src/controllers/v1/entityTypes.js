@@ -115,7 +115,7 @@ module.exports = class EntityTypes extends Abstract {
 	async create(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let result = await entityTypesHelper.create(req.body, req.userDetails)
+				let result = await entityTypesHelper.create(req.body, req.userDetails.userInformation)
 				return resolve(result)
 			} catch (error) {
 				return reject({
@@ -140,10 +140,9 @@ module.exports = class EntityTypes extends Abstract {
    */
 
 	update(req) {
-		console.log(req.body, "line no 139");
 		return new Promise(async (resolve, reject) => {
 		  try {
-			let result = await entityTypesHelper.update( req.params._id, req.body);
+			let result = await entityTypesHelper.update( req.params._id, req.body,req.userDetails.userInformation);
 	
 			return resolve(result);
 	
@@ -174,7 +173,7 @@ module.exports = class EntityTypes extends Abstract {
 			try {
 				let entityTypesCSVData = await csv().fromString(req.files.entityTypes.data.toString())
 				if (!entityTypesCSVData || entityTypesCSVData.length < 1) {
-					throw CONSTANTS.apiResponses.PROJECT_NOT_CREATED
+					throw CONSTANTS.apiResponses.ENTITY_TYPE_NOT_CREATED
 				}
 				const newEntityTypeData = await entityTypesHelper.bulkCreate(entityTypesCSVData, req.userDetails)
 
@@ -199,7 +198,7 @@ module.exports = class EntityTypes extends Abstract {
 
 					input.push(null)
 				} else {
-					throw CONSTANTS.apiResponses.PROJECT_NOT_CREATED
+					throw CONSTANTS.apiResponses.PROJECT_FAILED
 				}
 			} catch (error) {
 				return reject({
@@ -224,7 +223,7 @@ module.exports = class EntityTypes extends Abstract {
 			try {
 				let entityTypesCSVData = await csv().fromString(req.files.entityTypes.data.toString())
 				if (!entityTypesCSVData || entityTypesCSVData.length < 1) {
-					throw CONSTANTS.apiResponses.ENTITYTYPE_NOT_UPDATED
+					throw CONSTANTS.apiResponses.ENTITY_TYPE_NOT_UPDATED
 				}
 				let newEntityTypeData = await entityTypesHelper.bulkUpdate(entityTypesCSVData, req.userDetails)
 
@@ -249,7 +248,7 @@ module.exports = class EntityTypes extends Abstract {
 
 					input.push(null)
 				} else {
-					throw CONSTANTS.apiResponses.ENTITYTYPE_NOT_UPDATED
+					throw CONSTANTS.apiResponses.ENTITY_TYPE_NOT_UPDATED
 				}
 			} catch (error) {
 				return reject({

@@ -6,7 +6,7 @@
  */
 
 // Dependencies
-const entityTypeQueries = require('../../databaseQueries/entityTypes')
+const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
 
 // const entitiesHelper = require(MODULES_BASE_PATH + "/entities/helper")
 // const programUsersQueries = require(DB_QUERY_BASE_PATH + "/programUsers")
@@ -70,7 +70,7 @@ module.exports = class UserProjectsHelper {
 								}
 							}
 							const userId =
-								userDetails && userDetails.id ? userDetails && userDetails.id : CONSTANTS.common.SYSTEM
+								userDetails && userDetails.userInformation.id ? userDetails && userDetails.userInformation.id : CONSTANTS.common.SYSTEM
 							let newEntityType = await entityTypeQueries.create(
 								_.merge(
 									{
@@ -81,9 +81,6 @@ module.exports = class UserProjectsHelper {
 									entityType
 								)
 							)
-
-							delete entityType.registryDetails
-
 							if (newEntityType._id) {
 								entityType['_SYSTEM_ID'] = newEntityType._id
 								entityType.status = CONSTANTS.apiResponses.SUCCESS
@@ -93,7 +90,8 @@ module.exports = class UserProjectsHelper {
 							}
 						} catch (error) {
 							entityType['_SYSTEM_ID'] = ''
-							entityType.status = error && error.message ? error.message : error
+							entityType.status = CONSTANTS.apiResponses.FAILURE
+							entityType.message = CONSTANTS.apiResponses.FAILURE
 						}
 
 						return entityType
@@ -147,7 +145,7 @@ module.exports = class UserProjectsHelper {
 						)
 					}
 
-					const userId = userDetails && userDetails.id ? userDetails.id : CONSTANTS.common.SYSTEM
+					const userId = userDetails && userDetails.userInformation.id ? userDetails.userInformation.id : CONSTANTS.common.SYSTEM
 					let newEntityType = await entityTypeQueries.create(
 						_.merge(
 							{
@@ -166,9 +164,11 @@ module.exports = class UserProjectsHelper {
 						entityType.status = CONSTANTS.common.FAILURE
 					}
 				} catch (error) {
-					entityType.status = error && error.message ? error.message : error
-				}
-				return resolve(entityType)
+						}
+				return resolve({
+					message: CONSTANTS.apiResponses.ENTITY_INFORMATION_CREATED,
+					result: entityType,
+				})
 			} catch (error) {
 				return reject(error)
 			}
@@ -196,7 +196,11 @@ module.exports = class UserProjectsHelper {
 					return reject({ status: 404, message: CONSTANTS.apiResponses.ENTITYTYPE_NOT_FOUND })
 				}
 
-				resolve(entityInformation)
+				resolve({
+					success: true,
+                    message: CONSTANTS.apiResponses.ENTITY_UPDATATED,
+                    result: entityInformation
+				})
 			} catch (error) {
 				reject(error)
 			}
@@ -253,7 +257,7 @@ module.exports = class UserProjectsHelper {
 								}
 							}
 							const userId =
-								userDetails && userDetails.id ? userDetails && userDetails.id : CONSTANTS.common.SYSTEM
+								userDetails && userDetails.userInformation.id ? userDetails && userDetails.userInformation.id : CONSTANTS.common.SYSTEM
 							let updateEntityType = await entityTypeQueries.findOneAndUpdate(
 								{
 									_id: ObjectId(entityType._SYSTEM_ID),
@@ -278,7 +282,8 @@ module.exports = class UserProjectsHelper {
 							}
 						} catch (error) {
 							entityType['_SYSTEM_ID'] = ''
-							entityType.status = error && error.message ? error.message : error
+							entityType.status = CONSTANTS.apiResponses.FAILURE
+							entityType.message = CONSTANTS.apiResponses.FAILURE
 						}
 
 						return entityType
@@ -298,9 +303,7 @@ module.exports = class UserProjectsHelper {
 				if (queryParameter === 'all') {
 					queryParameter = {}
 				}
-				// let entityTypeData = await entityTypeQueries.find(
-
-				let entityTypeData = await entityTypeQueries.find(queryParameter, projection)
+				let entityTypeData = await entityTypeQueries.entityTypesDocument(queryParameter, projection)
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_TYPES_FETCHED,
 					result: entityTypeData,

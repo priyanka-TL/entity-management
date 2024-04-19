@@ -10,8 +10,8 @@ const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
 // const elasticSearch = require(ROOT_PATH + "/generics/helpers/elasticSearch");
 // const userRolesHelper = require(MODULES_BASE_PATH + "/userRoles/helper");
 // const userProfileService = require("../../generics/");
-const entitiesQueries = require('../../databaseQueries/entities')
-
+const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
+// const formService = require(PROJECT_ROOT_DIRECTORY + '/generics/services/form')
 // const entitiesHelper = require(MODULES_BASE_PATH + "/entities/helper")
 const _ = require('lodash')
 // const programUsersQueries = require(DB_QUERY_BASE_PATH + "/programUsers")
@@ -22,50 +22,6 @@ const _ = require('lodash')
  */
 
 module.exports = class UserProjectsHelper {
-	static entityDocuments(findQuery = 'all', fields = 'all', limitingValue = '', skippingValue = '', sortedData = '') {
-		return new Promise(async (resolve, reject) => {
-			try {
-				let queryObject = {}
-
-				if (findQuery != 'all') {
-					queryObject = findQuery
-				}
-				console.log(queryObject, 'line nooooooooooooooooooooooooo')
-				let projectionObject = {}
-
-				if (fields != 'all') {
-					fields.forEach((element) => {
-						projectionObject[element] = 1
-					})
-				}
-
-				let entitiesDocuments
-
-				if (sortedData !== '') {
-					entitiesDocuments = await entitiesQueries.entityDocuments
-					// .find(queryObject, projectionObject)
-					// .sort(sortedData)
-					// .limit(limitingValue)
-					// .skip(skippingValue)
-					// .lean()
-				} else {
-					entitiesDocuments = await entitiesQueries.entityDocuments
-					// .find(queryObject, projectionObject)
-					// .limit(limitingValue)
-					// .skip(skippingValue)
-					// .lean()
-				}
-				return resolve(entitiesDocuments)
-			} catch (error) {
-				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-					errorObject: error,
-				})
-			}
-		})
-	}
-
 	static processEntityMappingUploadData(mappingData = []) {
 		return new Promise(async (resolve, reject) => {
 			try {
@@ -121,6 +77,7 @@ module.exports = class UserProjectsHelper {
 				return resolve({
 					success: true,
 					message: CONSTANTS.apiResponses.ENTITY_INFORMATION_UPDATE,
+					
 				})
 			} catch (error) {
 				return reject(error)
@@ -129,11 +86,9 @@ module.exports = class UserProjectsHelper {
 	}
 
 	static addSubEntityToParent(parentEntityId, childEntityId, parentEntityProgramId = false) {
-		console.log(parentEntityId, childEntityId, 'line ni')
-		console.log(parentEntityProgramId, 'line no 129')
 		return new Promise(async (resolve, reject) => {
 			try {
-				let childEntity = await database.models.entities
+				let childEntity = await entitiesQueries
 					.findOne(
 						{
 							_id: ObjectId(childEntityId),
@@ -144,21 +99,17 @@ module.exports = class UserProjectsHelper {
 							childHierarchyPath: 1,
 						}
 					)
-					.lean()
-				console.log(childEntity, 'line no 139---------')
 
 				if (childEntity.entityType) {
 					let parentEntityQueryObject = {
 						_id: ObjectId(parentEntityId),
 					}
-					console.log(parentEntityQueryObject, 'line no 146')
 					if (parentEntityProgramId) {
 						parentEntityQueryObject['metaInformation.createdByProgramId'] = ObjectId(parentEntityProgramId)
 					}
 					let updateQuery = {}
 					updateQuery['$addToSet'] = {}
 					updateQuery['$addToSet'][`groups.${childEntity.entityType}`] = childEntity._id
-					console.log(updateQuery, 'line no 154')
 					if (!_.isEmpty(childEntity.groups)) {
 						Object.keys(childEntity.groups).forEach((eachChildEntity) => {
 							if (childEntity.groups[eachChildEntity].length > 0) {
@@ -170,7 +121,6 @@ module.exports = class UserProjectsHelper {
 					}
 
 					let childHierarchyPathToUpdate = [childEntity.entityType]
-					console.log(childHierarchyPathToUpdate, 'line no 169')
 					if (childEntity.childHierarchyPath && childEntity.childHierarchyPath.length > 0) {
 						childHierarchyPathToUpdate = childHierarchyPathToUpdate.concat(childEntity.childHierarchyPath)
 					}
@@ -193,21 +143,17 @@ module.exports = class UserProjectsHelper {
 							new: true,
 						}
 					)
-					console.log(updatedParentEntity, 'line no 193')
 					await this.mappedParentEntities(updatedParentEntity, childEntity)
 				}
 
 				return resolve()
 			} catch (error) {
-				console.log(error, 'line no 202')
 				return reject(error)
 			}
 		})
 	}
-	static mappedParentEntities(parentEntity, childEntity) {
-		console.log(parentEntity, 'line ni 234')
-		console.log(childEntity, 'line no 208')
 
+	static mappedParentEntities(parentEntity, childEntity) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let updateParentHierarchy = false
@@ -221,24 +167,20 @@ module.exports = class UserProjectsHelper {
 							updateParentHierarchy = true
 						}
 					} else {
-						console.log(parentEntity, 'line ni 234')
-
-						let checkParentEntitiesMappedValue = await database.models.entityTypes
+						let checkParentEntitiesMappedValue = await entitiesQueries
 							.findOne(
 								{
-									name: parentEntity.entityType,
+									entityType: parentEntity.entityType,
 								},
 								{
 									toBeMappedToParentEntities: 1,
 								}
 							)
-							.lean()
-
+							
 						if (checkParentEntitiesMappedValue.toBeMappedToParentEntities) {
 							updateParentHierarchy = true
 							entityDocuments
 						}
-						console.log('-------------')
 						if (this.entityMapProcessData.entityTypeMap) {
 							this.entityMapProcessData.entityTypeMap[parentEntity.entityType] = {
 								updateParentHierarchy: checkParentEntitiesMappedValue.toBeMappedToParentEntities
@@ -248,8 +190,7 @@ module.exports = class UserProjectsHelper {
 						}
 					}
 				} else {
-					console.log(parentEntity, 'line ni 244')
-					let checkParentEntitiesMappedValue = await database.models.entityTypes
+					let checkParentEntitiesMappedValue = await entitiesQueries
 						.findOne(
 							{
 								name: parentEntity.entityType,
@@ -265,8 +206,6 @@ module.exports = class UserProjectsHelper {
 					}
 				}
 
-				console.log('ooooooooooooooooooo')
-
 				if (updateParentHierarchy) {
 					let relatedEntities = await this.relatedEntities(
 						parentEntity._id,
@@ -279,7 +218,6 @@ module.exports = class UserProjectsHelper {
 					if (parentEntity.childHierarchyPath && parentEntity.childHierarchyPath.length > 0) {
 						childHierarchyPathToUpdate = childHierarchyPathToUpdate.concat(parentEntity.childHierarchyPath)
 					}
-					console.log('2677777777777777')
 					if (relatedEntities.length > 0) {
 						if (this.entityMapProcessData && this.entityMapProcessData.entityToUpdate) {
 							relatedEntities.forEach((eachRelatedEntities) => {
@@ -323,7 +261,6 @@ module.exports = class UserProjectsHelper {
 
 				return resolve()
 			} catch (error) {
-				console.log(error, 'line no 303')
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
 					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
@@ -331,46 +268,193 @@ module.exports = class UserProjectsHelper {
 			}
 		})
 	}
-	static relatedEntities(entityId, entityTypeId, entityType, projection = 'all') {
-		console.log(entityId, 'line no 71')
-		console.log(entityTypeId, 'line no 72')
-		console.log(entityType, 'line no 73')
-		console.log(projection, 'line no 74')
+
+	static relatedEntities(reqId) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				if (
-					this.entityMapProcessData &&
-					this.entityMapProcessData.relatedEntities &&
-					this.entityMapProcessData.relatedEntities[entityId.toString()]
-				) {
-					return resolve(this.entityMapProcessData.relatedEntities[entityId.toString()])
+				let projection = [
+					'metaInformation.externalId',
+					'metaInformation.name',
+					'metaInformation.addressLine1',
+					'metaInformation.addressLine2',
+					'metaInformation.administration',
+					'metaInformation.city',
+					'metaInformation.country',
+					'entityTypeId',
+					'entityType',
+				]
+				let entityDocument = await entitiesQueries.entityDocuments({ _id: reqId }, projection)
+				if (entityDocument.length < 1) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
 				}
+				let entityId = entityDocument[0]._id
+				let entityTypeId = entityDocument[0].entityTypeId
+				let entityType = entityDocument[0].entityType
+				// this.entityMapProcessData = {
+                //     entityTypeMap : {},
+                //     relatedEntities : {},
+                //     entityToUpdate : {}
+                // }
+				// if (
+				// 	this.entityMapProcessData &&
+				// 	this.entityMapProcessData.relatedEntities &&
+				// 	this.entityMapProcessData.relatedEntities[entityId.toString()]
+				// ) {
+					
+				// 	return resolve(this.entityMapProcessData.relatedEntities[entityId.toString()])
+				// }
 
 				let relatedEntitiesQuery = {}
 
 				if (entityTypeId && entityId && entityType) {
-					relatedEntitiesQuery[`groups.${entityType}`] = entityId
 					relatedEntitiesQuery['entityTypeId'] = {}
 					relatedEntitiesQuery['entityTypeId']['$ne'] = entityTypeId
 				} else {
 					throw {
 						status: HTTP_STATUS_CODE.bad_request.status,
-						message: CONSTANTS.apiResponses.MISSING_ENTITYID_ENTITYTYPE_ENTITYTYPEID,
+						message: CONSTANTS.apiResponses.MISSING_ENTITYID,
 					}
 				}
-
-				let relatedEntitiesDocument = await this.entityDocuments(relatedEntitiesQuery, projection)
+				let relatedEntitiesDocument = await entitiesQueries.entityDocuments(relatedEntitiesQuery, projection)
 				relatedEntitiesDocument = relatedEntitiesDocument ? relatedEntitiesDocument : []
-
-				if (this.entityMapProcessData && this.entityMapProcessData.relatedEntities) {
-					this.entityMapProcessData.relatedEntities[entityId.toString()] = relatedEntitiesDocument
-				}
+				// if (this.entityMapProcessData && this.entityMapProcessData.relatedEntities) {
+				// 	this.entityMapProcessData.relatedEntities[entityId.toString()] = relatedEntitiesDocument
+				// }
 
 				return resolve(relatedEntitiesDocument)
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
 					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+				})
+			}
+		})
+	}
+
+	/**
+	 * Sub entity type list.
+	 * @method
+	 * @name subEntityListBasedOnRoleAndLocation
+	 * @param role - role code
+	 * @param stateLocationId - state location id.
+	 * @returns {Array} List of sub entity type.
+	 */
+
+	static subEntityListBasedOnRoleAndLocation(stateLocationId) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// let rolesDocument = await userRolesHelper.roleDocuments({
+				//     code : role
+				// },["entityTypes.entityType"]);
+
+				// if( !rolesDocument.length > 0 ) {
+				//     throw {
+				//         status : httpStatusCode["bad_request"].status,
+				//         message: CONSTANTS.apiResponses.USER_ROLES_NOT_FOUND
+				//     }
+				// }
+
+				let filterQuery = {
+					'registryDetails.code': stateLocationId,
+				}
+
+				if (UTILS.checkValidUUID(stateLocationId)) {
+					filterQuery = {
+						'registryDetails.locationId': stateLocationId,
+					}
+				}
+
+				const entityDocuments = await entitiesQueries.entityDocuments(filterQuery, ['childHierarchyPath'])
+
+				if (!entityDocuments.length > 0) {
+					return resolve({
+						message: constants.apiResponses.ENTITY_NOT_FOUND,
+						result: [],
+					})
+				}
+
+				let result = []
+
+				//  if( rolesDocument[0].entityTypes[0].entityType === constants.common.STATE_ENTITY_TYPE ) {
+				//     result = entityDocuments[0].childHierarchyPath;
+				//     result.unshift(constants.common.STATE_ENTITY_TYPE);
+				//  } else {
+
+				//     let targetedEntityType = "";
+
+				//     rolesDocument[0].entityTypes.forEach(singleEntityType => {
+				//        if( entityDocuments[0].childHierarchyPath.includes(singleEntityType.entityType) ) {
+				//            targetedEntityType = singleEntityType.entityType;
+				//        }
+				//     });
+
+				// let findTargetedEntityIndex =
+				// entityDocuments[0].childHierarchyPath.findIndex(element => element === targetedEntityType);
+
+				// if( findTargetedEntityIndex < 0 ) {
+				//    throw {
+				//        message : CONSTANTS.apiResponses.SUB_ENTITY_NOT_FOUND,
+				//        result : []
+				//    }
+				// }
+
+				// result = entityDocuments[0].childHierarchyPath.slice(findTargetedEntityIndex);
+
+				return resolve({
+					success: true,
+					message: CONSTANTS.apiResponses.ENTITIES_CHILD_HIERACHY_PATH,
+					result: entityDocuments,
+				})
+			} catch (error) {
+				return reject(error)
+			}
+		})
+	}
+	/**
+	 * update registry in entities.
+	 * @method
+	 * @name listByLocationIds
+	 * @param {Object} locationIds - locationIds
+	 * @returns {Object} entity Document
+	 */
+
+	static listByLocationIds(locationIds) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let filterQuery = {
+					$or: [
+						{
+							'registryDetails.code': { $in: locationIds },
+						},
+						{
+							'registryDetails.locationId': { $in: locationIds },
+						},
+					],
+				}
+				let entities = await entitiesQueries.entityDocuments(filterQuery, [
+					'metaInformation',
+					'entityType',
+					'entityTypeId',
+					'registryDetails',
+				])
+				if (!entities.length > 0) {
+					throw {
+						message: CONSTANTS.apiResponses.ENTITIES_FETCHED,
+					}
+				}
+
+				return resolve({
+					success: true,
+					message: CONSTANTS.apiResponses.ENTITY_FETCHED,
+					data: entities,
+				})
+			} catch (error) {
+				return resolve({
+					success: false,
+					message: error.message,
 				})
 			}
 		})
@@ -388,15 +472,13 @@ module.exports = class UserProjectsHelper {
 	 */
 
 	static add(queryParams, data, userDetails) {
-		console.log(data, 'line no 393')
 		return new Promise(async (resolve, reject) => {
 			try {
-				let entityTypeDocument = await entitiesQueries.findOne({ name: queryParams.type }, { _id: 1 })
+				let entitiesDocument = await entitiesQueries.findOne({ name: queryParams.type }, { _id: 1 })
 
-				if (!entityTypeDocument) {
+				if (!entitiesDocument) {
 					throw CONSTANTS.apiResponses.ENTITY_NOT_FOUND
 				}
-				console.log('---------')
 				let entityDocuments = []
 				let dataArray = Array.isArray(data) ? data : [data]
 
@@ -422,7 +504,7 @@ module.exports = class UserProjectsHelper {
 					}
 
 					let entityDoc = {
-						entityTypeId: entityTypeDocument._id,
+						entityTypeId: entitiesDocument._id,
 						entityType: queryParams.type,
 						registryDetails: registryDetails,
 						groups: {},
@@ -432,15 +514,9 @@ module.exports = class UserProjectsHelper {
 						userId: userDetails.userId,
 					}
 
-					// if (singleEntity.allowedRoles && singleEntity.allowedRoles.length > 0) {
-					// 	entityDoc['allowedRoles'] = await allowedRoles(singleEntity.allowedRoles)
-					// 	delete entityDoc.metaInformation.allowedRoles
-					// }
-
 					entityDocuments.push(entityDoc)
 				}
-
-				let entityData = await database.models.entities.create(entityDocuments)
+				let entityData = await entitiesQueries.create(entityDocuments)
 
 				let entities = []
 
@@ -466,7 +542,6 @@ module.exports = class UserProjectsHelper {
 
 				return resolve(entityData)
 			} catch (error) {
-				console.log(error, 'line no 471')
 				return reject(error)
 			}
 		})
@@ -480,7 +555,6 @@ module.exports = class UserProjectsHelper {
 	 */
 
 	static details(entityId, requestData = {}) {
-		console.log(entityId, 'line no 484')
 		return new Promise(async (resolve, reject) => {
 			try {
 				// // let entityIdNum = parseInt(entityId)
@@ -492,11 +566,9 @@ module.exports = class UserProjectsHelper {
 				if (entityId) {
 					entityIds.push(entityId)
 				}
-				console.log(entityIds[0], 'line no 495')
 				if (requestData && requestData.entityIds) {
 					entityIds.push(...requestData.entityIds)
 				}
-				console.log(requestData, 'line no 499')
 				if (entityIds.length == 0 && !requestData.locationIds && !requestData.codes) {
 					throw {
 						message: CONSTANTS.apiResponses.ENTITY_ID_OR_LOCATION_ID_NOT_FOUND,
@@ -597,16 +669,15 @@ module.exports = class UserProjectsHelper {
 				// 		}),
 				// 		{}
 				// 	)
-				// 	console.log(solutionsData, 'line no 128')
 				// }
-				let entityTypeDocument = await entitiesQueries.findOne(
+				let entitiesDocument = await entitiesQueries.findOne(
 					// let entityTypeDocument = await database.models.entityTypes.findOne(
 					{
 						name: entityType,
 					},
 					{ _id: 1 }
 				)
-				if (!entityTypeDocument) {
+				if (!entitiesDocument) {
 					throw CONSTANTS.apiResponses.INVALID_ENTITY_TYPE
 				}
 
@@ -616,7 +687,7 @@ module.exports = class UserProjectsHelper {
 						addTagsInEntities(singleEntity)
 						const userId = userDetails && userDetails.id ? userDetails.id : CONSTANTS.common.SYSTEM
 						let entityCreation = {
-							entityTypeId: entityTypeDocument._id,
+							entityTypeId: entitiesDocument._id,
 							entityType: entityType,
 							registryDetails: {},
 							groups: {},
@@ -632,15 +703,17 @@ module.exports = class UserProjectsHelper {
 						})
 
 						if (entityCreation.registryDetails && Object.keys(entityCreation.registryDetails).length > 0) {
-							entityCreation.registryDetails['code'] = entityCreation.externalId
-							entityCreation.registryDetails['locationId'] = entityCreation.locationId
+							entityCreation.registryDetails['code'] =
+								entityCreation.registryDetails['code'] || entityCreation.externalId
+							entityCreation.registryDetails['locationId'] =
+								entityCreation.registryDetails['locationId'] || entityCreation.locationId
 							entityCreation.registryDetails['lastUpdatedAt'] = new Date()
 						}
 
-						if (singleEntity.allowedRoles && singleEntity.allowedRoles.length > 0) {
-							entityCreation['allowedRoles'] = await allowedRoles(singleEntity.allowedRoles)
-							delete singleEntity.allowedRoles
-						}
+						// if (singleEntity.allowedRoles && singleEntity.allowedRoles.length > 0) {
+						// 	entityCreation['allowedRoles'] = await allowedRoles(singleEntity.allowedRoles)
+						// 	delete singleEntity.allowedRoles
+						// }
 
 						entityCreation['metaInformation'] = _.omitBy(singleEntity, (value, key) => {
 							return _.startsWith(key, '_')
@@ -706,11 +779,12 @@ module.exports = class UserProjectsHelper {
 	 * @returns {Array} - Array of updated entity data.
 	 */
 
-	static bulkUpdate(userDetails, entityCSVData) {
+	static bulkUpdate(entityCSVData) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				const entityUploadedData = await Promise.all(
-					entityCSVData.map(async (singleEntity) => {
+				const entityUploadedData = 
+					await Promise.all(entityCSVData.map(async singleEntity  => {
+						
 						singleEntity = UTILS.valueParser(singleEntity)
 						addTagsInEntities(singleEntity)
 
@@ -730,8 +804,10 @@ module.exports = class UserProjectsHelper {
 						})
 
 						if (updateData.registryDetails && Object.keys(updateData.registryDetails).length > 0) {
-							entityCreation.registryDetails['code'] = entityCreation.externalId
-							entityCreation.registryDetails['locationId'] = entityCreation.locationId
+							entityCreation.registryDetails['code'] =
+								entityCreation.registryDetails['code'] || entityCreation.externalId
+							entityCreation.registryDetails['locationId'] =
+								entityCreation.registryDetails['locationId'] || entityCreation.locationId
 							updateData['registryDetails']['lastUpdatedAt'] = new Date()
 						}
 
@@ -758,7 +834,7 @@ module.exports = class UserProjectsHelper {
 								{ $set: updateData },
 								{ _id: 1 }
 							)
-
+						
 							if (!updateEntity || !updateEntity._id) {
 								singleEntity['UPDATE_STATUS'] = CONSTANTS.apiResponses.ENTITY_NOT_FOUND
 							} else {
@@ -767,102 +843,16 @@ module.exports = class UserProjectsHelper {
 						} else {
 							singleEntity['UPDATE_STATUS'] = CONSTANTS.apiResponses.NO_INFORMATION_TO_UPDATE
 						}
+					
 						return singleEntity
-					})
+			})
 				)
 
 				if (entityUploadedData.findIndex((entity) => entity === undefined) >= 0) {
 					throw CONSTANTS.apiResponses.SOMETHING_WRONG_INSERTED_UPDATED
 				}
 
-				return resolve(entityUploadedData)
-			} catch (error) {
-				return reject(error)
-			}
-		})
-	}
-
-	/**
-	 * create entities.
-	 * @method
-	 * @name create
-	 * @param {Object} queryParams - requested query data.
-	 * @param {Object} data - requested entity data.
-	 * @param {Object} userDetails - Logged in user information.
-	 * @param {String} userDetails.id - Logged in user id.
-	 * @returns {JSON} - Created entity information.
-	 */
-	static create(body, userDetails, parentEntityId) {
-		return new Promise(async (resolve, reject) => {
-			try {
-				let entityType = body
-
-				try {
-					if (entityType.profileFields) {
-						entityType.profileFields = entityType.profileFields.split(',') || []
-					}
-
-					if (
-						entityType.immediateChildrenEntityType != '' &&
-						entityType.immediateChildrenEntityType != undefined
-					) {
-						let entityTypeImmediateChildren = entityType.immediateChildrenEntityType.split(',')
-						entityTypeImmediateChildren = _.uniq(entityTypeImmediateChildren)
-
-						entityType.immediateChildrenEntityType = new Array()
-						entityTypeImmediateChildren.forEach((immediateChildren) => {
-							entityType.immediateChildrenEntityType.push(immediateChildren)
-						})
-					}
-
-					if (entityType.isObservable) {
-						entityType.isObservable = UTILS.convertStringToBoolean(entityType.isObservable)
-					}
-					if (entityType.toBeMappedToParentEntities) {
-						entityType.toBeMappedToParentEntities = UTILS.convertStringToBoolean(
-							entityType.toBeMappedToParentEntities
-						)
-					}
-					let entityTypes = await entityTypesHelper.list({ _id: new ObjectId(entityType.entityTypeId) })
-					if (!entityType.entityType) {
-						entityType.entityType = entityTypes.result[0].name
-					}
-					if (entityType.externalId && entityType.name) {
-						entityType.metaInformation = {
-							externalId: entityType.externalId,
-							name: entityType.name,
-						}
-					}
-					const userId = userDetails && userDetails.id ? userDetails.id : CONSTANTS.common.SYSTEM
-					let mergedEntity = _.merge(
-						{
-							isDeleted: false,
-							updatedBy: userId,
-							createdBy: userId,
-						},
-						entityType
-					)
-					let newEntityType = await entitiesQueries.create(mergedEntity)
-					// 	_.merge(
-					// 		{
-					// 			isDeleted: false,
-					// 			updatedBy: userId,
-					// 			createdBy: userId,
-					// 		},
-					// 		entityType
-					// 	)
-					// )
-					delete entityType.registryDetails
-
-					if (newEntityType._id) {
-						entityType.status = CONSTANTS.common.SUCCESS
-					} else {
-						entityType.status = CONSTANTS.common.FAILURE
-					}
-				} catch (error) {
-					entityType.status = error && error.message ? error.message : error
-				}
-				return resolve(entityType)
+			return resolve(entityUploadedData)
 			} catch (error) {
 				return reject(error)
 			}
@@ -873,17 +863,16 @@ module.exports = class UserProjectsHelper {
 	 * Update entity information.
 	 * @method
 	 * @name update
-	 * @param {String} entityType - entity type.
 	 * @param {String} entityId - entity id.
 	 * @param {Object} data - entity information that need to be updated.
 	 * @returns {JSON} - Updated entity information.
 	 */
 
-	static update(entityTypeId, bodyData) {
+	static update(entityId, bodyData) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let entityInformation = await entitiesQueries.findOneAndUpdate(
-					{ _id: ObjectId(entityTypeId) },
+					{ _id: ObjectId(entityId) },
 					bodyData,
 					{ new: true }
 				)
@@ -891,7 +880,11 @@ module.exports = class UserProjectsHelper {
 				if (!entityInformation) {
 					return reject({ status: 404, message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND })
 				}
-				resolve(entityInformation)
+				resolve({
+					success: true,
+                    message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
+                    result: entityInformation
+				})
 				// resolve({ entityInformation, message: CONSTANTS.apiResponses.ENTITYTYPE_UPDATED })
 			} catch (error) {
 				reject(error)
@@ -911,6 +904,7 @@ module.exports = class UserProjectsHelper {
 		}
 	}
 
+	
 	/**
 	 * List entities.
 	 * @method
@@ -934,7 +928,7 @@ module.exports = class UserProjectsHelper {
 			try {
 				let queryObject = { _id: ObjectId(entityTypeId) }
 				let projectObject = { [`groups.${entityType}`]: 1 }
-				let result = await entitiesQueries.findOne(queryObject, projectObject)
+				let result = await entitiesQueries.findOne(queryObject,projectObject)
 				if (!result) {
 					return resolve({
 						status: HTTP_STATUS_CODE.bad_request.status,
@@ -1015,31 +1009,6 @@ module.exports = class UserProjectsHelper {
 						},
 					},
 				])
-				// let entityData = await database.models.entities.aggregate([
-				// 	filteredQuery,
-				// 	{
-				// 		$project: {
-				// 			metaInformation: 1,
-				// 			groups: 1,
-				// 			entityType: 1,
-				// 			entityTypeId: 1,
-				// 		},
-				// 	},
-				// 	{
-				// 		$facet: {
-				// 			totalCount: [{ $count: 'count' }],
-				// 			data: [{ $skip: skippingValue }, { $limit: limitingValue }],
-				// 		},
-				// 	},
-				// 	{
-				// 		$project: {
-				// 			data: 1,
-				// 			count: {
-				// 				$arrayElemAt: ['$totalCount.count', 0],
-				// 			},
-				// 		},
-				// 	},
-				// ])
 
 				let count = 0
 				result = []
