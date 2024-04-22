@@ -9,7 +9,6 @@
 const entitiesHelper = require(MODULES_BASE_PATH + '/entities/helper')
 const csv = require('csvtojson')
 const FileStream = require(PROJECT_ROOT_DIRECTORY + '/generics/file-stream')
-const entitiesQueries = require('../../databaseQueries/entities')
 
 /**
  * entities
@@ -38,43 +37,32 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-* @api {get} /entity/api/v1/entities/list List all entities
-* @apiVersion 1.0.0
-* @apiName Entities list
-* @apiGroup Entities
-* @apiHeader {String} X-authenticated-user-token Authenticity token
-* @apiSampleRequest /entity/api/v1/entities/list
-* @apiUse successBody
-* @apiUse errorBody
-* @apiParamExample {json} Response:
-* "result": [
-  {
-    "_id": "5ce23d633c330302e720e661",
-    "name": "teacher"
-  },
-  {
-    "_id": "5ce23d633c330302e720e663",
-    "name": "schoolLeader"
-  }
-  ]
-*/
-
-	/**
-	 * Find all the entities.
-	 * @method
-	 * @name find
+	 * Find all the entities based on the projection.
+	 * @api {get} /assessment/api/v1/entities/relatedEntities/find all the API based on projection
+	 * @apiVersion 1.0.0
+	 * @apiName find
+	 * @apiGroup Entities
+	 * @apiSampleRequest /assessment/api/v1/entities/find/5c0bbab881bdbe330655da7f
+	 * @apiUse successBody
+	 * @apiUse errorBody
+	 * @apiParamExample {json} Response:
 	 * @returns {JSON} - List of all entities.
+	 *  "result": [
+        {
+            "_id": "6613b8142c7d9408449474bf"
+        },
+        {
+            "_id": "6613b8f32c7d9408449474c2"
+        }
+	]
 	 */
 
 	find(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let entityData = await entitiesQueries.entityDocuments(req.body.query, req.body.projection)
-				return resolve({
-					success: true,
-					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
-					result: entityData,
-				})
+				// Calls the 'find' function from 'entitiesHelper' to retrieve entity data
+				let entityData = await entitiesHelper.find(req.body.query, req.body.projection)
+				return resolve(entityData)
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
@@ -85,12 +73,46 @@ module.exports = class Entities extends Abstract {
 		})
 	}
 
+	/**
+  * @api {get} /assessment/api/v1/entities/relatedEntities/:entityId Get Related Entities
+  * @apiVersion 1.0.0
+  * @apiName Get Related Entities
+  * @apiGroup Entities
+  * @apiSampleRequest /assessment/api/v1/entities/relatedEntities/5c0bbab881bdbe330655da7f
+  * @apiUse successBody
+  * @apiUse errorBody
+  * @apiParamExample {json} Response:
+      "result": {
+        "relatedEntities": [
+            {
+                "_id": "5f33c3d85f637784791cd830",
+                "entityTypeId": "5f32d8228e0dc8312404056e",
+                "entityType": "state",
+                "metaInformation": {
+                    "externalId": "MH",
+                    "name": "Maharashtra"
+                }
+            },
+            {
+                "_id": "5fbf3f8c3e9df47967eed916",
+                "entityTypeId": "5f32d8228e0dc8312404056e",
+                "entityType": "state",
+                "metaInformation": {
+                    "externalId": "993067ca-8499-4ef5-9325-560d3b3e5de9",
+                    "name": "Himachal Pradesh"
+                }
+            }
+        ]
+	**/
 	relatedEntities(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let result = {}
 
+				// Retrieve related entities using 'entitiesHelper.relatedEntities'
 				let relatedEntities = await entitiesHelper.relatedEntities(req.params._id)
+
+				// Store the retrieved relatedEntities in the 'result' object
 				result['relatedEntities'] = relatedEntities.length > 0 ? relatedEntities : []
 
 				return resolve({
@@ -107,12 +129,37 @@ module.exports = class Entities extends Abstract {
 		})
 	}
 
+	/**
+	  * @api {post} /assessment/api/v1/entities/mappingUpload
+	  * @apiVersion 1.0.0
+	  * @apiName mappingUpload
+	  * @apiGroup Entities
+	  * @apiParam {File} entityMap Mandatory entity mapping file of type CSV.
+	  * @apiUse successBody
+	  * @apiUse errorBody
+   * @param {Array} req.files.entityMap - Array of entityMap data.         
+   * @returns {JSON} - Message of successfully updated.
+   * 
+   * {
+    "message": "ENTITY_INFORMATION_UPDATE",
+    "status": 200,
+    "result": {
+        "success": true,
+        "message": "ENTITY_INFORMATION_UPDATE"
+    }
+}
+   */
+
 	mappingUpload(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Parse CSV data from the uploaded file in the request body
 				let entityCSVData = await csv().fromString(req.files.entityMap.data.toString())
 
+				// Process the entity mapping upload data using 'entitiesHelper.processEntityMappingUploadData'
 				let entityMappingUploadResponse = await entitiesHelper.processEntityMappingUploadData(entityCSVData)
+
+				// Check if the entity mapping upload was successful
 				if (!entityMappingUploadResponse.success) {
 					throw new Error(CONSTANTS.apiResponses.SOMETHING_WENT_WRONG)
 				}
@@ -133,14 +180,74 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * details of the entities.
-	 * @method
-	 * @name details
+	  * @api {get} /entity/api/v1/entities/provide the details 
+	 * @apiVersion 1.0.0
+	 * @apiName details
+	 * @apiGroup Entities
+	 * @apiHeader {String} X-authenticated-user-token Authenticity token
+	 * @apiSampleRequest /entity/api/v1/entities/details
+	 * @apiUse successBody
+	 * @apiUse errorBody
 	 * @returns {JSON} - provide the details.
+	 * 
+	 "result": [
+        {
+            "_id": "5f33c3d85f637784791cd830",
+            "childHierarchyPath": [
+                "district",
+                "beat",
+                "cluster",
+                "school"
+            ],
+            "allowedRoles": [
+                "rahul",
+                "prajwal"
+            ],
+            "deleted": false,
+            "entityTypeId": "5f32d8228e0dc8312404056e",
+            "entityType": "state",
+            "metaInformation": {
+                "externalId": "MH",
+                "name": "Maharashtra",
+                "region": "West",
+                "capital": "Mumbai"
+            },
+            "updatedBy": "124fdade-aaa2-4587-9dcd-3c7cf15c7147",
+            "createdBy": "2b655fd1-201d-4d2a-a1b7-9048a25c0afa",
+            "updatedAt": "2021-01-18T06:51:31.086Z",
+            "createdAt": "2020-08-12T10:26:32.038Z",
+            "__v": 0,
+            "groups": {
+                "district": [
+                    "5f33c56fb451f58478b36996"
+                ],
+                "beat": [
+                    "5f33cb24c1352f84a29f547c",
+                    "5f33cb24c1352f84a29f547d"
+                ],
+                "cluster": [
+                    "5f33cb07ce438a849b4a17f6",
+                    "5f33cb07ce438a849b4a17f7"
+                ],
+                "school": [
+                    "5f33caebb451f58478b36998",
+                    "5f33caebb451f58478b36999",
+                    "5f833e5c87ae180cb64aeff0"
+                ]
+            },
+            "registryDetails": {
+                "locationId": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df",
+                "code": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df"
+            }
+        }
+    ]
+}
 	 */
 
 	details(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Prepare parameters for 'entitiesHelper.details' based on request data
 				let result = await entitiesHelper.details(
 					req.params._id ? req.params._id : '',
 					req.body ? req.body : {}
@@ -159,18 +266,47 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * Update entity information.
-	 * @method
-	 * @name update
+	 * @api {get} /entity/api/v1/entities/update single entities
+	 * @apiVersion 1.0.0
+	 * @apiName update
+	 * @apiGroup Entities
+	 * @apiHeader {String} X-authenticated-user-token Authenticity token
+	 * @apiSampleRequest /entity/api/v1/entities/update
+	 * @apiUse successBody
+	 * @apiUse errorBody
 	 * @param {Object} req - requested entity data.
 	 * @param {String} req.query.type - entity type.
 	 * @param {String} req.params._id - entity id.
 	 * @param {Object} req.body - entity information that need to be updated.
 	 * @returns {JSON} - Updated entity information.
+	 * 
+	 *   "result": {
+        "metaInformation": {
+            "externalId": "entity123",
+            "name": "rahul "
+        },
+        "childHierarchyPath": [],
+        "allowedRoles": [
+            "rahul",
+            "prajwal"
+        ],
+        "createdBy": "user123",
+        "updatedBy": "user123",
+        "deleted": false,
+        "_id": "6613ddfa44b91a0d1a58bb32",
+        "entityTypeId": "661384681797bc00de520555",
+        "entityType": "rahul",
+        "updatedAt": "2024-04-22T09:04:12.292Z",
+        "createdAt": "2024-04-08T12:07:22.369Z",
+        "__v": 0
+    }
+}
 	 */
 
 	update(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Call 'entitiesHelper.update' to perform the entity update operation
 				let result = await entitiesHelper.update(req.params._id, req.body)
 
 				return resolve(result)
@@ -186,22 +322,49 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * Add entities.
-	 * @method
-	 * @name add
+	 * @api {get} /entity/api/v1/entities/create single entities
+	 * @apiVersion 1.0.0
+	 * @apiName add
+	 * @apiGroup Entities
+	 * @apiHeader {String} X-authenticated-user-token Authenticity token
+	 * @apiSampleRequest /entity/api/v1/entities/add
+	 * @apiUse successBody
+	 * @apiUse errorBody
 	 * @param {Object} req - All requested Data.
 	 * @param {Object} req.files - requested files.
 	 * @returns {JSON} - Added entities information.
+	 * 
+	 *   "result": [
+        {
+            "childHierarchyPath": [],
+            "allowedRoles": [],
+            "createdBy": "SYSTEM",
+            "updatedBy": "SYSTEM",
+            "_id": "662627c923a1b004a5cc4d65",
+            "deleted": false,
+            "entityTypeId": "627a13928ce12806f5803f57",
+            "entityType": "block",
+            "metaInformation": {
+                "externalId": "entity123"
+            },
+            "updatedAt": "2024-04-22T09:03:05.921Z",
+            "createdAt": "2024-04-22T09:03:05.921Z",
+            "__v": 0
+        }
+    ]
 	 */
 
 	add(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Prepare query parameters for adding the entity
 				let queryParams = {
 					type: req.query.type,
 					// programId: req.query.programId,
 					//   solutionId: req.query.solutionId,
 					parentEntityId: req.query.parentEntityId,
 				}
+				// Call 'entitiesHelper.add' to perform the entity addition operation
 				let result = await entitiesHelper.add(queryParams, req.body, req.userDetails)
 
 				return resolve({
@@ -220,16 +383,41 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * List of entities by location ids.
-	 * @method
-	 * @name listByLocationIds
+	 * @api {get} /entity/api/v1/entities/list List all entities based locationIds
+	 * @apiVersion 1.0.0
+	 * @apiName listByLocationIds
+	 * @apiGroup Entities
+	 * @apiHeader {String} X-authenticated-user-token Authenticity token
+	 * @apiSampleRequest /entity/api/v1/entities/listByLocationIds
+	 * @apiUse successBody
+	 * @apiUse errorBody
 	 * @param {Object} req - requested data.
 	 * @param {Object} req.body.locationIds - registry data.
 	 * @returns {Object} -
+	 * 
+	 *   "result": [
+        {
+            "_id": "5f33c3d85f637784791cd830",
+            "entityTypeId": "5f32d8228e0dc8312404056e",
+            "entityType": "state",
+            "metaInformation": {
+                "externalId": "MH",
+                "name": "Maharashtra",
+                "region": "West",
+                "capital": "Mumbai"
+            },
+            "registryDetails": {
+                "locationId": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df",
+                "code": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df"
+            }
+        }
+	]
 	 */
 
 	listByLocationIds(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Call 'entitiesHelper.listByLocationIds' to retrieve entities based on location IDs
 				let entitiesData = await entitiesHelper.listByLocationIds(req.body.locationIds)
 
 				entitiesData.result = entitiesData.data
@@ -247,25 +435,58 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * Entities child hierarchy path
-	 * @method
-	 * @name subEntitiesRoles
+	 * @api {get} /entity/api/v1/entities/list List all entities based on Location and Role
+	 * @apiVersion 1.0.0
+	 * @apiName subEntityListBasedOnRoleAndLocation
+	 * @apiGroup Entities
+	 * @apiHeader {String} X-authenticated-user-token Authenticity token
+	 * @apiSampleRequest /entity/api/v1/entities/subEntityListBasedOnRoleAndLocation
+	 * @apiUse successBody
+	 * @apiUse errorBody
 	 * @param {String} req.params._id - entityId.
 	 * @returns {JSON} - Entities child hierarchy path
+	 * 
+	 *  "result": [
+        {
+            "_id": "5f33c3d85f637784791cd830",
+            "childHierarchyPath": [
+                "district",
+                "beat",
+                "cluster",
+                "school"
+            ]
+        },
+        {
+            "_id": "627a13928ce12806f5803f57",
+            "childHierarchyPath": [
+                "district",
+                "beat",
+                "cluster",
+                "school"
+            ]
+        }
+    ]
+}
 	 */
 
 	subEntityListBasedOnRoleAndLocation(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let currentMaximumCountOfRequiredEntities = 0
-				let subEntityTypeListData = new Array()
-				let data = req.userDetails.userInformation.entityTypes
+				let subEntityTypeListData = new Array() // Initialize array to store sub-entity type list data
+				let data = req.userDetails.userInformation.entityTypes // Get user's entity types from userDetails
+
+				// Loop through each role in the user's entity types
 				for (let roleCount = 0; roleCount < data.split(',').length; roleCount++) {
 					const eachRole = data.split(',')[roleCount]
+
+					// Call 'entitiesHelper.subEntityListBasedOnRoleAndLocation' to retrieve sub-entity list
 					const entityTypeMappingData = await entitiesHelper.subEntityListBasedOnRoleAndLocation(
 						req.params._id,
 						eachRole
 					)
 
+					// Check if the retrieved sub-entity list has more entities than current maximum
 					if (
 						entityTypeMappingData.result &&
 						entityTypeMappingData.result.length > currentMaximumCountOfRequiredEntities
@@ -288,17 +509,38 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-	 * List of entities by entityType.
-	 * @method
-	 * @name listByEntityType
-	 * @param {Object} req - requested data.
-	 * @param {String} req.params._id - requested entity type.
-	 * @returns {JSON} - Array of entities.
-	 */
-	
+    * @api {get} /entity/api/v1/entities/list all entities based on EntityType
+    * @apiVersion 1.0.0
+    * @apiName listByEntityType
+    * @apiGroup Entities
+    * @apiHeader {String} X-authenticated-user-token Authenticity token
+    * @apiSampleRequest /entity/api/v1/entities/listByEntityType
+    * @apiUse successBody
+    * @apiUse errorBody
+    * @param {Object} req - requested data.
+    * @param {String} req.params._id - requested entity type.
+    * @returns {JSON} - Array of entities.
+
+ "result": [
+        {
+            "externalId": "PBS",
+            "name": "Punjab",
+            "locationId": "",
+            "_id": "6613b8142c7d9408449474bf"
+        },
+        {
+            "externalId": "PBS",
+            "name": "Punjab",
+            "locationId": "",
+            "_id": "6613b8f32c7d9408449474c2"
+        },
+	]
+*/
+
 	listByEntityType(req, res) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Call 'entitiesHelper.listEntitiesByType' to retrieve entities based on the request
 				const result = await entitiesHelper.listEntitiesByType(req)
 
 				return resolve(result)
@@ -313,22 +555,37 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-	 * List entities.
-	 * @method
-	 * @name list
-	 * @param {Object} req - requested entity information.
-	 * @param {String} req.query.type - type of entity requested.
-	 * @param {String} req.params._id - requested entity id.
-	 * @param {Number} req.pageSize - total size of the page.
-	 * @param {Number} req.pageNo - page number.
-	 * @param {string} req.query.schoolTypes - comma seperated school types.
-	 * @param {string} req.query.administrationTypes - comma seperated administration types.
-	 * @returns {JSON} - Listed entity details.
-	 */
+    * @api {get} /entity/api/v1/entities/list List all entities
+    * @apiVersion 1.0.0
+    * @apiName Entities list
+    * @apiGroup Entities
+    * @apiHeader {String} X-authenticated-user-token Authenticity token
+    * @apiSampleRequest /entity/api/v1/entities/list
+    * @apiUse successBody
+    * @apiUse errorBody
+    * @param {String} req.query.type - type of entity requested.
+    * @param {String} req.params._id - requested entity id.
+    * @param {Number} req.pageSize - total size of the page.
+    * @param {Number} req.pageNo - page number.
+    * @param {string} req.query.schoolTypes - comma seperated school types.
+    * @param {string} req.query.administrationTypes - comma seperated administration types.
+    * @apiParamExample {json} Response:
+    * "result": [
+  {
+    "_id": "5ce23d633c330302e720e661",
+    "name": "teacher"
+  },
+  {
+    "_id": "5ce23d633c330302e720e663",
+    "name": "schoolLeader"
+  }
+  ]
+*/
 
 	list(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Call 'entitiesHelper.list' to retrieve entities based on provided parameters
 				let result = await entitiesHelper.list(
 					req.query.type,
 					req.params._id,
@@ -351,20 +608,30 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * Bulk create entities.
-	 * @method
-	 * @name bulkCreate
+	 * @api {get} /assessment/api/v1/entities/relatedEntities/Create API by uploading CSV
+	 * @apiVersion 1.0.0
+	 * @apiName bulkCreate
+	 * @apiGroup Entities
+	 * @apiSampleRequest /assessment/api/v1/entities/bulkCreate
+	 * @apiUse successBody
+	 * @apiUse errorBody
+	 * @apiParamExample {json} Response:
 	 * @param {Object} req - requested data.
 	 * @param {String} req.query.type - requested entity type.
 	 * @param {Object} req.userDetails - logged in user details.
 	 * @param {Object} req.files.entities - entities data.
 	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
 	 * public/reports/currentDate
+	 *
 	 */
 
 	bulkCreate(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Parse CSV data from uploaded file
 				let entityCSVData = await csv().fromString(req.files.entities.data.toString())
+
+				// Call 'entitiesHelper.bulkCreate' to create entities from parsed CSV data
 				let newEntityData = await entitiesHelper.bulkCreate(
 					req.query.type,
 					null,
@@ -373,11 +640,13 @@ module.exports = class Entities extends Abstract {
 					entityCSVData
 				)
 
+				// Check if new entities were created successfully
 				if (newEntityData.length > 0) {
 					const fileName = `Entity-Upload`
 					let fileStream = new FileStream(fileName)
 					let input = fileStream.initStream()
 
+					// Use Promise to handle stream processing and resolve with file details
 					;(async function () {
 						await fileStream.getProcessorPromise()
 						return resolve({
@@ -386,6 +655,7 @@ module.exports = class Entities extends Abstract {
 						})
 					})()
 
+					// Push each new entity into the file stream for processing
 					await Promise.all(
 						newEntityData.map(async (newEntity) => {
 							input.push(newEntity)
@@ -408,29 +678,43 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * Bulk update entities.
-	 * @method
-	 * @name bulkUpdate
+	 * @api {get} /assessment/api/v1/entities/relatedEntities/Update API by uploading CSV
+	 * @apiVersion 1.0.0
+	 * @apiName bulkUpdate
+	 * @apiGroup Entities
+	 * @apiSampleRequest /assessment/api/v1/entities/bulkUpdate
+	 * @apiUse successBody
+	 * @apiUse errorBody
+	 * @apiParamExample {json} Response:
 	 * @param {Object} req - requested data.
 	 * @param {Object} req.userDetails - logged in user details.
 	 * @param {Object} req.files.entities - entities data.
 	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
 	 * public/reports/currentDate
+	 *
 	 */
 
 	bulkUpdate(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Parse CSV data from uploaded file
 				let entityCSVData = await csv().fromString(req.files.entities.data.toString())
+
+				// Check if CSV data is valid and contains entities
 				if (!entityCSVData || entityCSVData.length < 1) {
 					throw CONSTANTS.apiResponses.ENTITY_TYPE_NOT_UPDATED
 				}
+
+				// Call 'entitiesHelper.bulkUpdate' to update entities based on CSV data and user details
 				let newEntityData = await entitiesHelper.bulkUpdate(entityCSVData, req.userDetails)
 
+				// Check if entities were updated successfully
 				if (newEntityData.length > 0) {
 					const fileName = `Entity-Upload`
 					let fileStream = new FileStream(fileName)
 					let input = fileStream.initStream()
 
+					// Use Promise to handle stream processing and resolve with file details
 					;(async function () {
 						await fileStream.getProcessorPromise()
 						return resolve({

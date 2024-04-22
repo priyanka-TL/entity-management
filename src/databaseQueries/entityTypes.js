@@ -29,8 +29,10 @@ module.exports = class EntityTypes {
 				let queryObject = filterData != 'all' ? filterData : {}
 				let projection = {}
 
+				// Configure projection based on provided fieldsArray
 				if (fieldsArray !== 'all') {
 					if (typeof fieldsArray === 'object' && !Array.isArray(fieldsArray)) {
+						// If fieldsArray is an object, use it directly as projection
 						projection = fieldsArray
 					} else if (Array.isArray(fieldsArray)) {
 						fieldsArray.forEach((field) => {
@@ -39,11 +41,14 @@ module.exports = class EntityTypes {
 					}
 				}
 
+				// Exclude specified fields from projection if skipFields is provided as an array
 				if (skipFields !== 'none') {
 					skipFields.forEach((field) => {
 						projection[field] = 0
 					})
 				}
+
+				// Find entity types documents based on queryObject and projection, and return as plain JavaScript objects
 				let entityTypesDoc = await database.models.entityTypes.find(queryObject, projection).lean()
 
 				return resolve(entityTypesDoc)
@@ -64,6 +69,7 @@ module.exports = class EntityTypes {
 	static create(entityTypeData) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Use Mongoose's create method to insert a new document into the entityTypes collection
 				let entityData = await database.models.entityTypes.create(entityTypeData)
 				return resolve(entityData)
 			} catch (error) {
@@ -88,6 +94,8 @@ module.exports = class EntityTypes {
 	static findOneAndUpdate(findQuery, updateObject, returnData = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Use Mongoose's findOneAndUpdate method to update a document based on the findQuery
+				// The updateObject specifies the new values to set, and returnData controls the data to return after the update
 				let entityTypeData = await database.models.entityTypes.findOneAndUpdate(
 					findQuery,
 					updateObject,
@@ -116,14 +124,17 @@ module.exports = class EntityTypes {
 	static updateEntityTypesDocument(query = {}, updateObject = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Check if the query object is empty
 				if (Object.keys(query).length == 0) {
 					throw new Error(CONSTANTS.apiResponses.UPDATE_QUERY_REQUIRED)
 				}
 
+				// Check if the updateObject is empty
 				if (Object.keys(updateObject).length == 0) {
 					throw new Error(CONSTANTS.apiResponses.UPDATE_OBJECT_REQUIRED)
 				}
 
+				// Use Mongoose's updateOne method to update a document based on the query and updateObject
 				let updateResponse = await database.models.entityTypes.updateOne(query, updateObject)
 
 				if (updateResponse.nModified == 0) {

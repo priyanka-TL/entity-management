@@ -17,6 +17,14 @@ const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
  */
 
 module.exports = class UserProjectsHelper {
+	/**
+	 * Bulk create entity Type.
+	 * @method
+	 * @name bulkCreate
+	 * @param {Object} userDetails - logged in user details.
+	 * @param {Array}  entityTypesCSVData - Array of entity data.
+	 * @returns {JSON} - uploaded entity information.
+	 */
 	static bulkCreate(entityTypesCSVData, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
@@ -26,6 +34,8 @@ module.exports = class UserProjectsHelper {
 							entityType = UTILS.valueParser(entityType)
 							entityType.registryDetails = {}
 							let removedKeys = []
+
+							// Extract registry details and remove related keys from entityType
 							Object.keys(entityType).forEach(function (eachKey) {
 								if (eachKey.startsWith('registry-')) {
 									let newKey = eachKey.replace('registry-', '')
@@ -38,6 +48,7 @@ module.exports = class UserProjectsHelper {
 								entityType.profileFields = entityType.profileFields.split(',') || []
 							}
 
+							// Process immediateChildrenEntityType to ensure uniqueness
 							if (
 								entityType.immediateChildrenEntityType != '' &&
 								entityType.immediateChildrenEntityType != undefined
@@ -69,6 +80,8 @@ module.exports = class UserProjectsHelper {
 									}
 								}
 							}
+
+							// Set userId based on userDetails
 							const userId =
 								userDetails && userDetails.userInformation.id
 									? userDetails && userDetails.userInformation.id
@@ -120,11 +133,13 @@ module.exports = class UserProjectsHelper {
 			try {
 				let entityType = body
 
+				// Process incoming entity type data
 				try {
 					if (entityType.profileFields) {
 						entityType.profileFields = entityType.profileFields.split(',') || []
 					}
 
+					// Ensure uniqueness of immediate children entity types
 					if (
 						entityType.immediateChildrenEntityType != '' &&
 						entityType.immediateChildrenEntityType != undefined
@@ -138,6 +153,7 @@ module.exports = class UserProjectsHelper {
 						})
 					}
 
+					// Convert string flags to boolean
 					if (entityType.isObservable) {
 						entityType.isObservable = UTILS.convertStringToBoolean(entityType.isObservable)
 					}
@@ -147,6 +163,7 @@ module.exports = class UserProjectsHelper {
 						)
 					}
 
+					// Determine userId based on userDetails or default to SYSTEM
 					const userId =
 						userDetails && userDetails.userInformation.id
 							? userDetails.userInformation.id
@@ -185,11 +202,13 @@ module.exports = class UserProjectsHelper {
 	 * @param {Object} data - requested entity data.
 	 * @param {Object} userDetails - Logged in user information.
 	 * @returns {JSON} - update single entity.
+	 *
 	 */
 
 	static update(entityTypeId, bodyData) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Find and update the entity type by ID with the provided bodyData
 				let entityInformation = await entityTypeQueries.findOneAndUpdate(
 					{ _id: ObjectId(entityTypeId) },
 					bodyData,
@@ -211,12 +230,23 @@ module.exports = class UserProjectsHelper {
 		})
 	}
 
+	/**
+	 * Bulk update entityType.
+	 * @method
+	 * @name bulkUpdate
+	 * @param {Object} userDetails - logged in user details.
+	 * @param {Array} entityTypesCSVData - Array of entity csv data to be updated.
+	 * @returns {Array} - Array of updated entity data.
+	 */
+
 	static bulkUpdate(entityTypesCSVData, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Process each entity type in the provided array asynchronously
 				const entityTypesUploadedData = await Promise.all(
 					entityTypesCSVData.map(async (entityType) => {
 						try {
+							// Parse values in the entityType object
 							entityType = UTILS.valueParser(entityType)
 							entityType.registryDetails = {}
 							let removedKeys = []
@@ -242,6 +272,7 @@ module.exports = class UserProjectsHelper {
 								})
 							}
 
+							// Convert isObservable and toBeMappedToParentEntities to boolean if present
 							if (entityType.isObservable) {
 								entityType.isObservable = UTILS.convertStringToBoolean(entityType.isObservable)
 							}
@@ -251,6 +282,7 @@ module.exports = class UserProjectsHelper {
 								)
 							}
 
+							// Remove keys collected in removedKeys
 							if (removedKeys && removedKeys.length > 0) {
 								for (var key in entityType) {
 									for (var removedKey in removedKeys) {
@@ -260,10 +292,14 @@ module.exports = class UserProjectsHelper {
 									}
 								}
 							}
+
+							// Get the userId from userDetails or default to SYSTEM
 							const userId =
 								userDetails && userDetails.userInformation.id
 									? userDetails && userDetails.userInformation.id
 									: CONSTANTS.common.SYSTEM
+
+							// Find and update the entityType by _SYSTEM_ID with merged data
 							let updateEntityType = await entityTypeQueries.findOneAndUpdate(
 								{
 									_id: ObjectId(entityType._SYSTEM_ID),
@@ -303,12 +339,25 @@ module.exports = class UserProjectsHelper {
 		})
 	}
 
+	/**
+	 * List enitity Type.
+	 * @method
+	 * @name list
+	 * @param {String} entityType - entity type.
+	 * @param {String} entityId - requested entity id.
+	 * @param {String} [queryParameter = ""] - queryParameter value if required.
+	 * @returns {JSON} - Details of entity.
+	 */
+
 	static list(queryParameter = 'all', projection = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Convert 'all' to an empty object for querying all entity types
 				if (queryParameter === 'all') {
 					queryParameter = {}
 				}
+
+				// Retrieve entity type data based on the provided queryParameter and projection
 				let entityTypeData = await entityTypeQueries.entityTypesDocument(queryParameter, projection)
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_TYPES_FETCHED,

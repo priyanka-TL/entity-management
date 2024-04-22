@@ -22,11 +22,19 @@ const _ = require('lodash')
  */
 
 module.exports = class UserProjectsHelper {
+	/**
+	 * Mapping upload
+	 * @method
+	 * @name processEntityMappingUploadData
+	 * @param {Array} [mappingData = []] - Array of entityMap data.
+	 * @returns {JSON} - Success and message .
+	 */
 	static processEntityMappingUploadData(mappingData = []) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let entities = []
 
+				// Validate that mappingData is not empty
 				if (mappingData.length < 1) {
 					throw new Error(CONSTANTS.apiResponses.INVALID_MAPPING_DATA)
 				}
@@ -37,6 +45,7 @@ module.exports = class UserProjectsHelper {
 					entityToUpdate: {},
 				}
 
+				// Iterate over each mapping data entry
 				for (let indexToEntityMapData = 0; indexToEntityMapData < mappingData.length; indexToEntityMapData++) {
 					if (
 						mappingData[indexToEntityMapData].parentEntiyId != '' &&
@@ -50,11 +59,13 @@ module.exports = class UserProjectsHelper {
 					}
 				}
 
+				// If there are entities to update
 				if (Object.keys(this.entityMapProcessData.entityToUpdate).length > 0) {
 					await Promise.all(
 						Object.keys(this.entityMapProcessData.entityToUpdate).map(async (entityIdToUpdate) => {
 							let updateQuery = { $addToSet: {} }
 
+							// Construct update query based on stored changes
 							Object.keys(this.entityMapProcessData.entityToUpdate[entityIdToUpdate]).forEach(
 								(groupToUpdate) => {
 									updateQuery['$addToSet'][groupToUpdate] = {
@@ -72,6 +83,7 @@ module.exports = class UserProjectsHelper {
 
 				// await this.pushEntitiesToElasticSearch(entities);
 
+				// Clear entityMapProcessData after processing
 				this.entityMapProcessData = {}
 
 				return resolve({
@@ -84,9 +96,20 @@ module.exports = class UserProjectsHelper {
 		})
 	}
 
+	/**
+	 * Add child entity inside parent entity groups.
+	 * @method
+	 * @name addSubEntityToParent
+	 * @param {String} parentEntityId - parent entity id.
+	 * @param {String} childEntityId - child entity id.
+	 * @param {Boolean} [parentEntityProgramId = false] - Program id of parent entity.
+	 * @returns {JSON} - Success and message .
+	 */
+
 	static addSubEntityToParent(parentEntityId, childEntityId, parentEntityProgramId = false) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Find the child entity based on its ID
 				let childEntity = await entitiesQueries.findOne(
 					{
 						_id: ObjectId(childEntityId),
@@ -105,6 +128,8 @@ module.exports = class UserProjectsHelper {
 					if (parentEntityProgramId) {
 						parentEntityQueryObject['metaInformation.createdByProgramId'] = ObjectId(parentEntityProgramId)
 					}
+
+					// Prepare update query to add childEntity to parent entity's groups
 					let updateQuery = {}
 					updateQuery['$addToSet'] = {}
 					updateQuery['$addToSet'][`groups.${childEntity.entityType}`] = childEntity._id
@@ -118,6 +143,7 @@ module.exports = class UserProjectsHelper {
 						})
 					}
 
+					// Update childHierarchyPath in parent entity to include childEntity's entityType
 					let childHierarchyPathToUpdate = [childEntity.entityType]
 					if (childEntity.childHierarchyPath && childEntity.childHierarchyPath.length > 0) {
 						childHierarchyPathToUpdate = childHierarchyPathToUpdate.concat(childEntity.childHierarchyPath)
@@ -151,11 +177,24 @@ module.exports = class UserProjectsHelper {
 		})
 	}
 
+	/**
+	 * Map parent entities
+	 * @method
+	 * @name mappedParentEntities
+	 * @param {Object} parentEntity
+	 * @param {String} parentEntity.entityType - entity type of the parent.
+	 * @param {String} parentEntity._id - parentEntity id.
+	 * @param {Object} childEntity
+	 * @param {String} childEntity.entityType - entity type of the child.
+	 * @param {String} childEntity._id - childEntity id.
+	 */
+
 	static mappedParentEntities(parentEntity, childEntity) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let updateParentHierarchy = false
 
+				// Check if entityMapProcessData is defined and entityTypeMap exists for the parent entity's entityType
 				if (this.entityMapProcessData) {
 					if (
 						this.entityMapProcessData.entityTypeMap &&
@@ -165,6 +204,7 @@ module.exports = class UserProjectsHelper {
 							updateParentHierarchy = true
 						}
 					} else {
+						// If entityTypeMap is not defined or does not exist for the parent entity's entityType, check the database
 						let checkParentEntitiesMappedValue = await entitiesQueries.findOne(
 							{
 								entityType: parentEntity.entityType,
@@ -174,6 +214,7 @@ module.exports = class UserProjectsHelper {
 							}
 						)
 
+						// Update entityTypeMap with the updateParentHierarchy status
 						if (checkParentEntitiesMappedValue.toBeMappedToParentEntities) {
 							updateParentHierarchy = true
 							entityDocuments
@@ -215,6 +256,8 @@ module.exports = class UserProjectsHelper {
 					if (parentEntity.childHierarchyPath && parentEntity.childHierarchyPath.length > 0) {
 						childHierarchyPathToUpdate = childHierarchyPathToUpdate.concat(parentEntity.childHierarchyPath)
 					}
+
+					// Update related entities with childEntity's association
 					if (relatedEntities.length > 0) {
 						if (this.entityMapProcessData && this.entityMapProcessData.entityToUpdate) {
 							relatedEntities.forEach((eachRelatedEntities) => {
@@ -266,9 +309,21 @@ module.exports = class UserProjectsHelper {
 		})
 	}
 
+	/**
+	 * All the related entities for the given entities.
+	 * @method
+	 * @name relatedEntities
+	 * @param {String} entityId - entity id.
+	 * @param {String} entityTypeId - entity type id.
+	 * @param {String} entityType - entity type.
+	 * @param {Array} [projection = "all"] - total fields to be projected.
+	 * @returns {Array} - returns an array of related entities data.
+	 */
+
 	static relatedEntities(reqId) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Define projection fields to retrieve from the entity document
 				let projection = [
 					'metaInformation.externalId',
 					'metaInformation.name',
@@ -280,6 +335,8 @@ module.exports = class UserProjectsHelper {
 					'entityTypeId',
 					'entityType',
 				]
+
+				// Retrieve entity document based on the provided request ID (reqId)
 				let entityDocument = await entitiesQueries.entityDocuments({ _id: reqId }, projection)
 				if (entityDocument.length < 1) {
 					throw {
@@ -287,6 +344,8 @@ module.exports = class UserProjectsHelper {
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
 					}
 				}
+
+				// Extract relevant information from the retrieved entity document
 				let entityId = entityDocument[0]._id
 				let entityTypeId = entityDocument[0].entityTypeId
 				let entityType = entityDocument[0].entityType
@@ -315,6 +374,8 @@ module.exports = class UserProjectsHelper {
 						message: CONSTANTS.apiResponses.MISSING_ENTITYID,
 					}
 				}
+
+				// Retrieve related entities matching the query criteria
 				let relatedEntitiesDocument = await entitiesQueries.entityDocuments(relatedEntitiesQuery, projection)
 				relatedEntitiesDocument = relatedEntitiesDocument ? relatedEntitiesDocument : []
 				// if (this.entityMapProcessData && this.entityMapProcessData.relatedEntities) {
@@ -358,12 +419,14 @@ module.exports = class UserProjectsHelper {
 					'registryDetails.code': stateLocationId,
 				}
 
+				// Check if stateLocationId is a valid UUID and update the filterQuery accordingly
 				if (UTILS.checkValidUUID(stateLocationId)) {
 					filterQuery = {
 						'registryDetails.locationId': stateLocationId,
 					}
 				}
 
+				// Retrieve entity documents based on the filterQuery
 				const entityDocuments = await entitiesQueries.entityDocuments(filterQuery, ['childHierarchyPath'])
 
 				if (!entityDocuments.length > 0) {
@@ -410,6 +473,7 @@ module.exports = class UserProjectsHelper {
 			}
 		})
 	}
+
 	/**
 	 * update registry in entities.
 	 * @method
@@ -421,6 +485,7 @@ module.exports = class UserProjectsHelper {
 	static listByLocationIds(locationIds) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Constructing the filter query to find entities based on locationIds
 				let filterQuery = {
 					$or: [
 						{
@@ -431,6 +496,8 @@ module.exports = class UserProjectsHelper {
 						},
 					],
 				}
+
+				// Retrieving entities that match the filter query
 				let entities = await entitiesQueries.entityDocuments(filterQuery, [
 					'metaInformation',
 					'entityType',
@@ -458,6 +525,29 @@ module.exports = class UserProjectsHelper {
 	}
 
 	/**
+	 * find detils in entities.
+	 * @method
+	 * @name find
+	 * @param {Object} bodyQuery - body data
+	 * @param {Object} projection - projection to filter data
+	 */
+
+	static find(bodyQuery, projection) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Fetch entities based on the provided query and projection
+				const result = await entitiesQueries.entityDocuments(bodyQuery, projection)
+				return resolve({
+					success: true,
+					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
+					result: result,
+				})
+			} catch (error) {
+				return reject(error)
+			}
+		})
+	}
+	/**
 	 * Add entities.
 	 * @method
 	 * @name add
@@ -471,6 +561,7 @@ module.exports = class UserProjectsHelper {
 	static add(queryParams, data, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Find the entities document based on the entityType in queryParams
 				let entitiesDocument = await entitiesQueries.findOne({ entityType: queryParams.type }, { _id: 1 })
 				if (!entitiesDocument) {
 					throw CONSTANTS.apiResponses.ENTITY_NOT_FOUND
@@ -489,6 +580,7 @@ module.exports = class UserProjectsHelper {
 						singleEntity.createdBySolutionId = ObjectId(singleEntity.solutionId)
 					}
 
+					// Prepare registryDetails based on singleEntity data
 					let registryDetails = {}
 					if (singleEntity.locationId) {
 						registryDetails['locationId'] = singleEntity.locationId
@@ -499,6 +591,7 @@ module.exports = class UserProjectsHelper {
 						registryDetails['lastUpdatedAt'] = new Date()
 					}
 
+					// Construct the entity document to be created
 					let entityDoc = {
 						entityTypeId: entitiesDocument._id,
 						entityType: queryParams.type,
@@ -559,6 +652,7 @@ module.exports = class UserProjectsHelper {
 				let query = {}
 				query['$or'] = []
 
+				// Prepare entityIds based on entityId and requestData
 				if (entityId) {
 					entityIds.push(entityId)
 				}
@@ -594,6 +688,7 @@ module.exports = class UserProjectsHelper {
 					})
 				}
 
+				// Fetch entity documents based on constructed query
 				let entityDocument = await entitiesQueries.entityDocuments(query, 'all', 10)
 
 				if (entityDocument && entityDocument.length == 0) {
@@ -666,10 +761,12 @@ module.exports = class UserProjectsHelper {
 				// 		{}
 				// 	)
 				// }
+
+				// Find the entity type document based on the provided entityType
 				let entitiesDocument = await entitiesQueries.findOne(
 					// let entityTypeDocument = await database.models.entityTypes.findOne(
 					{
-						name: entityType,
+						entityType: entityType,
 					},
 					{ _id: 1 }
 				)
@@ -677,6 +774,7 @@ module.exports = class UserProjectsHelper {
 					throw CONSTANTS.apiResponses.INVALID_ENTITY_TYPE
 				}
 
+				// Process each entity in the entityCSVData array to create new entities
 				const entityUploadedData = await Promise.all(
 					entityCSVData.map(async (singleEntity) => {
 						singleEntity = UTILS.valueParser(singleEntity)
@@ -691,6 +789,7 @@ module.exports = class UserProjectsHelper {
 							createdBy: userId,
 						}
 
+						// Extract registry details from singleEntity and populate entityCreation
 						Object.keys(singleEntity).forEach(function (key) {
 							if (key.startsWith('registry-')) {
 								let newKey = key.replace('registry-', '')
@@ -711,6 +810,7 @@ module.exports = class UserProjectsHelper {
 						// 	delete singleEntity.allowedRoles
 						// }
 
+						// Populate metaInformation by omitting keys starting with '_'
 						entityCreation['metaInformation'] = _.omitBy(singleEntity, (value, key) => {
 							return _.startsWith(key, '_')
 						})
@@ -783,6 +883,7 @@ module.exports = class UserProjectsHelper {
 						singleEntity = UTILS.valueParser(singleEntity)
 						addTagsInEntities(singleEntity)
 
+						// Check if '_SYSTEM_ID' is missing or invalid
 						if (!singleEntity['_SYSTEM_ID'] || singleEntity['_SYSTEM_ID'] == '') {
 							singleEntity['UPDATE_STATUS'] = CONSTANTS.apiResponses.INVALID_OR_MISSING_SYSTEM_ID
 							return singleEntity
@@ -843,6 +944,7 @@ module.exports = class UserProjectsHelper {
 					})
 				)
 
+				// Check for any undefined values in entityUploadedData array
 				if (entityUploadedData.findIndex((entity) => entity === undefined) >= 0) {
 					throw CONSTANTS.apiResponses.SOMETHING_WRONG_INSERTED_UPDATED
 				}
@@ -866,10 +968,12 @@ module.exports = class UserProjectsHelper {
 	static update(entityId, bodyData) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Update the entity using findOneAndUpdate
 				let entityInformation = await entitiesQueries.findOneAndUpdate({ _id: ObjectId(entityId) }, bodyData, {
 					new: true,
 				})
 
+				// Check if entityInformation is null (not found)
 				if (!entityInformation) {
 					return reject({ status: 404, message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND })
 				}
@@ -885,6 +989,13 @@ module.exports = class UserProjectsHelper {
 		})
 	}
 
+	/**
+	 * Default entities schema value.
+	 * @method
+	 * @name entitiesSchemaData
+	 * @returns {JSON} List of entities schema.
+	 */
+
 	static entitiesSchemaData() {
 		return {
 			SCHEMA_ENTITY_OBJECT_ID: '_id',
@@ -897,17 +1008,31 @@ module.exports = class UserProjectsHelper {
 		}
 	}
 
+	/**
+	 * Default entities schema value.
+	 * @method
+	 * @name listEntitiesByType
+	 * @returns {JSON} List of entities schema.
+	 *  @param {Array} req - List of request
+	 */
+
 	static listEntitiesByType(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Retrieve the schema meta information key
 				let schemaMetaInformation = this.entitiesSchemaData().SCHEMA_METAINFORMATION
+
+				// Define projection for entity document fields to retrieve
 				let projection = [
 					schemaMetaInformation + '.externalId',
 					schemaMetaInformation + '.name',
 					'registryDetails.locationId',
 				]
 
+				// Calculate skipping value based on pagination parameters
 				let skippingValue = req.pageSize * (req.pageNo - 1)
+
+				// Query entities based on entity type ID
 				let entityDocuments = await entitiesQueries.entityDocuments(
 					{
 						entityTypeId: ObjectId(req.params._id),
@@ -925,6 +1050,8 @@ module.exports = class UserProjectsHelper {
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
 					}
 				}
+
+				// Map retrieved entity documents to desired format
 				entityDocuments = entityDocuments.map((entityDocument) => {
 					return {
 						externalId: entityDocument.metaInformation.externalId,
@@ -936,22 +1063,22 @@ module.exports = class UserProjectsHelper {
 						_id: entityDocument._id,
 					}
 				})
-	
+
 				resolve({
 					success: true,
 					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
 					result: entityDocuments,
-				});
+				})
 			} catch (error) {
 				reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
 					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
 					errorObject: error,
-				});
+				})
 			}
-		});
+		})
 	}
-	
+
 	/**
 	 * List entities.
 	 * @method
@@ -973,6 +1100,7 @@ module.exports = class UserProjectsHelper {
 	) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Query for the specified entity type within the given entity type ID document
 				let queryObject = { _id: ObjectId(entityTypeId) }
 				let projectObject = { [`groups.${entityType}`]: 1 }
 				let result = await entitiesQueries.findOne(queryObject, projectObject)
@@ -983,12 +1111,15 @@ module.exports = class UserProjectsHelper {
 					})
 				}
 
+				// Check if the specified entity group within the document is not found
 				if (!result.groups || !result.groups[entityType]) {
 					return resolve({
 						status: HTTP_STATUS_CODE.bad_request.status,
 						message: CONSTANTS.apiResponses.ENTITY_GROUPS_NOT_FOUND,
 					})
 				}
+
+				// Extract entity IDs from the specified entity group
 				let entityIds = result.groups[entityType]
 
 				const entityTypesArray = await entityTypesHelper.list(
@@ -1001,6 +1132,7 @@ module.exports = class UserProjectsHelper {
 
 				let enityTypeToImmediateChildrenEntityMap = {}
 
+				// Build a map of entity types to their immediate child entity types
 				if (entityTypesArray.length > 0) {
 					entityTypesArray.forEach((entityType) => {
 						enityTypeToImmediateChildrenEntityMap[entityType.name] =
@@ -1031,6 +1163,8 @@ module.exports = class UserProjectsHelper {
 
 					filteredQuery['$match']['metaInformation.tags'] = { $in: schoolOrAdministrationTypes }
 				}
+
+				// Execute aggregation pipeline to retrieve and process entity data
 				let entityData = await entitiesQueries.getAggregate([
 					filteredQuery,
 					{
@@ -1062,6 +1196,7 @@ module.exports = class UserProjectsHelper {
 
 				if (entityData[0].data.length > 0) {
 					result = entityData[0].data.map((entity) => {
+						// Calculate and add metadata to each entity
 						entity.metaInformation.childrenCount = 0
 						entity.metaInformation.entityType = entity.entityType
 						entity.metaInformation.entityTypeId = entity.entityTypeId
@@ -1147,6 +1282,7 @@ module.exports = class UserProjectsHelper {
  */
 
 function addTagsInEntities(entityMetaInformation) {
+	// Convert and set school types to lowercase and assign them as tags
 	if (entityMetaInformation.schoolTypes) {
 		entityMetaInformation.schoolTypes = entityMetaInformation.schoolTypes.map((schoolType) =>
 			schoolType.toLowerCase()
@@ -1155,6 +1291,7 @@ function addTagsInEntities(entityMetaInformation) {
 		entityMetaInformation['tags'] = [...entityMetaInformation.schoolTypes]
 	}
 
+	// Convert and concatenate administration types with existing tags (if present)
 	if (entityMetaInformation.administrationTypes) {
 		entityMetaInformation.administrationTypes = entityMetaInformation.administrationTypes.map((schoolType) =>
 			schoolType.toLowerCase()

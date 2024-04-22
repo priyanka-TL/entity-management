@@ -10,6 +10,7 @@ module.exports = class entities {
 	static getAggregate(aggregateData) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Use database model 'entities' to perform aggregation using the provided aggregateData
 				let entityData = await database.models.entities.aggregate(aggregateData)
 				return resolve(entityData)
 			} catch (error) {
@@ -27,13 +28,14 @@ module.exports = class entities {
 	 * @method
 	 * @name findOneAndUpdate
 	 * @param {Object} [filterQuery] - filtered Query.
-	 * @param {Object} [updateData] - update data.
+	 * @param {Object} [UpdateObject] - update data.
 	 * @returns {Object} - entities data.
 	 */
 
 	static findOneAndUpdate(findQuery, UpdateObject, returnData = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Use database model 'entities' to find and update a document based on the provided query and update object
 				let entityData = await database.models.entities.findOneAndUpdate(findQuery, UpdateObject, returnData)
 				return resolve(entityData)
 			} catch (error) {
@@ -50,13 +52,14 @@ module.exports = class entities {
 	 * Create entities documents.
 	 * @method
 	 * @name create
-	 * @param {Object} [projectData] - project Data.
+	 * @param {Object} [entitiesData] - project Data.
 	 * @returns {Array} - entities data.
 	 */
 
 	static create(entitiesData) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Use database model 'entities' to create new entities based on the provided data
 				let entityData = await database.models.entities.create(entitiesData)
 				return resolve(entityData)
 			} catch (error) {
@@ -81,6 +84,7 @@ module.exports = class entities {
 	static updateMany(filterQuery, updateData) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Use database model 'entities' to update multiple documents based on the provided filter query and update data
 				let updatedCategories = await database.models.entities.updateMany(filterQuery, updateData)
 
 				return resolve(updatedCategories)
@@ -94,12 +98,23 @@ module.exports = class entities {
 		})
 	}
 
+	/**
+	 * find entities documents.
+	 * @method
+	 * @name findOne
+	 * @param {Object} [filterData] - project Data.
+	 * @param {Object} [fieldsArray] - project Data.
+	 * @returns {Array} - entities data.
+	 */
+
 	static findOne(filterData = 'all', fieldsArray = 'all', skipFields = 'none') {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Determine the query object based on the provided filterData
 				let queryObject = filterData !== 'all' ? filterData : {}
 				let projection = {}
 
+				// Configure projection based on provided fieldsArray
 				if (fieldsArray !== 'all') {
 					if (typeof fieldsArray === 'object' && !Array.isArray(fieldsArray)) {
 						projection = fieldsArray
@@ -110,12 +125,14 @@ module.exports = class entities {
 					}
 				}
 
+				// Exclude specified fields from projection if skipFields is provided as an array
 				if (skipFields !== 'none' && Array.isArray(skipFields)) {
 					skipFields.forEach((field) => {
 						projection[field] = 0
 					})
 				}
 
+				// Find one document matching the queryObject with specified projection and return as plain JavaScript object
 				let document = await database.models.entities.findOne(queryObject, projection).lean()
 				if (!document) {
 					return reject({
@@ -136,13 +153,16 @@ module.exports = class entities {
 	}
 
 	/**
-	 * Lists of entities document.
+	 * Implement find query for entity
 	 * @method
-	 * @name projectDocument
-	 * @param {Array} [filterData = "all"] - entities filter query.
-	 * @param {Array} [fieldsArray = "all"] - projected fields.
-	 * @param {Array} [skipFields = "none"] - field not to include
-	 * @returns {Array} Lists of entities.
+	 * @name entityDocuments
+	 * @param {Object} [findQuery = "all"] - filter query object if not provide
+	 * it will load all the document.
+	 * @param {Array} [fields = "all"] - All the projected field. If not provided
+	 * returns all the field
+	 * @param {Number} [limitingValue = ""] - total data to limit.
+	 * @param {Number} [skippingValue = ""] - total data to skip.
+	 * @returns {Array} - returns an array of entities data.
 	 */
 
 	static entityDocuments(findQuery = 'all', fields = '', limitingValue = '', skippingValue = '', sortedData = '') {
@@ -150,19 +170,23 @@ module.exports = class entities {
 			try {
 				let queryObject = {}
 
+				// Set queryObject based on provided findQuery
 				if (findQuery != 'all') {
 					queryObject = findQuery
 				}
 				let projectionObject = {}
 
+				// Configure projectionObject to specify fields to include
 				if (fields != 'all') {
 					fields.forEach((element) => {
 						projectionObject[element] = 1
 					})
 				}
 
+				// Execute query with optional sorting, limiting, and skipping
 				let entitiesDocuments
 
+				// Perform find operation with sorting, limiting, skipping, and return as plain JavaScript object
 				if (sortedData !== '') {
 					entitiesDocuments = await database.models.entities
 						.find(queryObject, projectionObject)
