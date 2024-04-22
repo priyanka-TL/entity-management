@@ -71,3 +71,10 @@ config/credentials/*
 package-lock.json
 
 src/public/reports/*
+
+gcp.json
+
+gcp1.json
+
+dev-ops/report
+
