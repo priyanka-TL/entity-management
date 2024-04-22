@@ -70,7 +70,9 @@ module.exports = class UserProjectsHelper {
 								}
 							}
 							const userId =
-								userDetails && userDetails.userInformation.id ? userDetails && userDetails.userInformation.id : CONSTANTS.common.SYSTEM
+								userDetails && userDetails.userInformation.id
+									? userDetails && userDetails.userInformation.id
+									: CONSTANTS.common.SYSTEM
 							let newEntityType = await entityTypeQueries.create(
 								_.merge(
 									{
@@ -145,7 +147,10 @@ module.exports = class UserProjectsHelper {
 						)
 					}
 
-					const userId = userDetails && userDetails.userInformation.id ? userDetails.userInformation.id : CONSTANTS.common.SYSTEM
+					const userId =
+						userDetails && userDetails.userInformation.id
+							? userDetails.userInformation.id
+							: CONSTANTS.common.SYSTEM
 					let newEntityType = await entityTypeQueries.create(
 						_.merge(
 							{
@@ -163,8 +168,7 @@ module.exports = class UserProjectsHelper {
 					} else {
 						entityType.status = CONSTANTS.common.FAILURE
 					}
-				} catch (error) {
-						}
+				} catch (error) {}
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_INFORMATION_CREATED,
 					result: entityType,
@@ -198,8 +202,8 @@ module.exports = class UserProjectsHelper {
 
 				resolve({
 					success: true,
-                    message: CONSTANTS.apiResponses.ENTITY_UPDATATED,
-                    result: entityInformation
+					message: CONSTANTS.apiResponses.ENTITY_UPDATATED,
+					result: entityInformation,
 				})
 			} catch (error) {
 				reject(error)
@@ -257,7 +261,9 @@ module.exports = class UserProjectsHelper {
 								}
 							}
 							const userId =
-								userDetails && userDetails.userInformation.id ? userDetails && userDetails.userInformation.id : CONSTANTS.common.SYSTEM
+								userDetails && userDetails.userInformation.id
+									? userDetails && userDetails.userInformation.id
+									: CONSTANTS.common.SYSTEM
 							let updateEntityType = await entityTypeQueries.findOneAndUpdate(
 								{
 									_id: ObjectId(entityType._SYSTEM_ID),

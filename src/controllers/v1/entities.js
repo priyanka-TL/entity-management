@@ -200,7 +200,7 @@ module.exports = class Entities extends Abstract {
 					type: req.query.type,
 					// programId: req.query.programId,
 					//   solutionId: req.query.solutionId,
-					// parentEntityId: req.query.parentEntityId,
+					parentEntityId: req.query.parentEntityId,
 				}
 				let result = await entitiesHelper.add(queryParams, req.body, req.userDetails)
 
@@ -276,7 +276,7 @@ module.exports = class Entities extends Abstract {
 					}
 				}
 
-				resolve(subEntityTypeListData)
+				return resolve(subEntityTypeListData)
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE['internal_server_error'].status,
@@ -295,51 +295,13 @@ module.exports = class Entities extends Abstract {
 	 * @param {String} req.params._id - requested entity type.
 	 * @returns {JSON} - Array of entities.
 	 */
-	listByEntityType(req) {
+	
+	listByEntityType(req, res) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let schemaMetaInformation = entitiesHelper.entitiesSchemaData().SCHEMA_METAINFORMATION
-				let projection = [
-					schemaMetaInformation + '.externalId',
-					schemaMetaInformation + '.name',
-					'registryDetails.locationId',
-				]
+				const result = await entitiesHelper.listEntitiesByType(req)
 
-				let skippingValue = req.pageSize * (req.pageNo - 1)
-				let entityDocuments = await entitiesQueries.entityDocuments(
-					{
-						entityTypeId: ObjectId(req.params._id),
-					},
-					projection,
-					req.pageSize,
-					skippingValue,
-					{
-						[schemaMetaInformation + '.name']: 1,
-					}
-				)
-				if (entityDocuments.length < 1) {
-					throw {
-						status: HTTP_STATUS_CODE.not_found.status,
-						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
-					}
-				}
-				entityDocuments = entityDocuments.map((entityDocument) => {
-					return {
-						externalId: entityDocument.metaInformation.externalId,
-						name: entityDocument.metaInformation.name,
-						locationId:
-							entityDocument.registryDetails && entityDocument.registryDetails.locationId
-								? entityDocument.registryDetails.locationId
-								: '',
-						_id: entityDocument._id,
-					}
-				})
-
-				return resolve({
-					success: true,
-					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
-					result: entityDocuments,
-				})
+				return resolve(result)
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,

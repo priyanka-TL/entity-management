@@ -77,7 +77,6 @@ module.exports = class UserProjectsHelper {
 				return resolve({
 					success: true,
 					message: CONSTANTS.apiResponses.ENTITY_INFORMATION_UPDATE,
-					
 				})
 			} catch (error) {
 				return reject(error)
@@ -88,17 +87,16 @@ module.exports = class UserProjectsHelper {
 	static addSubEntityToParent(parentEntityId, childEntityId, parentEntityProgramId = false) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let childEntity = await entitiesQueries
-					.findOne(
-						{
-							_id: ObjectId(childEntityId),
-						},
-						{
-							entityType: 1,
-							groups: 1,
-							childHierarchyPath: 1,
-						}
-					)
+				let childEntity = await entitiesQueries.findOne(
+					{
+						_id: ObjectId(childEntityId),
+					},
+					{
+						entityType: 1,
+						groups: 1,
+						childHierarchyPath: 1,
+					}
+				)
 
 				if (childEntity.entityType) {
 					let parentEntityQueryObject = {
@@ -167,16 +165,15 @@ module.exports = class UserProjectsHelper {
 							updateParentHierarchy = true
 						}
 					} else {
-						let checkParentEntitiesMappedValue = await entitiesQueries
-							.findOne(
-								{
-									entityType: parentEntity.entityType,
-								},
-								{
-									toBeMappedToParentEntities: 1,
-								}
-							)
-							
+						let checkParentEntitiesMappedValue = await entitiesQueries.findOne(
+							{
+								entityType: parentEntity.entityType,
+							},
+							{
+								toBeMappedToParentEntities: 1,
+							}
+						)
+
 						if (checkParentEntitiesMappedValue.toBeMappedToParentEntities) {
 							updateParentHierarchy = true
 							entityDocuments
@@ -294,16 +291,16 @@ module.exports = class UserProjectsHelper {
 				let entityTypeId = entityDocument[0].entityTypeId
 				let entityType = entityDocument[0].entityType
 				// this.entityMapProcessData = {
-                //     entityTypeMap : {},
-                //     relatedEntities : {},
-                //     entityToUpdate : {}
-                // }
+				//     entityTypeMap : {},
+				//     relatedEntities : {},
+				//     entityToUpdate : {}
+				// }
 				// if (
 				// 	this.entityMapProcessData &&
 				// 	this.entityMapProcessData.relatedEntities &&
 				// 	this.entityMapProcessData.relatedEntities[entityId.toString()]
 				// ) {
-					
+
 				// 	return resolve(this.entityMapProcessData.relatedEntities[entityId.toString()])
 				// }
 
@@ -474,8 +471,7 @@ module.exports = class UserProjectsHelper {
 	static add(queryParams, data, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let entitiesDocument = await entitiesQueries.findOne({ name: queryParams.type }, { _id: 1 })
-
+				let entitiesDocument = await entitiesQueries.findOne({ entityType: queryParams.type }, { _id: 1 })
 				if (!entitiesDocument) {
 					throw CONSTANTS.apiResponses.ENTITY_NOT_FOUND
 				}
@@ -782,9 +778,8 @@ module.exports = class UserProjectsHelper {
 	static bulkUpdate(entityCSVData) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				const entityUploadedData = 
-					await Promise.all(entityCSVData.map(async singleEntity  => {
-						
+				const entityUploadedData = await Promise.all(
+					entityCSVData.map(async (singleEntity) => {
 						singleEntity = UTILS.valueParser(singleEntity)
 						addTagsInEntities(singleEntity)
 
@@ -834,7 +829,7 @@ module.exports = class UserProjectsHelper {
 								{ $set: updateData },
 								{ _id: 1 }
 							)
-						
+
 							if (!updateEntity || !updateEntity._id) {
 								singleEntity['UPDATE_STATUS'] = CONSTANTS.apiResponses.ENTITY_NOT_FOUND
 							} else {
@@ -843,16 +838,16 @@ module.exports = class UserProjectsHelper {
 						} else {
 							singleEntity['UPDATE_STATUS'] = CONSTANTS.apiResponses.NO_INFORMATION_TO_UPDATE
 						}
-					
+
 						return singleEntity
-			})
+					})
 				)
 
 				if (entityUploadedData.findIndex((entity) => entity === undefined) >= 0) {
 					throw CONSTANTS.apiResponses.SOMETHING_WRONG_INSERTED_UPDATED
 				}
 
-			return resolve(entityUploadedData)
+				return resolve(entityUploadedData)
 			} catch (error) {
 				return reject(error)
 			}
@@ -871,19 +866,17 @@ module.exports = class UserProjectsHelper {
 	static update(entityId, bodyData) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let entityInformation = await entitiesQueries.findOneAndUpdate(
-					{ _id: ObjectId(entityId) },
-					bodyData,
-					{ new: true }
-				)
+				let entityInformation = await entitiesQueries.findOneAndUpdate({ _id: ObjectId(entityId) }, bodyData, {
+					new: true,
+				})
 
 				if (!entityInformation) {
 					return reject({ status: 404, message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND })
 				}
 				resolve({
 					success: true,
-                    message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
-                    result: entityInformation
+					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
+					result: entityInformation,
 				})
 				// resolve({ entityInformation, message: CONSTANTS.apiResponses.ENTITYTYPE_UPDATED })
 			} catch (error) {
@@ -904,6 +897,60 @@ module.exports = class UserProjectsHelper {
 		}
 	}
 
+	static listEntitiesByType(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let schemaMetaInformation = this.entitiesSchemaData().SCHEMA_METAINFORMATION
+				let projection = [
+					schemaMetaInformation + '.externalId',
+					schemaMetaInformation + '.name',
+					'registryDetails.locationId',
+				]
+
+				let skippingValue = req.pageSize * (req.pageNo - 1)
+				let entityDocuments = await entitiesQueries.entityDocuments(
+					{
+						entityTypeId: ObjectId(req.params._id),
+					},
+					projection,
+					req.pageSize,
+					skippingValue,
+					{
+						[schemaMetaInformation + '.name']: 1,
+					}
+				)
+				if (entityDocuments.length < 1) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
+				entityDocuments = entityDocuments.map((entityDocument) => {
+					return {
+						externalId: entityDocument.metaInformation.externalId,
+						name: entityDocument.metaInformation.name,
+						locationId:
+							entityDocument.registryDetails && entityDocument.registryDetails.locationId
+								? entityDocument.registryDetails.locationId
+								: '',
+						_id: entityDocument._id,
+					}
+				})
+	
+				resolve({
+					success: true,
+					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
+					result: entityDocuments,
+				});
+			} catch (error) {
+				reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				});
+			}
+		});
+	}
 	
 	/**
 	 * List entities.
@@ -928,7 +975,7 @@ module.exports = class UserProjectsHelper {
 			try {
 				let queryObject = { _id: ObjectId(entityTypeId) }
 				let projectObject = { [`groups.${entityType}`]: 1 }
-				let result = await entitiesQueries.findOne(queryObject,projectObject)
+				let result = await entitiesQueries.findOne(queryObject, projectObject)
 				if (!result) {
 					return resolve({
 						status: HTTP_STATUS_CODE.bad_request.status,

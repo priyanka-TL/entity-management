@@ -1,5 +1,5 @@
 /**
- * name : .js
+ * name : EntityTypes.js
  * author : Priyanka Pradeep
  * created-date : 21-Mar-2024
  * Description : EntityTypes helper for DB interactions.
@@ -29,7 +29,7 @@ module.exports = class EntityTypes {
 				let queryObject = filterData != 'all' ? filterData : {}
 				let projection = {}
 
-                if (fieldsArray !== 'all') {
+				if (fieldsArray !== 'all') {
 					if (typeof fieldsArray === 'object' && !Array.isArray(fieldsArray)) {
 						projection = fieldsArray
 					} else if (Array.isArray(fieldsArray)) {
@@ -38,7 +38,6 @@ module.exports = class EntityTypes {
 						})
 					}
 				}
-
 
 				if (skipFields !== 'none') {
 					skipFields.forEach((field) => {

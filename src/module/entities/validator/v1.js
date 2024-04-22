@@ -14,26 +14,26 @@ module.exports = (req) => {
 		update: function () {
 			req.checkBody('externalId').exists().withMessage('required externalId')
 		},
-        find: function () {
-			req.checkBody('metaInformation.externalId').exists().withMessage('required externalId')
+		find: function () {
+			req.checkBody('query').exists().withMessage('required query')
+			req.checkBody('projection').exists().withMessage('required projection')
 		},
-		listByEntityType : function () {
-            req.checkParams('_id').exists().withMessage("required Entity type");
-        },
-		subEntityListBasedOnRoleAndLocation : function () {
-            req.checkParams('_id').exists().withMessage("required state location id");
-        },
-		details : function () {
-            req.checkParams('_id').exists().withMessage("required state location id");
-
-        },
+		listByEntityType: function () {
+			req.checkParams('_id').exists().withMessage('required Entity type')
+		},
+		subEntityListBasedOnRoleAndLocation: function () {
+			req.checkParams('_id').exists().withMessage('required state location id')
+		},
+		details: function () {
+			req.checkParams('_id').exists().withMessage('required state location id')
+		},
 		list: function () {
-            req.checkQuery('type').exists().withMessage("required type")
-            req.checkParams('_id').exists().withMessage("required entity id")
-        },
+			req.checkQuery('type').exists().withMessage('required type')
+			req.checkParams('_id').exists().withMessage('required entity id')
+		},
 		relatedEntities: function () {
-            req.checkParams('_id').exists().withMessage("required Entity id")
-        },
+			req.checkParams('_id').exists().withMessage('required Entity id')
+		},
 		bulkCreate: function () {
 			if (!req.files || !req.files.entities) {
 				req.checkBody('entities').exists().withMessage('entities file is required')
@@ -49,13 +49,12 @@ module.exports = (req) => {
 				req.checkBody('entityMap').exists().withMessage('entityMap file is required')
 			}
 		},
-        listByLocationIds : function () {
-            req.checkBody("locationIds").exists().withMessage("Location ids is required");
-        },
-        registryMappingUpload: function () {
-            req.checkQuery('entityType').exists().withMessage("required entity type")
-        }
-
+		listByLocationIds: function () {
+			req.checkBody('locationIds').exists().withMessage('Location ids is required')
+		},
+		registryMappingUpload: function () {
+			req.checkQuery('entityType').exists().withMessage('required entity type')
+		},
 	}
 
 	if (entitiesValidator[req.params.method]) {

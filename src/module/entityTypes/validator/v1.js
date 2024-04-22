@@ -19,7 +19,7 @@ module.exports = (req, res) => {
 			}
 		},
 		update: function () {
-			req.checkParams('_id').exists().withMessage('required type')
+			req.checkParams('_id').exists().withMessage('required _id')
 			req.checkBody('name').exists().withMessage('required name')
 		},
 		add: function () {
@@ -31,7 +31,7 @@ module.exports = (req, res) => {
 		},
 
 		find: function () {
-			req.checkBody('query.name').exists().withMessage('required name')
+			req.checkBody('query').exists().withMessage('required name')
 		},
 	}
 

@@ -34,7 +34,7 @@ var removedHeaders = [
 ]
 
 module.exports = async function (req, res, next, token = '') {
-  	removedHeaders.forEach(function (e) {
+	removedHeaders.forEach(function (e) {
 		delete req.headers[e]
 	})
 
@@ -93,8 +93,8 @@ module.exports = async function (req, res, next, token = '') {
 			userName: decodedToken.data.name,
 			// email : decodedToken.data.email, //email is removed from token
 			firstName: decodedToken.data.name,
-			roles : decodedToken.data.roles.map(role => role.title),
-			entityTypes : "state"
+			roles: decodedToken.data.roles.map((role) => role.title),
+			entityTypes: 'state',
 		},
 	}
 	next()

@@ -109,13 +109,13 @@ module.exports = class entities {
 						})
 					}
 				}
-				
+
 				if (skipFields !== 'none' && Array.isArray(skipFields)) {
 					skipFields.forEach((field) => {
 						projection[field] = 0
 					})
 				}
-				
+
 				let document = await database.models.entities.findOne(queryObject, projection).lean()
 				if (!document) {
 					return reject({
@@ -154,14 +154,13 @@ module.exports = class entities {
 					queryObject = findQuery
 				}
 				let projectionObject = {}
-			
 
 				if (fields != 'all') {
 					fields.forEach((element) => {
 						projectionObject[element] = 1
 					})
 				}
-				
+
 				let entitiesDocuments
 
 				if (sortedData !== '') {

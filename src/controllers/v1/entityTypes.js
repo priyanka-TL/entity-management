@@ -103,7 +103,7 @@ module.exports = class EntityTypes extends Abstract {
 		})
 	}
 
-		/**
+	/**
 	 *  create Entity Types.
 	 * @method
 	 * @name bulkCreate
@@ -127,38 +127,32 @@ module.exports = class EntityTypes extends Abstract {
 		})
 	}
 
-
-		 /**
-   * Update entityType information.
-   * @method
-   * @name update
-   * @param {Object} req - requested entityType data.
-   * @param {String} req.query.type - entityType type.
-   * @param {String} req.params._id - entityType id.
-   * @param {Object} req.body - entityType information that need to be updated.       
-   * @returns {JSON} - Updated entityType information.
-   */
+	/**
+	 * Update entityType information.
+	 * @method
+	 * @name update
+	 * @param {Object} req - requested entityType data.
+	 * @param {String} req.query.type - entityType type.
+	 * @param {String} req.params._id - entityType id.
+	 * @param {Object} req.body - entityType information that need to be updated.
+	 * @returns {JSON} - Updated entityType information.
+	 */
 
 	update(req) {
 		return new Promise(async (resolve, reject) => {
-		  try {
-			let result = await entityTypesHelper.update( req.params._id, req.body,req.userDetails.userInformation);
-	
-			return resolve(result);
-	
-		  } catch (error) {
-	
-			return reject({
-			  status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-			  message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-			  errorObject: error
-			})
-	
-		  }
-	
-	
+			try {
+				let result = await entityTypesHelper.update(req.params._id, req.body, req.userDetails.userInformation)
+
+				return resolve(result)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
 		})
-	  }
+	}
 
 	/**
 	 * Bulk create Entity Types.
