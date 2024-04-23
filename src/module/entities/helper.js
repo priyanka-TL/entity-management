@@ -537,6 +537,13 @@ module.exports = class UserProjectsHelper {
 			try {
 				// Fetch entities based on the provided query and projection
 				const result = await entitiesQueries.entityDocuments(bodyQuery, projection)
+
+				if (result.length < 1) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
 				return resolve({
 					success: true,
 					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,

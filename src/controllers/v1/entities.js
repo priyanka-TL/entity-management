@@ -241,7 +241,6 @@ module.exports = class Entities extends Abstract {
             }
         }
     ]
-}
 	 */
 
 	details(req) {
@@ -446,7 +445,8 @@ module.exports = class Entities extends Abstract {
 	 * @param {String} req.params._id - entityId.
 	 * @returns {JSON} - Entities child hierarchy path
 	 * 
-	 *  "result": [
+	 * 
+    "result": [
         {
             "_id": "5f33c3d85f637784791cd830",
             "childHierarchyPath": [
@@ -466,7 +466,7 @@ module.exports = class Entities extends Abstract {
             ]
         }
     ]
-}
+
 	 */
 
 	subEntityListBasedOnRoleAndLocation(req) {
