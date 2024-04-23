@@ -48,12 +48,12 @@ module.exports = class Entities extends Abstract {
 	 * @apiParamExample {json} Response:
 	 * @returns {JSON} - List of all entities.
 	 *  "result": [
-        {
-            "_id": "6613b8142c7d9408449474bf"
-        },
-        {
-            "_id": "6613b8f32c7d9408449474c2"
-        }
+		{
+			"_id": "6613b8142c7d9408449474bf"
+		},
+		{
+			"_id": "6613b8f32c7d9408449474c2"
+		}
 	]
 	 */
 
@@ -82,27 +82,27 @@ module.exports = class Entities extends Abstract {
   * @apiUse successBody
   * @apiUse errorBody
   * @apiParamExample {json} Response:
-      "result": {
-        "relatedEntities": [
-            {
-                "_id": "5f33c3d85f637784791cd830",
-                "entityTypeId": "5f32d8228e0dc8312404056e",
-                "entityType": "state",
-                "metaInformation": {
-                    "externalId": "MH",
-                    "name": "Maharashtra"
-                }
-            },
-            {
-                "_id": "5fbf3f8c3e9df47967eed916",
-                "entityTypeId": "5f32d8228e0dc8312404056e",
-                "entityType": "state",
-                "metaInformation": {
-                    "externalId": "993067ca-8499-4ef5-9325-560d3b3e5de9",
-                    "name": "Himachal Pradesh"
-                }
-            }
-        ]
+	  "result": {
+		"relatedEntities": [
+			{
+				"_id": "5f33c3d85f637784791cd830",
+				"entityTypeId": "5f32d8228e0dc8312404056e",
+				"entityType": "state",
+				"metaInformation": {
+					"externalId": "MH",
+					"name": "Maharashtra"
+				}
+			},
+			{
+				"_id": "5fbf3f8c3e9df47967eed916",
+				"entityTypeId": "5f32d8228e0dc8312404056e",
+				"entityType": "state",
+				"metaInformation": {
+					"externalId": "993067ca-8499-4ef5-9325-560d3b3e5de9",
+					"name": "Himachal Pradesh"
+				}
+			}
+		]
 	**/
 	relatedEntities(req) {
 		return new Promise(async (resolve, reject) => {
@@ -141,13 +141,13 @@ module.exports = class Entities extends Abstract {
    * @returns {JSON} - Message of successfully updated.
    * 
    * {
-    "message": "ENTITY_INFORMATION_UPDATE",
-    "status": 200,
-    "result": {
-        "success": true,
-        "message": "ENTITY_INFORMATION_UPDATE"
-    }
-}
+		"message": "ENTITY_INFORMATION_UPDATE",
+		"status": 200,
+		"result": {
+			"success": true,
+			"message": "ENTITY_INFORMATION_UPDATE"
+		}
+	}
    */
 
 	mappingUpload(req) {
@@ -191,56 +191,56 @@ module.exports = class Entities extends Abstract {
 	 * @returns {JSON} - provide the details.
 	 * 
 	 "result": [
-        {
-            "_id": "5f33c3d85f637784791cd830",
-            "childHierarchyPath": [
-                "district",
-                "beat",
-                "cluster",
-                "school"
-            ],
-            "allowedRoles": [
-                "rahul",
-                "prajwal"
-            ],
-            "deleted": false,
-            "entityTypeId": "5f32d8228e0dc8312404056e",
-            "entityType": "state",
-            "metaInformation": {
-                "externalId": "MH",
-                "name": "Maharashtra",
-                "region": "West",
-                "capital": "Mumbai"
-            },
-            "updatedBy": "124fdade-aaa2-4587-9dcd-3c7cf15c7147",
-            "createdBy": "2b655fd1-201d-4d2a-a1b7-9048a25c0afa",
-            "updatedAt": "2021-01-18T06:51:31.086Z",
-            "createdAt": "2020-08-12T10:26:32.038Z",
-            "__v": 0,
-            "groups": {
-                "district": [
-                    "5f33c56fb451f58478b36996"
-                ],
-                "beat": [
-                    "5f33cb24c1352f84a29f547c",
-                    "5f33cb24c1352f84a29f547d"
-                ],
-                "cluster": [
-                    "5f33cb07ce438a849b4a17f6",
-                    "5f33cb07ce438a849b4a17f7"
-                ],
-                "school": [
-                    "5f33caebb451f58478b36998",
-                    "5f33caebb451f58478b36999",
-                    "5f833e5c87ae180cb64aeff0"
-                ]
-            },
-            "registryDetails": {
-                "locationId": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df",
-                "code": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df"
-            }
-        }
-    ]
+		{
+			"_id": "5f33c3d85f637784791cd830",
+			"childHierarchyPath": [
+				"district",
+				"beat",
+				"cluster",
+				"school"
+			],
+			"allowedRoles": [
+				"rahul",
+				"prajwal"
+			],
+			"deleted": false,
+			"entityTypeId": "5f32d8228e0dc8312404056e",
+			"entityType": "state",
+			"metaInformation": {
+				"externalId": "MH",
+				"name": "Maharashtra",
+				"region": "West",
+				"capital": "Mumbai"
+			},
+			"updatedBy": "124fdade-aaa2-4587-9dcd-3c7cf15c7147",
+			"createdBy": "2b655fd1-201d-4d2a-a1b7-9048a25c0afa",
+			"updatedAt": "2021-01-18T06:51:31.086Z",
+			"createdAt": "2020-08-12T10:26:32.038Z",
+			"__v": 0,
+			"groups": {
+				"district": [
+					"5f33c56fb451f58478b36996"
+				],
+				"beat": [
+					"5f33cb24c1352f84a29f547c",
+					"5f33cb24c1352f84a29f547d"
+				],
+				"cluster": [
+					"5f33cb07ce438a849b4a17f6",
+					"5f33cb07ce438a849b4a17f7"
+				],
+				"school": [
+					"5f33caebb451f58478b36998",
+					"5f33caebb451f58478b36999",
+					"5f833e5c87ae180cb64aeff0"
+				]
+			},
+			"registryDetails": {
+				"locationId": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df",
+				"code": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df"
+			}
+		}
+	]
 	 */
 
 	details(req) {
@@ -279,27 +279,27 @@ module.exports = class Entities extends Abstract {
 	 * @param {Object} req.body - entity information that need to be updated.
 	 * @returns {JSON} - Updated entity information.
 	 * 
-	 *   "result": {
-        "metaInformation": {
-            "externalId": "entity123",
-            "name": "rahul "
-        },
-        "childHierarchyPath": [],
-        "allowedRoles": [
-            "rahul",
-            "prajwal"
-        ],
-        "createdBy": "user123",
-        "updatedBy": "user123",
-        "deleted": false,
-        "_id": "6613ddfa44b91a0d1a58bb32",
-        "entityTypeId": "661384681797bc00de520555",
-        "entityType": "rahul",
-        "updatedAt": "2024-04-22T09:04:12.292Z",
-        "createdAt": "2024-04-08T12:07:22.369Z",
-        "__v": 0
-    }
-}
+	 *  
+	"result": {
+		"metaInformation": {
+		"externalId": "entity123",
+		"name": "rahul"
+		},
+		"childHierarchyPath": [],
+		"allowedRoles": [
+		"rahul",
+		"prajwal"
+		],
+		"createdBy": "user123",
+		"updatedBy": "user123",
+		"deleted": false,
+		"_id": "6613ddfa44b91a0d1a58bb32",
+		"entityTypeId": "661384681797bc00de520555",
+		"entityType": "rahul",
+		"updatedAt": "2024-04-22T09:04:12.292Z",
+		"createdAt": "2024-04-08T12:07:22.369Z",
+		"__v": 0
+	}
 	 */
 
 	update(req) {
@@ -334,23 +334,23 @@ module.exports = class Entities extends Abstract {
 	 * @returns {JSON} - Added entities information.
 	 * 
 	 *   "result": [
-        {
-            "childHierarchyPath": [],
-            "allowedRoles": [],
-            "createdBy": "SYSTEM",
-            "updatedBy": "SYSTEM",
-            "_id": "662627c923a1b004a5cc4d65",
-            "deleted": false,
-            "entityTypeId": "627a13928ce12806f5803f57",
-            "entityType": "block",
-            "metaInformation": {
-                "externalId": "entity123"
-            },
-            "updatedAt": "2024-04-22T09:03:05.921Z",
-            "createdAt": "2024-04-22T09:03:05.921Z",
-            "__v": 0
-        }
-    ]
+		{
+			"childHierarchyPath": [],
+			"allowedRoles": [],
+			"createdBy": "SYSTEM",
+			"updatedBy": "SYSTEM",
+			"_id": "662627c923a1b004a5cc4d65",
+			"deleted": false,
+			"entityTypeId": "627a13928ce12806f5803f57",
+			"entityType": "block",
+			"metaInformation": {
+				"externalId": "entity123"
+			},
+			"updatedAt": "2024-04-22T09:03:05.921Z",
+			"createdAt": "2024-04-22T09:03:05.921Z",
+			"__v": 0
+		}
+	]
 	 */
 
 	add(req) {
@@ -395,22 +395,22 @@ module.exports = class Entities extends Abstract {
 	 * @returns {Object} -
 	 * 
 	 *   "result": [
-        {
-            "_id": "5f33c3d85f637784791cd830",
-            "entityTypeId": "5f32d8228e0dc8312404056e",
-            "entityType": "state",
-            "metaInformation": {
-                "externalId": "MH",
-                "name": "Maharashtra",
-                "region": "West",
-                "capital": "Mumbai"
-            },
-            "registryDetails": {
-                "locationId": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df",
-                "code": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df"
-            }
-        }
-	]
+		{
+			"_id": "5f33c3d85f637784791cd830",
+			"entityTypeId": "5f32d8228e0dc8312404056e",
+			"entityType": "state",
+			"metaInformation": {
+				"externalId": "MH",
+				"name": "Maharashtra",
+				"region": "West",
+				"capital": "Mumbai"
+			},
+			"registryDetails": {
+				"locationId": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df",
+				"code": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df"
+			}
+		}
+    ]
 	 */
 
 	listByLocationIds(req) {
@@ -446,26 +446,26 @@ module.exports = class Entities extends Abstract {
 	 * @returns {JSON} - Entities child hierarchy path
 	 * 
 	 * 
-    "result": [
-        {
-            "_id": "5f33c3d85f637784791cd830",
-            "childHierarchyPath": [
-                "district",
-                "beat",
-                "cluster",
-                "school"
-            ]
-        },
-        {
-            "_id": "627a13928ce12806f5803f57",
-            "childHierarchyPath": [
-                "district",
-                "beat",
-                "cluster",
-                "school"
-            ]
-        }
-    ]
+	"result": [
+		{
+			"_id": "5f33c3d85f637784791cd830",
+			"childHierarchyPath": [
+				"district",
+				"beat",
+				"cluster",
+				"school"
+			]
+		},
+		{
+			"_id": "627a13928ce12806f5803f57",
+			"childHierarchyPath": [
+				"district",
+				"beat",
+				"cluster",
+				"school"
+			]
+		}
+	]
 
 	 */
 
@@ -509,32 +509,32 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-    * @api {get} /entity/api/v1/entities/list all entities based on EntityType
-    * @apiVersion 1.0.0
-    * @apiName listByEntityType
-    * @apiGroup Entities
-    * @apiHeader {String} X-authenticated-user-token Authenticity token
-    * @apiSampleRequest /entity/api/v1/entities/listByEntityType
-    * @apiUse successBody
-    * @apiUse errorBody
-    * @param {Object} req - requested data.
-    * @param {String} req.params._id - requested entity type.
-    * @returns {JSON} - Array of entities.
+	* @api {get} /entity/api/v1/entities/list all entities based on EntityType
+	* @apiVersion 1.0.0
+	* @apiName listByEntityType
+	* @apiGroup Entities
+	* @apiHeader {String} X-authenticated-user-token Authenticity token
+	* @apiSampleRequest /entity/api/v1/entities/listByEntityType
+	* @apiUse successBody
+	* @apiUse errorBody
+	* @param {Object} req - requested data.
+	* @param {String} req.params._id - requested entity type.
+	* @returns {JSON} - Array of entities.
 
- "result": [
-        {
-            "externalId": "PBS",
-            "name": "Punjab",
-            "locationId": "",
-            "_id": "6613b8142c7d9408449474bf"
-        },
-        {
-            "externalId": "PBS",
-            "name": "Punjab",
-            "locationId": "",
-            "_id": "6613b8f32c7d9408449474c2"
-        },
-	]
+	"result": [
+			{
+				"externalId": "PBS",
+				"name": "Punjab",
+				"locationId": "",
+				"_id": "6613b8142c7d9408449474bf"
+			},
+			{
+				"externalId": "PBS",
+				"name": "Punjab",
+				"locationId": "",
+				"_id": "6613b8f32c7d9408449474c2"
+			},
+		]
 */
 
 	listByEntityType(req, res) {
@@ -555,31 +555,31 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-    * @api {get} /entity/api/v1/entities/list List all entities
-    * @apiVersion 1.0.0
-    * @apiName Entities list
-    * @apiGroup Entities
-    * @apiHeader {String} X-authenticated-user-token Authenticity token
-    * @apiSampleRequest /entity/api/v1/entities/list
-    * @apiUse successBody
-    * @apiUse errorBody
-    * @param {String} req.query.type - type of entity requested.
-    * @param {String} req.params._id - requested entity id.
-    * @param {Number} req.pageSize - total size of the page.
-    * @param {Number} req.pageNo - page number.
-    * @param {string} req.query.schoolTypes - comma seperated school types.
-    * @param {string} req.query.administrationTypes - comma seperated administration types.
-    * @apiParamExample {json} Response:
-    * "result": [
-  {
-    "_id": "5ce23d633c330302e720e661",
-    "name": "teacher"
-  },
-  {
-    "_id": "5ce23d633c330302e720e663",
-    "name": "schoolLeader"
-  }
-  ]
+	* @api {get} /entity/api/v1/entities/list List all entities
+	* @apiVersion 1.0.0
+	* @apiName Entities list
+	* @apiGroup Entities
+	* @apiHeader {String} X-authenticated-user-token Authenticity token
+	* @apiSampleRequest /entity/api/v1/entities/list
+	* @apiUse successBody
+	* @apiUse errorBody
+	* @param {String} req.query.type - type of entity requested.
+	* @param {String} req.params._id - requested entity id.
+	* @param {Number} req.pageSize - total size of the page.
+	* @param {Number} req.pageNo - page number.
+	* @param {string} req.query.schoolTypes - comma seperated school types.
+	* @param {string} req.query.administrationTypes - comma seperated administration types.
+	* @apiParamExample {json} Response:
+	* "result": [
+	{
+		"_id": "5ce23d633c330302e720e661",
+		"name": "teacher"
+	},
+	{
+		"_id": "5ce23d633c330302e720e663",
+		"name": "schoolLeader"
+	}
+	]
 */
 
 	list(req) {

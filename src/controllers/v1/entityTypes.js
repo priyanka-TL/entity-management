@@ -47,15 +47,15 @@ module.exports = class EntityTypes extends Abstract {
     * @apiUse errorBody
     * @returns {JSON} - List of all entity types.
     * "result": [
-  {
-    "_id": "5ce23d633c330302e720e661",
-    "name": "teacher"
-  },
-  {
-    "_id": "5ce23d633c330302e720e663",
-    "name": "schoolLeader"
-  }
-  ]
+	{
+		"_id": "5ce23d633c330302e720e661",
+		"name": "teacher"
+	},
+	{
+		"_id": "5ce23d633c330302e720e663",
+		"name": "schoolLeader"
+	}
+	]
 */
 	async list() {
 		return new Promise(async (resolve, reject) => {
@@ -138,7 +138,6 @@ module.exports = class EntityTypes extends Abstract {
             "collage"
         ]
     }
-}
 	 */
 
 	async create(req) {

@@ -243,7 +243,6 @@ module.exports = class UserProjectsHelper {
 						updateParentHierarchy = true
 					}
 				}
-
 				if (updateParentHierarchy) {
 					let relatedEntities = await this.relatedEntities(
 						parentEntity._id,
@@ -251,12 +250,10 @@ module.exports = class UserProjectsHelper {
 						parentEntity.entityType,
 						['_id']
 					)
-
 					let childHierarchyPathToUpdate = [parentEntity.entityType]
 					if (parentEntity.childHierarchyPath && parentEntity.childHierarchyPath.length > 0) {
 						childHierarchyPathToUpdate = childHierarchyPathToUpdate.concat(parentEntity.childHierarchyPath)
 					}
-
 					// Update related entities with childEntity's association
 					if (relatedEntities.length > 0) {
 						if (this.entityMapProcessData && this.entityMapProcessData.entityToUpdate) {
