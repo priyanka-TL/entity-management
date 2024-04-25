@@ -6,33 +6,32 @@
  */
 
 module.exports = {
-    name: "entities",
-    schema: {
-        entityTypeId: "ObjectId",
-        entityType: {
-            type: String,
-            index: true
-        },
-        groups: Object,
-        metaInformation: {
-            externalId: { type: String, index: true },
-            name: { type: String, index: true },
-        },
-        childHierarchyPath: Array,
-        userId: {
-            type: String,
-            index: true
-        },
-        allowedRoles: Array,
-        createdBy: {
-            type: String,
-            default: "SYSTEM",
-            index: true
-        },
-        updatedBy: {
-            type: String,
-            default: "SYSTEM"
-        }
-    },
+	name: 'entities',
+	schema: {
+		entityTypeId: 'ObjectId',
+		entityType: {
+			type: String,
+			index: true,
+		},
+		groups: Object,
+		metaInformation: {
+			externalId: { type: String, index: true, unique: true },
+			name: { type: String, index: true },
+		},
+		childHierarchyPath: Array,
+		userId: {
+			type: String,
+			index: true,
+		},
+		allowedRoles: Array,
+		createdBy: {
+			type: String,
+			default: 'SYSTEM',
+			index: true,
+		},
+		updatedBy: {
+			type: String,
+			default: 'SYSTEM',
+		},
+	},
 }
-

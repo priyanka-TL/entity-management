@@ -18,7 +18,6 @@ module.exports = function (app) {
   app.use(applicationBaseUrl, pagination)
 
   var router = async function (req, res, next) {
-
     if (!req.params.version) {
       next()
     } else if (!controllers[req.params.version]) {
