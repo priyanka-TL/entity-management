@@ -7,7 +7,6 @@
 
 // dependencies
 const jwt = require('jsonwebtoken')
-const EntityTypes = require('../../databaseQueries/entityTypes')
 
 var respUtil = function (resp) {
 	return {
