@@ -144,7 +144,7 @@ module.exports = class EntityTypes extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call 'entityTypesHelper.create' to create a new entity type
-				let result = await entityTypesHelper.create(req.body, req.userDetails.userInformation)
+				let result = await entityTypesHelper.create(req.body, req.userDetails)
 				return resolve(result)
 			} catch (error) {
 				return reject({
