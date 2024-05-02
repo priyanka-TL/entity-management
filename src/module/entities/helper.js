@@ -7,15 +7,9 @@
 
 // Dependencies
 const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
-// const elasticSearch = require(ROOT_PATH + "/generics/helpers/elasticSearch");
-// const userRolesHelper = require(MODULES_BASE_PATH + "/userRoles/helper");
-// const userProfileService = require("../../generics/");
 const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
 const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
-// const formService = require(PROJECT_ROOT_DIRECTORY + '/generics/services/form')
-// const entitiesHelper = require(MODULES_BASE_PATH + "/entities/helper")
 const _ = require('lodash')
-// const programUsersQueries = require(DB_QUERY_BASE_PATH + "/programUsers")
 
 /**
  * UserProjectsHelper
@@ -566,8 +560,8 @@ module.exports = class UserProjectsHelper {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Find the entities document based on the entityType in queryParams
-				let entitiesDocument = await entityTypeQueries.findOne({ name: queryParams.type }, { _id: 1 })
-				if (!entitiesDocument) {
+				let entityTypeDocument = await entityTypeQueries.findOne({ name: queryParams.type }, { _id: 1 })
+				if (!entityTypeDocument) {
 					throw CONSTANTS.apiResponses.ENTITY_NOT_FOUND
 				}
 				let entityDocuments = []
@@ -597,7 +591,7 @@ module.exports = class UserProjectsHelper {
 
 					// Construct the entity document to be created
 					let entityDoc = {
-						entityTypeId: entitiesDocument._id,
+						entityTypeId: entityTypeDocument._id,
 						entityType: queryParams.type,
 						registryDetails: registryDetails,
 						groups: {},
@@ -767,14 +761,13 @@ module.exports = class UserProjectsHelper {
 				// }
 
 				// Find the entity type document based on the provided entityType
-				let entitiesDocument = await entityTypeQueries.findOne(
-					// let entityTypeDocument = await database.models.entityTypes.findOne(
+				let entityTypeDocument = await entityTypeQueries.findOne(
 					{
 						name: entityType,
 					},
 					{ _id: 1 }
 				)
-				if (!entitiesDocument) {
+				if (!entityTypeDocument) {
 					throw CONSTANTS.apiResponses.INVALID_ENTITY_TYPE
 				}
 
@@ -785,7 +778,7 @@ module.exports = class UserProjectsHelper {
 						addTagsInEntities(singleEntity)
 						const userId = userDetails && userDetails.id ? userDetails.id : CONSTANTS.common.SYSTEM
 						let entityCreation = {
-							entityTypeId: entitiesDocument._id,
+							entityTypeId: entityTypeDocument._id,
 							entityType: entityType,
 							registryDetails: {},
 							groups: {},
@@ -842,7 +835,6 @@ module.exports = class UserProjectsHelper {
 						return singleEntity
 					})
 				)
-
 				if (entityUploadedData.findIndex((entity) => entity === undefined) >= 0) {
 					throw CONSTANTS.apiResponses.SOMETHING_WRONG_INSERTED_UPDATED
 				}
