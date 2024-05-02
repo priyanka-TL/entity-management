@@ -133,59 +133,56 @@ module.exports = class UserProjectsHelper {
 			try {
 				let entityType = body
 
-				// Process incoming entity type data
-				try {
-					if (entityType.profileFields) {
-						entityType.profileFields = entityType.profileFields.split(',') || []
-					}
+				if (entityType.profileFields) {
+					entityType.profileFields = entityType.profileFields.split(',') || []
+				}
 
-					// Ensure uniqueness of immediate children entity types
-					if (
-						entityType.immediateChildrenEntityType != '' &&
-						entityType.immediateChildrenEntityType != undefined
-					) {
-						let entityTypeImmediateChildren = entityType.immediateChildrenEntityType.split(',')
-						entityTypeImmediateChildren = _.uniq(entityTypeImmediateChildren)
+				// Ensure uniqueness of immediate children entity types
+				if (
+					entityType.immediateChildrenEntityType != '' &&
+					entityType.immediateChildrenEntityType != undefined
+				) {
+					let entityTypeImmediateChildren = entityType.immediateChildrenEntityType.split(',')
+					entityTypeImmediateChildren = _.uniq(entityTypeImmediateChildren)
 
-						entityType.immediateChildrenEntityType = new Array()
-						entityTypeImmediateChildren.forEach((immediateChildren) => {
-							entityType.immediateChildrenEntityType.push(immediateChildren)
-						})
-					}
+					entityType.immediateChildrenEntityType = new Array()
+					entityTypeImmediateChildren.forEach((immediateChildren) => {
+						entityType.immediateChildrenEntityType.push(immediateChildren)
+					})
+				}
 
-					// Convert string flags to boolean
-					if (entityType.isObservable) {
-						entityType.isObservable = UTILS.convertStringToBoolean(entityType.isObservable)
-					}
-					if (entityType.toBeMappedToParentEntities) {
-						entityType.toBeMappedToParentEntities = UTILS.convertStringToBoolean(
-							entityType.toBeMappedToParentEntities
-						)
-					}
-
-					// Determine userId based on userDetails or default to SYSTEM
-					const userId =
-						userDetails && userDetails.userInformation.id
-							? userDetails.userInformation.id
-							: CONSTANTS.common.SYSTEM
-					let newEntityType = await entityTypeQueries.create(
-						_.merge(
-							{
-								isDeleted: false,
-								updatedBy: userId,
-								createdBy: userId,
-							},
-							entityType
-						)
+				// Convert string flags to boolean
+				if (entityType.isObservable) {
+					entityType.isObservable = UTILS.convertStringToBoolean(entityType.isObservable)
+				}
+				if (entityType.toBeMappedToParentEntities) {
+					entityType.toBeMappedToParentEntities = UTILS.convertStringToBoolean(
+						entityType.toBeMappedToParentEntities
 					)
-					delete entityType.registryDetails
+				}
 
-					if (newEntityType._id) {
-						entityType.status = CONSTANTS.common.SUCCESS
-					} else {
-						entityType.status = CONSTANTS.common.FAILURE
-					}
-				} catch (error) {}
+				// Determine userId based on userDetails or default to SYSTEM
+				const userId =
+					userDetails && userDetails.userInformation.id
+						? userDetails.userInformation.id
+						: CONSTANTS.common.SYSTEM
+				let newEntityType = await entityTypeQueries.create(
+					_.merge(
+						{
+							isDeleted: false,
+							updatedBy: userId,
+							createdBy: userId,
+						},
+						entityType
+					)
+				)
+				delete entityType.registryDetails
+
+				if (newEntityType._id) {
+					entityType.status = CONSTANTS.common.SUCCESS
+				} else {
+					entityType.status = CONSTANTS.common.FAILURE
+				}
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_INFORMATION_CREATED,
 					result: entityType,
