@@ -82,6 +82,63 @@ module.exports = class EntityTypes {
 		})
 	}
 
+
+	/**
+	 * find entityType documents.
+	 * @method
+	 * @name findOne
+	 * @param {Object} [filterData] - project Data.
+	 * @param {Object} [fieldsArray] - project Data.
+	 * @returns {Array} - entityType data.
+	 */
+
+	static findOne(filterData = 'all', fieldsArray = 'all', skipFields = 'none') {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Determine the query object based on the provided filterData
+				let queryObject = filterData !== 'all' ? filterData : {}
+				let projection = {}
+
+				// Configure projection based on provided fieldsArray
+				if (fieldsArray !== 'all') {
+					if (typeof fieldsArray === 'object' && !Array.isArray(fieldsArray)) {
+						projection = fieldsArray
+					} else if (Array.isArray(fieldsArray)) {
+						fieldsArray.forEach((field) => {
+							projection[field] = 1
+						})
+					}
+				}
+
+				// Exclude specified fields from projection if skipFields is provided as an array
+				if (skipFields !== 'none' && Array.isArray(skipFields)) {
+					skipFields.forEach((field) => {
+						projection[field] = 0
+					})
+				}
+
+				// Find one document matching the queryObject with specified projection and return as plain JavaScript object
+				let document = await database.models.entityTypes.findOne(queryObject, projection).lean()
+				if (!document) {
+					return reject({
+						status: 404,
+						message: CONSTANTS.apiResponses.DOCUMENT_NOT_FOUND,
+					})
+				}
+
+				return resolve(document)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+
+
 	/**
 	 * Update entityTypes documents.
 	 * @method
