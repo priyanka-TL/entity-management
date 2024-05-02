@@ -11,6 +11,7 @@ const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
 // const userRolesHelper = require(MODULES_BASE_PATH + "/userRoles/helper");
 // const userProfileService = require("../../generics/");
 const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
+const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
 // const formService = require(PROJECT_ROOT_DIRECTORY + '/generics/services/form')
 // const entitiesHelper = require(MODULES_BASE_PATH + "/entities/helper")
 const _ = require('lodash')
@@ -205,9 +206,9 @@ module.exports = class UserProjectsHelper {
 						}
 					} else {
 						// If entityTypeMap is not defined or does not exist for the parent entity's entityType, check the database
-						let checkParentEntitiesMappedValue = await entitiesQueries.findOne(
+						let checkParentEntitiesMappedValue = await entityTypeQueries.findOne(
 							{
-								entityType: parentEntity.entityType,
+								name: parentEntity.entityType,
 							},
 							{
 								toBeMappedToParentEntities: 1,
@@ -217,7 +218,6 @@ module.exports = class UserProjectsHelper {
 						// Update entityTypeMap with the updateParentHierarchy status
 						if (checkParentEntitiesMappedValue.toBeMappedToParentEntities) {
 							updateParentHierarchy = true
-							entityDocuments
 						}
 						if (this.entityMapProcessData.entityTypeMap) {
 							this.entityMapProcessData.entityTypeMap[parentEntity.entityType] = {
@@ -228,7 +228,7 @@ module.exports = class UserProjectsHelper {
 						}
 					}
 				} else {
-					let checkParentEntitiesMappedValue = await entitiesQueries
+					let checkParentEntitiesMappedValue = await entityTypeQueries
 						.findOne(
 							{
 								name: parentEntity.entityType,
@@ -428,7 +428,7 @@ module.exports = class UserProjectsHelper {
 
 				if (!entityDocuments.length > 0) {
 					return resolve({
-						message: constants.apiResponses.ENTITY_NOT_FOUND,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
 						result: [],
 					})
 				}
@@ -566,7 +566,7 @@ module.exports = class UserProjectsHelper {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Find the entities document based on the entityType in queryParams
-				let entitiesDocument = await entitiesQueries.findOne({ entityType: queryParams.type }, { _id: 1 })
+				let entitiesDocument = await entityTypeQueries.findOne({ name: queryParams.type }, { _id: 1 })
 				if (!entitiesDocument) {
 					throw CONSTANTS.apiResponses.ENTITY_NOT_FOUND
 				}
@@ -767,10 +767,10 @@ module.exports = class UserProjectsHelper {
 				// }
 
 				// Find the entity type document based on the provided entityType
-				let entitiesDocument = await entitiesQueries.findOne(
+				let entitiesDocument = await entityTypeQueries.findOne(
 					// let entityTypeDocument = await database.models.entityTypes.findOne(
 					{
-						entityType: entityType,
+						name: entityType,
 					},
 					{ _id: 1 }
 				)
