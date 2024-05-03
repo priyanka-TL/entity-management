@@ -581,56 +581,15 @@ module.exports = class UserProjectsHelper {
 
 					// Prepare registryDetails based on singleEntity data
 					let registryDetails = {}
-					if (singleEntity.registryDetails.locationId) {
-						registryDetails['locationId'] = singleEntity.registryDetails.locationId
-						if (singleEntity.registryDetails.code) {
-							registryDetails['code'] = singleEntity.registryDetails.code
+					if (singleEntity.externalId) {
+						registryDetails['locationId'] = singleEntity.externalId
+						if (singleEntity.externalId) {
+							registryDetails['code'] = singleEntity.externalId
 						}
 
 						registryDetails['lastUpdatedAt'] = new Date()
 					}
-					let groups = {}
-					if (singleEntity.groups) {
-						groups = {
-							district: [],
-							beat: [],
-							cluster: [],
-							school: [],
-							zone: [],
-							Village: [],
-							
-						}
-
-						// Update district if available
-						if (singleEntity.groups.district && Array.isArray(singleEntity.groups.district)) {
-							groups.district = singleEntity.groups.district.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
-						}
-
-						// Update zone if available
-						if (singleEntity.groups.zone && Array.isArray(singleEntity.groups.zone)) {
-								groups.zone = singleEntity.groups.zone.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
-						}
-		
-						// Update Village if available
-						if (singleEntity.groups.Village && Array.isArray(singleEntity.groups.Village)) {
-								groups.Village = singleEntity.groups.Village.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
-						}
-
-						// Update beat if available
-						if (singleEntity.groups.beat && Array.isArray(singleEntity.groups.beat)) {
-							groups.beat = singleEntity.groups.beat.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
-						}
-
-						// Update cluster if available
-						if (singleEntity.groups.cluster && Array.isArray(singleEntity.groups.cluster)) {
-							groups.cluster = singleEntity.groups.cluster.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
-						}
-
-						// Update school if available
-						if (singleEntity.groups.school && Array.isArray(singleEntity.groups.school)) {
-							groups.school = singleEntity.groups.school.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
-						}
-					}
+					
 					let childHierarchyPath = [];
 
 					// Update childHierarchyPath if it exists and is an array
@@ -644,7 +603,7 @@ module.exports = class UserProjectsHelper {
 						childHierarchyPath: childHierarchyPath,
 						entityType: queryParams.type,
 						registryDetails: registryDetails,
-						groups: groups,
+						groups: {},
 						metaInformation: _.omit(singleEntity, ['locationId', 'code']),
 						updatedBy: userDetails.userId,
 						createdBy: userDetails.userId,
