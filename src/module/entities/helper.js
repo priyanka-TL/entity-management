@@ -421,10 +421,10 @@ module.exports = class UserProjectsHelper {
 				const entityDocuments = await entitiesQueries.entityDocuments(filterQuery, ['childHierarchyPath'])
 
 				if (!entityDocuments.length > 0) {
-					return resolve({
+					throw {
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
 						result: [],
-					})
+					}
 				}
 
 				let result = []
@@ -497,7 +497,7 @@ module.exports = class UserProjectsHelper {
 				])
 				if (!entities.length > 0) {
 					throw {
-						message: CONSTANTS.apiResponses.ENTITIES_FETCHED,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
 					}
 				}
 
@@ -509,6 +509,7 @@ module.exports = class UserProjectsHelper {
 			} catch (error) {
 				return resolve({
 					success: false,
+					status: 400,
 					message: error.message,
 				})
 			}
@@ -580,18 +581,21 @@ module.exports = class UserProjectsHelper {
 
 					// Prepare registryDetails based on singleEntity data
 					let registryDetails = {}
-					if (singleEntity.locationId) {
-						registryDetails['locationId'] = singleEntity.locationId
-						if (singleEntity.code) {
-							registryDetails['code'] = singleEntity.code
-						}
+					registryDetails['locationId'] = singleEntity.externalId
+					registryDetails['code'] = singleEntity.externalId
+					registryDetails['lastUpdatedAt'] = new Date()
+					
+					let childHierarchyPath = [];
 
-						registryDetails['lastUpdatedAt'] = new Date()
+					// Update childHierarchyPath if it exists and is an array
+					if (Array.isArray(singleEntity.childHierarchyPath)) {
+						childHierarchyPath = singleEntity.childHierarchyPath.map(String);
 					}
 
 					// Construct the entity document to be created
 					let entityDoc = {
 						entityTypeId: entityTypeDocument._id,
+						childHierarchyPath: childHierarchyPath,
 						entityType: queryParams.type,
 						registryDetails: registryDetails,
 						groups: {},
