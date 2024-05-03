@@ -421,10 +421,10 @@ module.exports = class UserProjectsHelper {
 				const entityDocuments = await entitiesQueries.entityDocuments(filterQuery, ['childHierarchyPath'])
 
 				if (!entityDocuments.length > 0) {
-					return resolve({
+					throw {
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
 						result: [],
-					})
+					}
 				}
 
 				let result = []
@@ -497,7 +497,7 @@ module.exports = class UserProjectsHelper {
 				])
 				if (!entities.length > 0) {
 					throw {
-						message: CONSTANTS.apiResponses.ENTITIES_FETCHED,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
 					}
 				}
 
@@ -509,6 +509,7 @@ module.exports = class UserProjectsHelper {
 			} catch (error) {
 				return resolve({
 					success: false,
+					status: 400,
 					message: error.message,
 				})
 			}
@@ -580,21 +581,70 @@ module.exports = class UserProjectsHelper {
 
 					// Prepare registryDetails based on singleEntity data
 					let registryDetails = {}
-					if (singleEntity.locationId) {
-						registryDetails['locationId'] = singleEntity.locationId
-						if (singleEntity.code) {
-							registryDetails['code'] = singleEntity.code
+					if (singleEntity.registryDetails.locationId) {
+						registryDetails['locationId'] = singleEntity.registryDetails.locationId
+						if (singleEntity.registryDetails.code) {
+							registryDetails['code'] = singleEntity.registryDetails.code
 						}
 
 						registryDetails['lastUpdatedAt'] = new Date()
+					}
+					let groups = {}
+					if (singleEntity.groups) {
+						groups = {
+							district: [],
+							beat: [],
+							cluster: [],
+							school: [],
+							zone: [],
+							Village: [],
+							
+						}
+
+						// Update district if available
+						if (singleEntity.groups.district && Array.isArray(singleEntity.groups.district)) {
+							groups.district = singleEntity.groups.district.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
+						}
+
+						// Update zone if available
+						if (singleEntity.groups.zone && Array.isArray(singleEntity.groups.zone)) {
+								groups.zone = singleEntity.groups.zone.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
+						}
+		
+						// Update Village if available
+						if (singleEntity.groups.Village && Array.isArray(singleEntity.groups.Village)) {
+								groups.Village = singleEntity.groups.Village.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
+						}
+
+						// Update beat if available
+						if (singleEntity.groups.beat && Array.isArray(singleEntity.groups.beat)) {
+							groups.beat = singleEntity.groups.beat.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
+						}
+
+						// Update cluster if available
+						if (singleEntity.groups.cluster && Array.isArray(singleEntity.groups.cluster)) {
+							groups.cluster = singleEntity.groups.cluster.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
+						}
+
+						// Update school if available
+						if (singleEntity.groups.school && Array.isArray(singleEntity.groups.school)) {
+							groups.school = singleEntity.groups.school.map((id) => id.toString()) // Assuming MongoDB ObjectIds are converted to strings
+						}
+					}
+					let childHierarchyPath = [];
+
+					// Update childHierarchyPath if it exists and is an array
+					if (Array.isArray(singleEntity.childHierarchyPath)) {
+						childHierarchyPath = singleEntity.childHierarchyPath.map(String);
 					}
 
 					// Construct the entity document to be created
 					let entityDoc = {
 						entityTypeId: entityTypeDocument._id,
+						childHierarchyPath: childHierarchyPath,
 						entityType: queryParams.type,
 						registryDetails: registryDetails,
-						groups: {},
+						groups: groups,
 						metaInformation: _.omit(singleEntity, ['locationId', 'code']),
 						updatedBy: userDetails.userId,
 						createdBy: userDetails.userId,
