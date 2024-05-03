@@ -10,6 +10,7 @@ module.exports = (req) => {
 		add: function () {
 			req.checkQuery('type').exists().withMessage('required type')
 			req.checkBody('entityTypeId').exists().withMessage('required entityTypeId ')
+			req.checkBody('externalId').exists().withMessage('required externalId ')
 		},
 		update: function () {
 			req.checkBody('externalId').exists().withMessage('required externalId')
