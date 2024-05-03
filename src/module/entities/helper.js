@@ -581,10 +581,9 @@ module.exports = class UserProjectsHelper {
 
 					// Prepare registryDetails based on singleEntity data
 					let registryDetails = {}
-				
-						registryDetails['locationId'] = singleEntity.externalId
-						registryDetails['code'] = singleEntity.externalId
-						registryDetails['lastUpdatedAt'] = new Date()
+					registryDetails['locationId'] = singleEntity.externalId
+					registryDetails['code'] = singleEntity.externalId
+					registryDetails['lastUpdatedAt'] = new Date()
 					
 					let childHierarchyPath = [];
 
