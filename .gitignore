@@ -69,3 +69,12 @@ config/credentials/*
 *.DS_Store
 
 package-lock.json
+
+src/public/reports/*
+
+gcp.json
+
+gcp1.json
+
+dev-ops/report
+
