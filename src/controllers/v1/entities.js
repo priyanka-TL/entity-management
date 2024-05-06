@@ -38,11 +38,19 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * Find all the entities based on the projection.
-	 * @api {get} /assessment/api/v1/entities/relatedEntities/find all the API based on projection
+	 * @api {POST} /v1/entities/find all the API based on projection
 	 * @apiVersion 1.0.0
 	 * @apiName find
 	 * @apiGroup Entities
-	 * @apiSampleRequest /assessment/api/v1/entities/find/5c0bbab881bdbe330655da7f
+	 * @apiSampleRequest {
+		"query" : {
+			"metaInformation.externalId" : "PBS"
+		},
+
+		"projection": [
+			"_id"
+		]
+		}
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:
@@ -74,11 +82,11 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-  * @api {get} /assessment/api/v1/entities/relatedEntities/:entityId Get Related Entities
+  * @api {get} v1/entities/relatedEntities/:entityId Get Related Entities
   * @apiVersion 1.0.0
   * @apiName Get Related Entities
   * @apiGroup Entities
-  * @apiSampleRequest /assessment/api/v1/entities/relatedEntities/5c0bbab881bdbe330655da7f
+  * @apiSampleRequest v1/entities/relatedEntities/5c0bbab881bdbe330655da7f
   * @apiUse successBody
   * @apiUse errorBody
   * @apiParamExample {json} Response:
@@ -130,7 +138,7 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-	  * @api {post} /assessment/api/v1/entities/mappingUpload
+	  * @api {post} v1/entities/mappingUpload
 	  * @apiVersion 1.0.0
 	  * @apiName mappingUpload
 	  * @apiGroup Entities
@@ -180,12 +188,12 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * details of the entities.
-	  * @api {get} /entity/api/v1/entities/provide the details 
+	  * @api {get} v1/entities/details provide the details 
 	 * @apiVersion 1.0.0
 	 * @apiName details
 	 * @apiGroup Entities
 	 * @apiHeader {String} X-authenticated-user-token Authenticity token
-	 * @apiSampleRequest /entity/api/v1/entities/details
+	 * @apiSampleRequest v1/entities/details/663339bc0cb19f01c459853b
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @returns {JSON} - provide the details.
@@ -265,12 +273,12 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * Update entity information.
-	 * @api {get} /entity/api/v1/entities/update single entities
+	 * @api {POST} /v1/entities/update single entities
 	 * @apiVersion 1.0.0
 	 * @apiName update
 	 * @apiGroup Entities
 	 * @apiHeader {String} X-authenticated-user-token Authenticity token
-	 * @apiSampleRequest /entity/api/v1/entities/update
+	 * @apiSampleRequest /v1/entities/update/663364443c990eaa179e289e
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {Object} req - requested entity data.
@@ -321,7 +329,7 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * Add entities.
-	 * @api {get} /entity/api/v1/entities/create single entities
+	 * @api {POST} /entity/api/v1/entities/create single entities
 	 * @apiVersion 1.0.0
 	 * @apiName add
 	 * @apiGroup Entities
@@ -382,12 +390,12 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * List of entities by location ids.
-	 * @api {get} /entity/api/v1/entities/list List all entities based locationIds
+	 * @api {get} v1/entities/list List all entities based locationIds
 	 * @apiVersion 1.0.0
 	 * @apiName listByLocationIds
 	 * @apiGroup Entities
 	 * @apiHeader {String} X-authenticated-user-token Authenticity token
-	 * @apiSampleRequest /entity/api/v1/entities/listByLocationIds
+	 * @apiSampleRequest v1/entities/listByLocationIds
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {Object} req - requested data.
@@ -434,12 +442,12 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * Entities child hierarchy path
-	 * @api {get} /entity/api/v1/entities/list List all entities based on Location and Role
+	 * @api {get} v1/entities/subEntityListBasedOnRoleAndLocation List all entities based on Location and Role
 	 * @apiVersion 1.0.0
 	 * @apiName subEntityListBasedOnRoleAndLocation
 	 * @apiGroup Entities
 	 * @apiHeader {String} X-authenticated-user-token Authenticity token
-	 * @apiSampleRequest /entity/api/v1/entities/subEntityListBasedOnRoleAndLocation
+	 * @apiSampleRequest v1/entities/subEntityListBasedOnRoleAndLocation
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {String} req.params._id - entityId.
@@ -509,12 +517,12 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-	* @api {get} /entity/api/v1/entities/list all entities based on EntityType
+	* @api {get} v1/entities/listByEntityType all entities based on EntityType
 	* @apiVersion 1.0.0
 	* @apiName listByEntityType
 	* @apiGroup Entities
 	* @apiHeader {String} X-authenticated-user-token Authenticity token
-	* @apiSampleRequest /entity/api/v1/entities/listByEntityType
+	* @apiSampleRequest v1/entities/listByEntityType
 	* @apiUse successBody
 	* @apiUse errorBody
 	* @param {Object} req - requested data.
@@ -555,12 +563,12 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-	* @api {get} /entity/api/v1/entities/list List all entities
+	* @api {get} v1/entities/list List all entities
 	* @apiVersion 1.0.0
 	* @apiName Entities list
 	* @apiGroup Entities
 	* @apiHeader {String} X-authenticated-user-token Authenticity token
-	* @apiSampleRequest /entity/api/v1/entities/list
+	* @apiSampleRequest /v1/entities/list
 	* @apiUse successBody
 	* @apiUse errorBody
 	* @param {String} req.query.type - type of entity requested.
@@ -606,13 +614,152 @@ module.exports = class Entities extends Abstract {
 		})
 	}
 
+
+
+
+
+    /**
+     * @api {GET} v1/entities/subEntityList/663339bc0cb19f01c459853b?type=school&search=&page=1&limit=100
+     * Get sub entity list for the given entity. 
+     * @apiVersion 1.0.0
+     * @apiGroup Entities
+     * @apiHeader {String} X-authenticated-user-token Authenticity token
+     * @apiSampleRequest v1/entities/subEntityList/663339bc0cb19f01c459853b?type=school&search=&page=1&limit=100
+     * @apiUse successBody
+     * @apiUse errorBody
+     * @apiParamExample {json} Response:
+     * {
+    "status": 200,
+    "result": {
+        "data": [
+            {
+                "_id": "627a13928ce12806f5803f57",
+                "entityType": "school",
+                "externalId": "entity123",
+                "label": "undefined - entity123",
+                "value": "627a13928ce12806f5803f57"
+            }
+        ],
+        "count": 1
+    }
+    }
+
+    /**
+      * Get the immediate entities .
+      * @method
+      * @name subEntityList
+      * @param  {Request} req request body.
+      * @param {String} req.params._id - entityId
+      * @returns {JSON} Returns list of immediate entities
+     */
+
+    subEntityList(req) {
+        
+		return new Promise(async (resolve, reject) => {
+		    // Check if required parameters (_id or entities) are missing
+		  if( !(req.params._id || req.body.entities) ) {
+			return resolve({
+			  status :  HTTP_STATUS_CODE.bad_request.status,
+			  message : constants.apiResponses.ENTITY_ID_NOT_FOUND
+			})
+		  }
+	  
+			try {
+		    // Call 'entitiesHelper.subEntityList' to retrieve sub-entities based on the request parameters
+			  let entityDocuments = await entitiesHelper.subEntityList(
+				req.body.entities ? req.body.entities : "",
+				req.params._id ? req.params._id : "",
+				req.query.type ? req.query.type : "",
+				req.searchText,
+				req.pageSize,
+				req.pageNo
+			  );
+			// Modify labels for specific entity types 
+			  if(entityDocuments.result && entityDocuments.result.data && Array.isArray(entityDocuments.result.data) && entityDocuments.result.data.length > 0) {
+				for (let pointerToEntitiesArray = 0; pointerToEntitiesArray < entityDocuments.result.data.length; pointerToEntitiesArray++) {
+				  if(entityDocuments.result.data[pointerToEntitiesArray].entityType == "school") {
+					entityDocuments.result.data[pointerToEntitiesArray].label += " - " + entityDocuments.result.data[pointerToEntitiesArray].externalId;
+				  }
+				}
+			  }
+  
+			  return resolve(entityDocuments);
+	  
+			} catch (error) {
+	  
+			  return reject({
+				status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+				message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+				errorObject: error
+			  })
+	  
+			}
+	  
+	  
+		  })
+	  }
+
+
+
+
+    /**
+     * @api {GET} /v1/entities/listByIds
+     * Get sub entity list for the given entity. 
+     * @apiVersion 1.0.0
+     * @apiGroup Entities
+     * @apiHeader {String} X-authenticated-user-token Authenticity token
+     * @apiSampleRequest{
+		"entities": [
+			"5f33c3d85f637784791cd830"
+		],
+		"fields": [
+			"entityType"
+		]
+	}
+     * @apiUse successBody
+     * @apiUse errorBody
+     * @apiParamExample {json} Response:
+
+    /**
+   * List of entities.
+   * @method
+   * @name listByIds
+   * @param {Object} req - requested data.
+   * @param {String} req.params._id - requested entity type.         
+   * @returns {JSON} - Array of entities.
+   */
+
+	listByIds(req) {
+		return new Promise(async (resolve, reject) => {
+	
+		  try {
+	        // Call 'entitiesHelper.listByEntityIds' to retrieve entities based on provided entity IDs and fields
+			const entities = await entitiesHelper.listByEntityIds(req.body.entities,req.body.fields);
+			return resolve(entities);
+	
+		  } catch (error) {
+	
+			return reject({
+			  status : error.status || HTTP_STATUS_CODE.internal_server_error.status,
+			  message : error.message || HTTP_STATUS_CODE.internal_server_error.message,
+			  errorObject : error
+			})
+	
+		  }
+	
+	
+		})
+	  }
+	
+
+
 	/**
 	 * Bulk create entities.
-	 * @api {get} /assessment/api/v1/entities/relatedEntities/Create API by uploading CSV
+	 * @api {POST}v1/entities/relatedEntities/Create API by uploading CSV
 	 * @apiVersion 1.0.0
 	 * @apiName bulkCreate
 	 * @apiGroup Entities
-	 * @apiSampleRequest /assessment/api/v1/entities/bulkCreate
+	 * @apiSampleRequest /v1/entities/bulkCreate
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:
@@ -678,11 +825,11 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * Bulk update entities.
-	 * @api {get} /assessment/api/v1/entities/relatedEntities/Update API by uploading CSV
+	 * @api {POST} v1/entities/relatedEntities/Update API by uploading CSV
 	 * @apiVersion 1.0.0
 	 * @apiName bulkUpdate
 	 * @apiGroup Entities
-	 * @apiSampleRequest /assessment/api/v1/entities/bulkUpdate
+	 * @apiSampleRequest v1/entities/bulkUpdate
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:
