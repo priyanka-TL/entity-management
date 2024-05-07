@@ -364,7 +364,7 @@ module.exports = class UserProjectsHelper {
 	}
  
 
-     /**
+   /**
    * Search entity.
    * @method 
    * @name search
@@ -443,7 +443,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {String} childEntityId - child entity id.
 	 * @param {Boolean} [parentEntityProgramId = false] - Program id of parent entity.
 	 * @returns {JSON} - Success and message .
-	 */
+	*/
 
 	static addSubEntityToParent(parentEntityId, childEntityId, parentEntityProgramId = false) {
 		return new Promise(async (resolve, reject) => {
@@ -526,7 +526,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {Object} childEntity
 	 * @param {String} childEntity.entityType - entity type of the child.
 	 * @param {String} childEntity._id - childEntity id.
-	 */
+	*/
 
 	static mappedParentEntities(parentEntity, childEntity) {
 		return new Promise(async (resolve, reject) => {
@@ -653,7 +653,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {String} entityType - entity type.
 	 * @param {Array} [projection = "all"] - total fields to be projected.
 	 * @returns {Array} - returns an array of related entities data.
-	 */
+	*/
 
 	static relatedEntities(reqId) {
 		return new Promise(async (resolve, reject) => {

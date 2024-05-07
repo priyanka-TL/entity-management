@@ -15,6 +15,12 @@ module.exports = (req) => {
 		update: function () {
 			req.checkBody('externalId').exists().withMessage('required externalId')
 		},
+		subEntityList: function () {
+			req.checkParams('_id').exists().withMessage('required _id')
+		},
+		listByIds: function () {
+			req.checkBody('entities').exists().withMessage('required entities')
+		},
 		find: function () {
 			req.checkBody('query').exists().withMessage('required query')
 			req.checkBody('projection').exists().withMessage('required projection')

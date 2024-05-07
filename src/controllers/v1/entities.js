@@ -82,15 +82,15 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-  * @api {get} v1/entities/relatedEntities/:entityId Get Related Entities
-  * @apiVersion 1.0.0
-  * @apiName Get Related Entities
-  * @apiGroup Entities
-  * @apiSampleRequest v1/entities/relatedEntities/5c0bbab881bdbe330655da7f
-  * @apiUse successBody
-  * @apiUse errorBody
-  * @apiParamExample {json} Response:
-	  "result": {
+      * @api {get} v1/entities/relatedEntities/:entityId Get Related Entities
+      * @apiVersion 1.0.0
+      * @apiName Get Related Entities
+      * @apiGroup Entities
+      * @apiSampleRequest v1/entities/relatedEntities/5c0bbab881bdbe330655da7f
+      * @apiUse successBody
+      * @apiUse errorBody
+      * @apiParamExample {json} Response:
+	 "result": {
 		"relatedEntities": [
 			{
 				"_id": "5f33c3d85f637784791cd830",
@@ -145,18 +145,18 @@ module.exports = class Entities extends Abstract {
 	  * @apiParam {File} entityMap Mandatory entity mapping file of type CSV.
 	  * @apiUse successBody
 	  * @apiUse errorBody
-   * @param {Array} req.files.entityMap - Array of entityMap data.         
-   * @returns {JSON} - Message of successfully updated.
-   * 
-   * {
+      * @param {Array} req.files.entityMap - Array of entityMap data.         
+     * @returns {JSON} - Message of successfully updated.
+     * 
+     * {
 		"message": "ENTITY_INFORMATION_UPDATE",
 		"status": 200,
 		"result": {
 			"success": true,
 			"message": "ENTITY_INFORMATION_UPDATE"
 		}
-	}
-   */
+	 }
+    */
 
 	mappingUpload(req) {
 		return new Promise(async (resolve, reject) => {
@@ -188,7 +188,7 @@ module.exports = class Entities extends Abstract {
 
 	/**
 	 * details of the entities.
-	  * @api {get} v1/entities/details provide the details 
+	 * @api {get} v1/entities/details provide the details 
 	 * @apiVersion 1.0.0
 	 * @apiName details
 	 * @apiGroup Entities
@@ -248,8 +248,8 @@ module.exports = class Entities extends Abstract {
 				"code": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df"
 			}
 		}
-	]
-	 */
+	 ]
+	*/
 
 	details(req) {
 		return new Promise(async (resolve, reject) => {
@@ -307,8 +307,8 @@ module.exports = class Entities extends Abstract {
 		"updatedAt": "2024-04-22T09:04:12.292Z",
 		"createdAt": "2024-04-08T12:07:22.369Z",
 		"__v": 0
-	}
-	 */
+	 }
+	*/
 
 	update(req) {
 		return new Promise(async (resolve, reject) => {
@@ -358,8 +358,8 @@ module.exports = class Entities extends Abstract {
 			"createdAt": "2024-04-22T09:03:05.921Z",
 			"__v": 0
 		}
-	]
-	 */
+	 ]
+	*/
 
 	add(req) {
 		return new Promise(async (resolve, reject) => {
@@ -418,8 +418,8 @@ module.exports = class Entities extends Abstract {
 				"code": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df"
 			}
 		}
-    ]
-	 */
+     ]
+	*/
 
 	listByLocationIds(req) {
 		return new Promise(async (resolve, reject) => {
@@ -472,10 +472,10 @@ module.exports = class Entities extends Abstract {
 				"cluster",
 				"school"
 			]
-		}
-	]
+		} 
+	 ]
 
-	 */
+	*/
 
 	subEntityListBasedOnRoleAndLocation(req) {
 		return new Promise(async (resolve, reject) => {
@@ -543,7 +543,7 @@ module.exports = class Entities extends Abstract {
 				"_id": "6613b8f32c7d9408449474c2"
 			},
 		]
-*/
+    */
 
 	listByEntityType(req, res) {
 		return new Promise(async (resolve, reject) => {
@@ -588,7 +588,7 @@ module.exports = class Entities extends Abstract {
 		"name": "schoolLeader"
 	}
 	]
-*/
+    */
 
 	list(req) {
 		return new Promise(async (resolve, reject) => {
@@ -613,10 +613,6 @@ module.exports = class Entities extends Abstract {
 			}
 		})
 	}
-
-
-
-
 
     /**
      * @api {GET} v1/entities/subEntityList/663339bc0cb19f01c459853b?type=school&search=&page=1&limit=100
@@ -721,13 +717,13 @@ module.exports = class Entities extends Abstract {
      * @apiParamExample {json} Response:
 
     /**
-   * List of entities.
-   * @method
-   * @name listByIds
-   * @param {Object} req - requested data.
-   * @param {String} req.params._id - requested entity type.         
-   * @returns {JSON} - Array of entities.
-   */
+     * List of entities.
+     * @method
+     * @name listByIds
+	 * @param {Object} req - requested data.
+	 * @param {String} req.params._id - requested entity type.         
+	 * @returns {JSON} - Array of entities.
+	*/
 
 	listByIds(req) {
 		return new Promise(async (resolve, reject) => {
@@ -770,7 +766,7 @@ module.exports = class Entities extends Abstract {
 	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
 	 * public/reports/currentDate
 	 *
-	 */
+	*/
 
 	bulkCreate(req) {
 		return new Promise(async (resolve, reject) => {
@@ -839,7 +835,7 @@ module.exports = class Entities extends Abstract {
 	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
 	 * public/reports/currentDate
 	 *
-	 */
+	*/
 
 	bulkUpdate(req) {
 		return new Promise(async (resolve, reject) => {
