@@ -24,5 +24,4 @@ module.exports = {
 	FORM_SERVICE_URL: 'http://player:3000',
 	ENTITYTYPE : "entityType",
     GROUPS : "groups",
-
 }

@@ -650,7 +650,6 @@ module.exports = class Entities extends Abstract {
      */
 
     subEntityList(req) {
-        
 		return new Promise(async (resolve, reject) => {
 		    // Check if required parameters (_id or entities) are missing
 		  if( !(req.params._id || req.body.entities) ) {
