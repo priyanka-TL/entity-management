@@ -22,4 +22,6 @@ module.exports = {
 	GET_METHOD: 'GET',
 	GET_FORM_DATA: '/plugin/v1/form/read',
 	FORM_SERVICE_URL: 'http://player:3000',
+	ENTITYTYPE : "entityType",
+    GROUPS : "groups",
 }
