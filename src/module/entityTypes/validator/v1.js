@@ -22,10 +22,6 @@ module.exports = (req, res) => {
 			req.checkParams('_id').exists().withMessage('required _id')
 			req.checkBody('name').exists().withMessage('required name')
 		},
-		add: function () {
-			req.checkQuery('type').exists().withMessage('required type')
-			req.checkBody('data').exists().withMessage('required data')
-		},
 		create: function () {
 			req.checkBody('name').exists().withMessage('required name')
 		},
