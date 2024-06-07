@@ -15,8 +15,10 @@ module.exports = (req) => {
 		},
 		update: function () {
 			req.checkBody('externalId').exists().withMessage('required externalId')
+			req.checkParams('_id').exists().withMessage('required _id')
 		},
 		subEntityList: function () {
+			req.checkQuery('type').exists().withMessage('required type')
 			req.checkParams('_id').exists().withMessage('required _id')
 		},
 		listByIds: function () {
@@ -24,7 +26,7 @@ module.exports = (req) => {
 		},
 		find: function () {
 			req.checkBody('query').exists().withMessage('required query')
-			req.checkBody('projection').exists().withMessage('required projection')
+			// req.checkBody('projection').exists().withMessage('required projection')
 		},
 		listByEntityType: function () {
 			req.checkParams('_id').exists().withMessage('required Entity type')

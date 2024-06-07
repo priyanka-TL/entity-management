@@ -12,7 +12,11 @@ module.exports = {
 		'/entityTypes/bulkUpdate',
 		'/entityTypes/find',
 		'/entities/bulkCreate',
-		'/entities/subEntityListBasedOnRoleAndLocation',
+		'/entities/bulkUpdate',
+		'/entities/add',
+		'/entities/update',
+		'/entityTypes/create',
+		'/entityTypes/update'
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',
