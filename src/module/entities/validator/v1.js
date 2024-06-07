@@ -26,7 +26,7 @@ module.exports = (req) => {
 		},
 		find: function () {
 			req.checkBody('query').exists().withMessage('required query')
-			req.checkBody('projection').exists().withMessage('required projection')
+			// req.checkBody('projection').exists().withMessage('required projection')
 		},
 		listByEntityType: function () {
 			req.checkParams('_id').exists().withMessage('required Entity type')
