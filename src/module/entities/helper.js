@@ -91,6 +91,350 @@ module.exports = class UserProjectsHelper {
 		})
 	}
 
+
+
+   /**
+   * List of Entities
+   * @method
+   * @name list
+   * @param bodyData - Body data.
+   * @returns {Array} List of Entities.
+   */
+  
+   static listByEntityIds( entityIds = [], fields = [] ) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Call 'entitiesQueries.entityDocuments' to retrieve entities based on provided entity IDs and fields
+            const entities = await entitiesQueries.entityDocuments(
+                {
+                    _id : { $in : entityIds }
+                },
+                fields ? fields  : [] 
+            );
+
+            return resolve({
+                message : CONSTANTS.apiResponses.ENTITIES_FETCHED,
+                result : entities
+            });
+            
+        } catch (error) {
+            return reject(error);
+        }
+    });
+  }
+
+
+
+    /**
+     * Get immediate entities for requested Array.
+     * @method
+     * @name subList
+     * @param {params} entities - array of entitity ids
+     * @param {params} entityId - single entitiy id
+     * @param {params} type - sub list entity type. 
+     * @param {params} search - search entity data. 
+     * @param {params} limit - page limit. 
+     * @param {params} pageNo - page no. 
+     * @returns {Array} - List of all sub list entities.
+     */
+
+    static subEntityList( entities,entityId,type,search,limit,pageNo ) {
+        return new Promise(async (resolve, reject) => {
+
+            try {
+
+                let result = [];
+                let obj = {
+                    entityId : entityId,
+                    type : type,
+                    search : search,
+                    limit : limit,
+                    pageNo : pageNo
+                }
+                // Retrieve sub-entities using 'this.subEntities' for a single entity
+                if ( entityId !== "" ) {
+                    result = await this.subEntities(
+                        obj
+                    );
+                } else {
+                // Retrieve sub-entities using 'this.subEntities' for multiple entities   
+                    await Promise.all(entities.map(async (entity)=> {
+    
+                        obj["entityId"] = entity;
+                        let entitiesDocument = await this.subEntities(
+                            obj
+                        );
+
+                        if( Array.isArray(entitiesDocument.data) && 
+                        entitiesDocument.data.length > 0
+                        ) {
+                            result = entitiesDocument;
+                        }
+                    }));
+                }
+			    // Modify data properties (e.g., 'label') of retrieved entities if necessary
+                if( result.data && result.data.length > 0 ) {
+                    result.data = result.data.map(data=>{
+                        let cloneData = {...data};
+                        cloneData["label"] = cloneData.name;
+                        cloneData["value"] = cloneData._id;
+                        return cloneData;
+                    })
+                }
+    
+                resolve({
+                    message: CONSTANTS.apiResponses.ENTITIES_FETCHED,
+                    result: result
+                });   
+            } catch(error) {
+                return reject(error);
+            }
+        })
+    }
+
+
+     /**
+     * Get either immediate entities or entity traversal based upon the type.
+     * @method
+     * @name subEntities
+     * @param {body} entitiesData
+     * @returns {Array} - List of all immediate entities or traversal data.
+     */
+
+	 static subEntities( entitiesData ) {
+        return new Promise(async (resolve, reject) => {
+
+            try {
+                
+                let entitiesDocument;
+                
+                if( entitiesData.type !== "" ) {
+                // Perform entity traversal based on the specified type
+                    entitiesDocument = await this.entityTraversal(
+                        entitiesData.entityId,
+                        entitiesData.type,
+                        entitiesData.search,
+                        entitiesData.limit,
+                        entitiesData.pageNo
+                        );
+                } else {
+                    // Retrieve immediate entities
+                    entitiesDocument = await this.immediateEntities(
+                        entitiesData.entityId, 
+                        entitiesData.search,
+                        entitiesData.limit,
+                        entitiesData.pageNo
+                    );
+                }
+                
+                return resolve(entitiesDocument);
+            } catch(error) {
+                return reject(error);
+            }
+        })
+    }
+
+
+
+    /**
+    * Get immediate entities.
+    * @method
+    * @name listByEntityType
+    * @param {Object} entityId
+    * @returns {Array} - List of all immediateEntities based on entityId.
+    */
+
+    static immediateEntities(entityId, searchText = "",pageSize="",pageNo="") {
+        return new Promise(async (resolve, reject) => {
+
+            try {
+            // Define projection fields for entity retrieval
+                let projection = [
+                    CONSTANTS.common.ENTITYTYPE,
+                    CONSTANTS.common.GROUPS
+                ];
+            // Retrieve entity documents based on entityId and projection fields
+                let entitiesDocument = await entitiesQueries.entityDocuments({
+                    _id: entityId
+                }, projection);
+                let immediateEntities = [];
+            // Process entity groups and retrieve immediate entity types
+                if (entitiesDocument[0] &&
+                    entitiesDocument[0].groups &&
+                    Object.keys(entitiesDocument[0].groups).length > 0
+                ) {
+    
+                    let getImmediateEntityTypes =
+                        await entityTypesHelper.entityTypesDocument({
+                            name : entitiesDocument[0].entityType
+                        },["immediateChildrenEntityType"]
+                    );
+    
+                    let immediateEntitiesIds;
+                // Identify immediate entity types and fetch associated entity IDs
+                    Object.keys(entitiesDocument[0].groups).forEach(entityGroup => {
+                        if (
+                            getImmediateEntityTypes[0].immediateChildrenEntityType &&
+                            getImmediateEntityTypes[0].immediateChildrenEntityType.length > 0 &&
+                            getImmediateEntityTypes[0].immediateChildrenEntityType.includes(entityGroup)
+                        ) {
+                            immediateEntitiesIds = 
+                            entitiesDocument[0].groups[entityGroup];
+                        }
+                    })
+    
+                    if (
+                        Array.isArray(immediateEntitiesIds) &&
+                        immediateEntitiesIds.length > 0
+                    ) {
+                   
+                        let searchImmediateData = await this.search(
+                            searchText, 
+                            pageSize, 
+                            pageNo, 
+                            immediateEntitiesIds
+                        );
+    
+                        immediateEntities = searchImmediateData[0];
+                    }
+                }
+    
+                return resolve(immediateEntities);
+
+            } catch(error) {
+                return reject(error);
+            }
+        })
+    }
+
+
+    /**
+    * Get immediate entities.
+    * @method
+    * @name listByEntityType
+    * @param {Object} entityId
+    * @returns {Array} - List of all immediateEntities based on entityId.
+    */
+
+	static entityTraversal(
+		entityId,
+		entityTraversalType = "", 
+		searchText = "",
+		pageSize,
+		pageNo
+	 ) {
+		 return new Promise(async (resolve, reject) => {
+			 try {
+				 
+				 let entityTraversal = `groups.${entityTraversalType}`;
+            // Retrieve entity documents for entity traversal based on entityId, entity traversal type, search text, page size, and page number
+				 let entitiesDocument = 
+				 await entitiesQueries.entityDocuments(
+					 { 
+						 _id: entityId,
+						 "groups" : { $exists : true }, 
+						 [entityTraversal] : { $exists: true } 
+					 },
+					 [ entityTraversal ]
+				 );
+				// Return an empty array if no entities document is found
+				 if( !entitiesDocument[0] ) {
+					 return resolve([]);
+				 }
+				 let result = [];
+                // Process entity traversal data and retrieve entities based on search parameters
+				 if( entitiesDocument[0].groups[entityTraversalType].length > 0 ) {
+					 
+					 let entityTraversalData = await this.search(
+						 searchText,
+						 pageSize,
+						 pageNo,
+						 entitiesDocument[0].groups[entityTraversalType]
+					 );
+ 
+					 result = entityTraversalData[0];
+ 
+				 }
+				 return resolve(result);
+ 
+			 } catch(error) {
+				 return reject(error);
+			 }
+		 })
+	}
+ 
+
+   /**
+   * Search entity.
+   * @method 
+   * @name search
+   * @param {String} searchText - Text to be search.
+   * @param {Number} pageSize - total page size.
+   * @param {Number} pageNo - Page no.
+   * @param {Array} [entityIds = false] - Array of entity ids.
+   */
+
+	 static search( searchText, pageSize, pageNo, entityIds = false ) {
+		return new Promise(async (resolve, reject) => {
+			try {
+	
+				let queryObject = {};
+                // Configure match criteria based on search text and entity IDs (if provided)
+				queryObject["$match"] = {};
+	
+				if (entityIds && entityIds.length > 0) {
+					queryObject["$match"]["_id"] = {};
+					queryObject["$match"]["_id"]["$in"] = entityIds;
+				}
+	
+				if( searchText !== "") {
+					queryObject["$match"]["$or"] = [
+						{ "metaInformation.name": new RegExp(searchText, 'i') },
+						{ "metaInformation.externalId": new RegExp("^" + searchText, 'm') },
+						{ "metaInformation.addressLine1": new RegExp(searchText, 'i') },
+						{ "metaInformation.addressLine2": new RegExp(searchText, 'i') }
+					];
+				}
+                // Perform aggregation query to retrieve entity documents based on search criteria
+				let entityDocuments = await entitiesQueries.getAggregate([
+					queryObject,
+					{
+						$project: {
+							name: "$metaInformation.name",
+							externalId: "$metaInformation.externalId",
+							addressLine1: "$metaInformation.addressLine1",
+							addressLine2: "$metaInformation.addressLine2",
+							entityType : 1
+						}
+					},
+					{
+						$facet: {
+							"totalCount": [
+								{ "$count": "count" }
+							],
+							"data": [
+								{ $skip: pageSize * (pageNo - 1) },
+								{ $limit: pageSize }
+							],
+						}
+					}, {
+						$project: {
+							"data": 1,
+							"count": {
+								$arrayElemAt: ["$totalCount.count", 0]
+							}
+						}
+					}
+				]);
+				return resolve(entityDocuments);
+	
+			} catch (error) {
+				return reject(error);
+			}
+		})
+	  }
+
+
 	/**
 	 * Add child entity inside parent entity groups.
 	 * @method
@@ -99,7 +443,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {String} childEntityId - child entity id.
 	 * @param {Boolean} [parentEntityProgramId = false] - Program id of parent entity.
 	 * @returns {JSON} - Success and message .
-	 */
+	*/
 
 	static addSubEntityToParent(parentEntityId, childEntityId, parentEntityProgramId = false) {
 		return new Promise(async (resolve, reject) => {
@@ -182,7 +526,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {Object} childEntity
 	 * @param {String} childEntity.entityType - entity type of the child.
 	 * @param {String} childEntity._id - childEntity id.
-	 */
+	*/
 
 	static mappedParentEntities(parentEntity, childEntity) {
 		return new Promise(async (resolve, reject) => {
@@ -309,7 +653,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {String} entityType - entity type.
 	 * @param {Array} [projection = "all"] - total fields to be projected.
 	 * @returns {Array} - returns an array of related entities data.
-	 */
+	*/
 
 	static relatedEntities(reqId) {
 		return new Promise(async (resolve, reject) => {

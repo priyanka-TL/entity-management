@@ -12,7 +12,11 @@ module.exports = {
 		'/entityTypes/bulkUpdate',
 		'/entityTypes/find',
 		'/entities/bulkCreate',
-		'/entities/subEntityListBasedOnRoleAndLocation',
+		'/entities/bulkUpdate',
+		'/entities/add',
+		'/entities/update',
+		'/entityTypes/create',
+		'/entityTypes/update'
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',
@@ -22,4 +26,6 @@ module.exports = {
 	GET_METHOD: 'GET',
 	GET_FORM_DATA: '/plugin/v1/form/read',
 	FORM_SERVICE_URL: 'http://player:3000',
+	ENTITYTYPE : "entityType",
+    GROUPS : "groups",
 }

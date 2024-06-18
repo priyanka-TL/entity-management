@@ -37,12 +37,12 @@ module.exports = class EntityTypes extends Abstract {
 	}
 
 	/**
-    * @api {get} /entity/api/v1/entityTypes/list List all entity types.
+    * @api {get} v1/entityTypes/list List all entity types.
     * @apiVersion 1.0.0
     *  @apiName Entity Type list
     * @apiGroup Entity Types
     * @apiHeader {String} X-authenticated-user-token Authenticity token
-    * @apiSampleRequest /assessment/api/v1/entityTypes/list
+    * @apiSampleRequest v1/entityTypes/list
     * @apiUse successBody
     * @apiUse errorBody
     * @returns {JSON} - List of all entity types.
@@ -77,12 +77,12 @@ module.exports = class EntityTypes extends Abstract {
 
 	/**
 	 * Find all the entity types.
-	* @api {get} /entity/api/v1/entityTypes/find all entity types.
+	* @api {post} v1/entityTypes/find all entity types.
     * @apiVersion 1.0.0
     * @apiName find
     * @apiGroup Entity Types
     * @apiHeader {String} X-authenticated-user-token Authenticity token
-    * @apiSampleRequest /assessment/api/v1/entityTypes/find
+    * @apiSampleRequest v1/entityTypes/find
     * @apiUse successBody
     * @apiUse errorBody
 	 * @returns {JSON} - List of all entity types.
@@ -115,11 +115,11 @@ module.exports = class EntityTypes extends Abstract {
 
 	/**
 	 *  create Entity Types.
-	 * @api {get} /assessment/api/v1/entities/relatedEntities/create single API's
+	 * @api {POST} /v1/entityTypes/createsingle API's
 	 * @apiVersion 1.0.0
 	 * @apiName create
 	 * @apiGroup Entities
-	 * @apiSampleRequest /assessment/api/v1/entityTypes/create
+	 * @apiSampleRequest /v1/entityTypes/create
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {Object} req -request data.
@@ -158,11 +158,11 @@ module.exports = class EntityTypes extends Abstract {
 
 	/**
 	 * Update entityType information.
-	 * @api {get} /assessment/api/v1/entities/relatedEntities/update single API's
+	 * @api {POST} /v1/entityTypes/update single API's
 	 * @apiVersion 1.0.0
 	 * @apiName update
 	 * @apiGroup Entities
-	 * @apiSampleRequest /assessment/api/v1/entityTypes/update
+	 * @apiSampleRequest /v1/entityTypes/update/662f7d733f9b670521cadcff
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {Object} req - requested entityType data.
@@ -214,11 +214,11 @@ module.exports = class EntityTypes extends Abstract {
 
 	/**
 	 * Bulk create Entity Types.
-	 * @api {get} /assessment/api/v1/entities/relatedEntities/Create API by uploading CSV
+	 * @api {POST} /v1/entityTypes/bulkCreate API by uploading CSV
 	 * @apiVersion 1.0.0
 	 * @apiName bulkCreate
 	 * @apiGroup Entities
-	 * @apiSampleRequest /assessment/api/v1/entityTypes/bulkCreate
+	 * @apiSampleRequest /v1/entityTypes/bulkCreate
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:
@@ -277,11 +277,11 @@ module.exports = class EntityTypes extends Abstract {
 
 	/**
 	 * Bulk update Entity Types.
-	 * @api {get} /assessment/api/v1/entities/relatedEntities/update API by uploading CSV
+	 * @api {POST} v1/entityTypes/bulkUpdate API by uploading CSV
 	 * @apiVersion 1.0.0
 	 * @apiName bulkUpdate
 	 * @apiGroup Entities
-	 * @apiSampleRequest /assessment/api/v1/entityTypes/bulkUpdate
+	 * @apiSampleRequest v1/entityTypes/bulkUpdate
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:

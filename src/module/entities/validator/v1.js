@@ -11,13 +11,22 @@ module.exports = (req) => {
 			req.checkQuery('type').exists().withMessage('required type')
 			req.checkBody('entityTypeId').exists().withMessage('required entityTypeId ')
 			req.checkBody('externalId').exists().withMessage('required externalId ')
+			req.checkBody('name').exists().withMessage('required name ')
 		},
 		update: function () {
 			req.checkBody('externalId').exists().withMessage('required externalId')
+			req.checkParams('_id').exists().withMessage('required _id')
+		},
+		subEntityList: function () {
+			req.checkQuery('type').exists().withMessage('required type')
+			req.checkParams('_id').exists().withMessage('required _id')
+		},
+		listByIds: function () {
+			req.checkBody('entities').exists().withMessage('required entities')
 		},
 		find: function () {
 			req.checkBody('query').exists().withMessage('required query')
-			req.checkBody('projection').exists().withMessage('required projection')
+			// req.checkBody('projection').exists().withMessage('required projection')
 		},
 		listByEntityType: function () {
 			req.checkParams('_id').exists().withMessage('required Entity type')
