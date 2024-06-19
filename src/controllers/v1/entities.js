@@ -68,6 +68,7 @@ module.exports = class Entities extends Abstract {
 	find(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				console.log('inside the controller')
 				// Calls the 'find' function from 'entitiesHelper' to retrieve entity data
 				let entityData = await entitiesHelper.find(req.body.query, req.body.projection)
 				return resolve(entityData)
@@ -614,7 +615,7 @@ module.exports = class Entities extends Abstract {
 		})
 	}
 
-    /**
+	/**
      * @api {GET} v1/entities/subEntityList/663339bc0cb19f01c459853b?type=school&search=&page=1&limit=100
      * Get sub entity list for the given entity. 
      * @apiVersion 1.0.0
@@ -649,55 +650,57 @@ module.exports = class Entities extends Abstract {
       * @returns {JSON} Returns list of immediate entities
      */
 
-    subEntityList(req) {
+	subEntityList(req) {
 		return new Promise(async (resolve, reject) => {
-		    // Check if required parameters (_id or entities) are missing
-		  if( !(req.params._id || req.body.entities) ) {
-			return resolve({
-			  status :  HTTP_STATUS_CODE.bad_request.status,
-			  message : constants.apiResponses.ENTITY_ID_NOT_FOUND
-			})
-		  }
-	  
-			try {
-		    // Call 'entitiesHelper.subEntityList' to retrieve sub-entities based on the request parameters
-			  let entityDocuments = await entitiesHelper.subEntityList(
-				req.body.entities ? req.body.entities : "",
-				req.params._id ? req.params._id : "",
-				req.query.type ? req.query.type : "",
-				req.searchText,
-				req.pageSize,
-				req.pageNo
-			  );
-			// Modify labels for specific entity types 
-			  if(entityDocuments.result && entityDocuments.result.data && Array.isArray(entityDocuments.result.data) && entityDocuments.result.data.length > 0) {
-				for (let pointerToEntitiesArray = 0; pointerToEntitiesArray < entityDocuments.result.data.length; pointerToEntitiesArray++) {
-				  if(entityDocuments.result.data[pointerToEntitiesArray].entityType == "school") {
-					entityDocuments.result.data[pointerToEntitiesArray].label += " - " + entityDocuments.result.data[pointerToEntitiesArray].externalId;
-				  }
-				}
-			  }
-  
-			  return resolve(entityDocuments);
-	  
-			} catch (error) {
-	  
-			  return reject({
-				status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-				message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-				errorObject: error
-			  })
-	  
+			// Check if required parameters (_id or entities) are missing
+			if (!(req.params._id || req.body.entities)) {
+				return resolve({
+					status: HTTP_STATUS_CODE.bad_request.status,
+					message: constants.apiResponses.ENTITY_ID_NOT_FOUND,
+				})
 			}
-	  
-	  
-		  })
-	  }
 
+			try {
+				// Call 'entitiesHelper.subEntityList' to retrieve sub-entities based on the request parameters
+				let entityDocuments = await entitiesHelper.subEntityList(
+					req.body.entities ? req.body.entities : '',
+					req.params._id ? req.params._id : '',
+					req.query.type ? req.query.type : '',
+					req.searchText,
+					req.pageSize,
+					req.pageNo
+				)
+				// Modify labels for specific entity types
+				if (
+					entityDocuments.result &&
+					entityDocuments.result.data &&
+					Array.isArray(entityDocuments.result.data) &&
+					entityDocuments.result.data.length > 0
+				) {
+					for (
+						let pointerToEntitiesArray = 0;
+						pointerToEntitiesArray < entityDocuments.result.data.length;
+						pointerToEntitiesArray++
+					) {
+						if (entityDocuments.result.data[pointerToEntitiesArray].entityType == 'school') {
+							entityDocuments.result.data[pointerToEntitiesArray].label +=
+								' - ' + entityDocuments.result.data[pointerToEntitiesArray].externalId
+						}
+					}
+				}
 
+				return resolve(entityDocuments)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
 
-
-    /**
+	/**
      * @api {GET} /v1/entities/listByIds
      * Get sub entity list for the given entity. 
      * @apiVersion 1.0.0
@@ -726,27 +729,19 @@ module.exports = class Entities extends Abstract {
 
 	listByIds(req) {
 		return new Promise(async (resolve, reject) => {
-	
-		  try {
-	        // Call 'entitiesHelper.listByEntityIds' to retrieve entities based on provided entity IDs and fields
-			const entities = await entitiesHelper.listByEntityIds(req.body.entities,req.body.fields);
-			return resolve(entities);
-	
-		  } catch (error) {
-	
-			return reject({
-			  status : error.status || HTTP_STATUS_CODE.internal_server_error.status,
-			  message : error.message || HTTP_STATUS_CODE.internal_server_error.message,
-			  errorObject : error
-			})
-	
-		  }
-	
-	
+			try {
+				// Call 'entitiesHelper.listByEntityIds' to retrieve entities based on provided entity IDs and fields
+				const entities = await entitiesHelper.listByEntityIds(req.body.entities, req.body.fields)
+				return resolve(entities)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
 		})
-	  }
-	
-
+	}
 
 	/**
 	 * Bulk create entities.
@@ -765,7 +760,7 @@ module.exports = class Entities extends Abstract {
 	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
 	 * public/reports/currentDate
 	 *
-	*/
+	 */
 
 	bulkCreate(req) {
 		return new Promise(async (resolve, reject) => {
@@ -834,7 +829,7 @@ module.exports = class Entities extends Abstract {
 	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
 	 * public/reports/currentDate
 	 *
-	*/
+	 */
 
 	bulkUpdate(req) {
 		return new Promise(async (resolve, reject) => {
