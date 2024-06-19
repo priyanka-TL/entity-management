@@ -16,7 +16,8 @@ module.exports = {
 		'/entities/add',
 		'/entities/update',
 		'/entityTypes/create',
-		'/entityTypes/update'
+		'/entityTypes/update',
+		'/entities/find',
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',
@@ -26,6 +27,6 @@ module.exports = {
 	GET_METHOD: 'GET',
 	GET_FORM_DATA: '/plugin/v1/form/read',
 	FORM_SERVICE_URL: 'http://player:3000',
-	ENTITYTYPE : "entityType",
-    GROUPS : "groups",
+	ENTITYTYPE: 'entityType',
+	GROUPS: 'groups',
 }
