@@ -823,10 +823,8 @@ module.exports = class UserProjectsHelper {
 	static find(bodyQuery, projection) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				console.log('bodyQuery, projection', bodyQuery, projection)
 				// Fetch entities based on the provided query and projection
 				const result = await entitiesQueries.entityDocuments(bodyQuery, projection)
-				console.log('result : ', result)
 				if (result.length < 1) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
