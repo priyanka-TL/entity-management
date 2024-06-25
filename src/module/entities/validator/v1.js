@@ -21,6 +21,9 @@ module.exports = (req) => {
 			req.checkQuery('type').exists().withMessage('required type')
 			req.checkParams('_id').exists().withMessage('required _id')
 		},
+		entityListBasedOnEntityType: function () {
+			req.checkQuery('type').exists().withMessage('required type')
+		},
 		listByIds: function () {
 			req.checkBody('entities').exists().withMessage('required entities')
 		},
