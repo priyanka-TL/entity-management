@@ -841,6 +841,66 @@ module.exports = class UserProjectsHelper {
 			}
 		})
 	}
+
+	/**
+	 * Fetches entity documents based on entity type.
+	 * @method
+	 * @name entityListBasedOnEntityType
+	 * @param {string} type - Type of entity to fetch documents for.
+	 * @returns {Promise<Object>} Promise that resolves with fetched documents or rejects with an error.
+	 */
+
+	static entityListBasedOnEntityType(type) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Fetch the list of entity types available
+				const entityList = await entityTypesHelper.list()
+				let entityTypeData = entityList.result
+				// Check if entity list is empty
+				if (entityTypeData.length < 1) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
+				let result = []
+				// Loop through each entity type to find matching entities
+				for (const entity of entityTypeData) {
+					if (entity.name === type) {
+						// Fetch documents for the matching entity type
+						const fetchList = await entitiesQueries.entityDocuments(
+							{
+								entityType: type,
+							},
+							['id']
+						)
+						if (fetchList.length < 1) {
+							throw {
+								status: HTTP_STATUS_CODE.not_found.status,
+								message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+							}
+						}
+						// Push fetched documents into result array
+						result.push(...fetchList)
+					}
+				}
+				if (result.length < 1) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
+				return resolve({
+					success: true,
+					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
+					result: result,
+				})
+			} catch (error) {
+				return reject(error)
+			}
+		})
+	}
+
 	/**
 	 * Add entities.
 	 * @method
