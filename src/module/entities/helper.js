@@ -854,37 +854,35 @@ module.exports = class UserProjectsHelper {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Fetch the list of entity types available
-				const entityList = await entityTypesHelper.list()
-				let entityTypeData = entityList.result
+				const entityList = await entityTypeQueries.entityTypesDocument(
+					{
+						name: type,
+					},
+					['name']
+				)
 				// Check if entity list is empty
-				if (entityTypeData.length < 1) {
+				if (entityList.length < 0) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
-						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+						message: CONSTANTS.apiResponses.ENTITYTYPE_NOT_FOUND,
 					}
 				}
-				let result = []
-				// Loop through each entity type to find matching entities
-				for (const entity of entityTypeData) {
-					if (entity.name === type) {
-						// Fetch documents for the matching entity type
-						const fetchList = await entitiesQueries.entityDocuments(
-							{
-								entityType: type,
-							},
-							['id']
-						)
-						if (fetchList.length < 1) {
-							throw {
-								status: HTTP_STATUS_CODE.not_found.status,
-								message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
-							}
-						}
-						// Push fetched documents into result array
-						result.push(...fetchList)
-					}
-				}
-				if (result.length < 1) {
+				const projection = ['_id', 'metaInformation.name']
+				// Fetch documents for the matching entity type
+				let fetchList = await entitiesQueries.entityDocuments(
+					{
+						entityType: type,
+					},
+					projection
+				)
+
+				// Transform the fetched list to match the required result format
+				const result = fetchList.map((entity) => ({
+					_id: entity._id,
+					name: entity.metaInformation.name,
+				}))
+
+				if (fetchList.length < 1) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
