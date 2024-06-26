@@ -882,7 +882,7 @@ module.exports = class UserProjectsHelper {
 					name: entity.metaInformation.name,
 				}))
 
-				if (fetchList.length < 1) {
+				if (fetchList.length < 0) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
