@@ -138,6 +138,49 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
+	 * Find all the entities based on the projection.
+	 * @api {GET} /v1/entities/entityListBasedOnEntityType?entityType=state all the API based on projection
+	 * @apiVersion 1.0.0
+	 * @apiName entityListBasedOnEntityType
+	 * @apiGroup Entities
+	 * @apiUse successBody
+	 * @apiUse errorBody
+	 * @apiParamExample {json} Response:
+	 * @returns {JSON} - List of all entities.
+	 *  {
+    "message": "ASSETS_FETCHED_SUCCESSFULLY",
+    "status": 200,
+    "result": [
+        {
+            "_id": "665d8df5c6892808846230e7",
+            "name": "goa"
+        },
+        {
+            "_id": "665d96cdc6892808846230f1",
+            "name": "Arunachal Pradesh"
+        }
+    ]
+	}
+	 */
+
+	entityListBasedOnEntityType(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Call helper function to fetch entity data based on entity type
+				let entityData = await entitiesHelper.entityListBasedOnEntityType(req.query.entityType)
+				return resolve(entityData)
+			} catch (error) {
+				return reject({
+					// Handle any errors that occur during the fetch operation
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+	/**
 	  * @api {post} v1/entities/mappingUpload
 	  * @apiVersion 1.0.0
 	  * @apiName mappingUpload
