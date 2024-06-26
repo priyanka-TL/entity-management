@@ -861,7 +861,7 @@ module.exports = class UserProjectsHelper {
 					['name']
 				)
 				// Check if entity list is empty
-				if (entityList.length < 0) {
+				if (!entityList.length > 0) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ENTITYTYPE_NOT_FOUND,
@@ -876,18 +876,20 @@ module.exports = class UserProjectsHelper {
 					projection
 				)
 
+				// Check if fetchList list is empty
+				if (!fetchList.length > 0) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
+
 				// Transform the fetched list to match the required result format
 				const result = fetchList.map((entity) => ({
 					_id: entity._id,
 					name: entity.metaInformation.name,
 				}))
 
-				if (fetchList.length < 0) {
-					throw {
-						status: HTTP_STATUS_CODE.not_found.status,
-						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
-					}
-				}
 				return resolve({
 					success: true,
 					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
