@@ -1,0 +1,2489 @@
+openapi: 3.0.0
+info:
+  title: Entity-Management-Service
+  version: 1.0.0
+  description: '* This API is used to create and maintain all the entity'
+  contact:
+    email: tech-infra@shikshalokam.org
+servers:
+  - url: http://localhost:5001
+    description: local server
+  - url: https://dev.elevate-apis.shikshalokam.org
+    description: dev server
+paths:
+  /v1/account/registrationOtp:
+    post:
+      tags:
+        - User
+      summary: Registration OTP
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: priyanka@tunerlabs.com
+                password:
+                  type: string
+                  example: password
+                name:
+                  type: string
+                  example: Priyanka
+              required:
+                - email
+                - password
+                - name
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: >-
+                      OTP has been sent to your registered email ID. Please
+                      enter the otp to complete the registration process.
+                    result: []
+                    meta:
+                      formsVersion: []
+                      correlation: cf10a8b0-7f68-4a79-b6e1-bc9fdfa897a8
+        '422':
+          description: Bad response
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        location:
+                          type: string
+                        param:
+                          type: string
+                        msg:
+                          type: string
+                      required:
+                        - location
+                        - param
+                        - msg
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                  message:
+                    type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: CLIENT_ERROR
+                    error:
+                      - location: body
+                        param: email
+                        msg: email field is empty
+                      - location: body
+                        param: email
+                        msg: email is invalid
+                      - location: body
+                        param: name
+                        msg: name field is empty
+                    meta:
+                      correlation: a660b9b9-6839-4f7d-a23f-e07a0046250c
+                    message: Validation failed, Entered data is incorrect!
+      description: ''
+  /v1/account/create:
+    post:
+      tags:
+        - User
+      summary: Registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                otp:
+                  type: string
+                has_accepted_terms_and_conditions:
+                  type: boolean
+            examples:
+              example1:
+                value:
+                  name: user
+                  email: user@yahoo.com
+                  password: password
+                  otp: '871826'
+                  has_accepted_terms_and_conditions: true
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Sign-up successful, Please wait while logging in.
+                    result:
+                      access_token: >-
+                        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo0LCJuYW1lIjoiaGkiLCJzZXNzaW9uX2lkIjoyNTMsIm9yZ2FuaXphdGlvbl9pZCI6MSwicm9sZXMiOlt7ImlkIjo1LCJ0aXRsZSI6Im1lbnRlZSIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxLCJ2aXNpYmlsaXR5IjoiUFVCTElDIn1dfSwiaWF0IjoxNzE5NTQ3MjQ1LCJleHAiOjE3MTk1NDkwNDV9.0JE2J1lEh_EsuPqkrNHXPJIL9cdgTy1Cj9Os_e0BKrU
+                      refresh_token: >-
+                        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo0LCJuYW1lIjoiaGkiLCJzZXNzaW9uX2lkIjoyNTMsIm9yZ2FuaXphdGlvbl9pZCI6MSwicm9sZXMiOlt7ImlkIjo1LCJ0aXRsZSI6Im1lbnRlZSIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxLCJ2aXNpYmlsaXR5IjoiUFVCTElDIn1dfSwiaWF0IjoxNzE5NTQ3MjQ1LCJleHAiOjE3MzUzNTg0NDV9.5XNhrv61L-4W-b510wMKQ6hP3wv3mqsqY280m3cfD5E
+                      user:
+                        id: 4
+                        email: dd@yahoo.com
+                        email_verified: 'false'
+                        name: hi
+                        gender: null
+                        location: null
+                        about: null
+                        share_link: null
+                        status: ACTIVE
+                        image: null
+                        has_accepted_terms_and_conditions: true
+                        languages: null
+                        preferred_language:
+                          value: en
+                          label: English
+                        organization_id: 1
+                        roles:
+                          - 5
+                        meta: null
+                        location_ids: null
+                        created_at: '2024-06-28T04:00:45.293Z'
+                        updated_at: '2024-06-28T04:00:45.293Z'
+                        deleted_at: null
+                        organization:
+                          id: 1
+                          name: Default Organization
+                          code: default_code
+                        user_roles:
+                          - id: 5
+                            title: mentee
+                            user_type: 0
+                            status: ACTIVE
+                            organization_id: 1
+                            visibility: PUBLIC
+                    meta:
+                      formsVersion: []
+                      correlation: f6cd0424-58bb-4191-a1b6-c5f84599e14d
+        '406':
+          description: Bad response
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  error:
+                    type: array
+                    items:
+                      type: string
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                  message:
+                    type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: CLIENT_ERROR
+                    error: []
+                    meta:
+                      correlation: 9356c4d9-74a9-47d4-9f13-3aea30c90b90
+                    message: User already exists.
+      description: ''
+  /v1/account/login:
+    post:
+      tags:
+        - User
+      summary: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: prajwal@tunerlabs.com
+                password: password
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: User logged in successfully.
+                    result:
+                      access_token: >-
+                        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoxLCJuYW1lIjoiUHJpeWFua2EiLCJzZXNzaW9uX2lkIjoyNTIsIm9yZ2FuaXphdGlvbl9pZCI6MSwicm9sZXMiOlt7ImlkIjo3LCJ0aXRsZSI6Im9yZ19hZG1pbiIsInVzZXJfdHlwZSI6MSwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxLCJ2aXNpYmlsaXR5IjoiUFVCTElDIn0seyJpZCI6NSwidGl0bGUiOiJtZW50ZWUiLCJ1c2VyX3R5cGUiOjAsInN0YXR1cyI6IkFDVElWRSIsIm9yZ2FuaXphdGlvbl9pZCI6MSwidmlzaWJpbGl0eSI6IlBVQkxJQyJ9LHsiaWQiOjgsInRpdGxlIjoicHJvZ3JhbV9kZXNpZ2luZXIiLCJ1c2VyX3R5cGUiOjAsInN0YXR1cyI6IkFDVElWRSIsIm9yZ2FuaXphdGlvbl9pZCI6MSwidmlzaWJpbGl0eSI6IlBVQkxJQyJ9LHsiaWQiOjksInRpdGxlIjoicHJvZ3JhbV9jcmVhdG9yIiwidXNlcl90eXBlIjowLCJzdGF0dXMiOiJBQ1RJVkUiLCJvcmdhbml6YXRpb25faWQiOjEsInZpc2liaWxpdHkiOiJQVUJMSUMifV19LCJpYXQiOjE3MTk1NDY0MTYsImV4cCI6MTcxOTU0ODIxNn0.FAg4n2nlg3NydH6K6rozZ588Z_CQSE9WklZfy6G8Msc
+                      refresh_token: >-
+                        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoxLCJuYW1lIjoiUHJpeWFua2EiLCJzZXNzaW9uX2lkIjoyNTIsIm9yZ2FuaXphdGlvbl9pZCI6MSwicm9sZXMiOlt7ImlkIjo3LCJ0aXRsZSI6Im9yZ19hZG1pbiIsInVzZXJfdHlwZSI6MSwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxLCJ2aXNpYmlsaXR5IjoiUFVCTElDIn0seyJpZCI6NSwidGl0bGUiOiJtZW50ZWUiLCJ1c2VyX3R5cGUiOjAsInN0YXR1cyI6IkFDVElWRSIsIm9yZ2FuaXphdGlvbl9pZCI6MSwidmlzaWJpbGl0eSI6IlBVQkxJQyJ9LHsiaWQiOjgsInRpdGxlIjoicHJvZ3JhbV9kZXNpZ2luZXIiLCJ1c2VyX3R5cGUiOjAsInN0YXR1cyI6IkFDVElWRSIsIm9yZ2FuaXphdGlvbl9pZCI6MSwidmlzaWJpbGl0eSI6IlBVQkxJQyJ9LHsiaWQiOjksInRpdGxlIjoicHJvZ3JhbV9jcmVhdG9yIiwidXNlcl90eXBlIjowLCJzdGF0dXMiOiJBQ1RJVkUiLCJvcmdhbml6YXRpb25faWQiOjEsInZpc2liaWxpdHkiOiJQVUJMSUMifV19LCJpYXQiOjE3MTk1NDY0MTYsImV4cCI6MTczNTM1NzYxNn0.iY99cjRQHCz-GdvmG3rp8VUC6kKN6FZmJcu8WindMw4
+                      user:
+                        id: 1
+                        email: rahul@yahoo.com
+                        email_verified: 'false'
+                        name: Priyanka
+                        gender: null
+                        location:
+                          value: ap
+                          label: Andhra Pradesh
+                        about: This is teswtg
+                        share_link: null
+                        status: ACTIVE
+                        image: null
+                        has_accepted_terms_and_conditions: true
+                        languages:
+                          - value: en_in
+                            label: English
+                        preferred_language:
+                          value: en
+                          label: English
+                        organization_id: 1
+                        roles:
+                          - 5
+                          - 7
+                          - 9
+                          - 8
+                        meta:
+                          hub:
+                            - 5fd1b52ab53a6416aaeefb26
+                          block:
+                            - 5fd1b52ab53a6416aaeefb1f
+                            - 5fd1b52ab53a6416aaeefb24
+                          state: 663364443c990eaa179e289e
+                          school:
+                            - 5fd1b52ab53a6416aaeefb26
+                          district: 5fd098e2e049735a86b748ae
+                        location_ids: null
+                        created_at: '2024-06-11T06:52:31.427Z'
+                        updated_at: '2024-06-25T04:44:52.020Z'
+                        deleted_at: null
+                        organization:
+                          id: 1
+                          name: Default Organization
+                          code: default_code
+                        user_roles:
+                          - id: 7
+                            title: org_admin
+                            user_type: 1
+                            status: ACTIVE
+                            organization_id: 1
+                            visibility: PUBLIC
+                          - id: 5
+                            title: mentee
+                            user_type: 0
+                            status: ACTIVE
+                            organization_id: 1
+                            visibility: PUBLIC
+                          - id: 8
+                            title: program_desiginer
+                            user_type: 0
+                            status: ACTIVE
+                            organization_id: 1
+                            visibility: PUBLIC
+                          - id: 9
+                            title: program_creator
+                            user_type: 0
+                            status: ACTIVE
+                            organization_id: 1
+                            visibility: PUBLIC
+                    meta:
+                      formsVersion: []
+                      correlation: 3d8e16f0-c7cf-496b-bb3c-dd0ab94a3285
+        '422':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        location:
+                          type: string
+                        param:
+                          type: string
+                        msg:
+                          type: string
+                      required:
+                        - location
+                        - param
+                        - msg
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                  message:
+                    type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: CLIENT_ERROR
+                    error:
+                      - location: body
+                        param: email
+                        msg: email field is empty
+                      - location: body
+                        param: email
+                        msg: email is invalid
+                      - location: body
+                        param: password
+                        msg: password field is empty
+                    meta:
+                      correlation: 31b55aad-51f7-4d4d-8358-3ab24f559821
+                    message: Validation failed, Entered data is incorrect!
+      description: ''
+  /v1/entityTypes/bulkCreate:
+    post:
+      operationId: ''
+      summary: 'bulkCreate create entityType '
+      tags:
+        - entityType-API's
+      description: >-
+        You can use this API to to create Bulk entityType by passing
+
+
+        * The API Endpoint for creating a form is `/v1/entityType/bulkCreate`
+
+        * It is mandatory to provide values for parameters which are marked as
+        `required`
+
+        * This is a mandatory parameter and cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use this API, you require an X-auth-token. This token is
+            available in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: &ref_0
+            type: string
+          required: true
+      requestBody: null
+      responses:
+        '200':
+          headers: {}
+          content:
+            text:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                example1:
+                  value: |-
+                    "name",
+                    "registry-name",
+                    "isObservable",
+                    "toBeMappedToParentEntities",
+                    "immediateChildrenEntityType",
+                    "registryDetails",
+                    "_SYSTEM_ID",
+                    "status"
+                    "blockkks",
+                    "locationRegistry",
+                    true,
+                    true,
+                    "[""school""]",
+                    "{""name"":""locationRegistry""}",
+                    "6679320261add28f7f681294",
+                    "SUCCESS"
+        '400':
+          description: Bad Request
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: entityTypes
+                        msg: EntityTypes file is required
+    parameters: []
+  /v1/entityTypes/bulkUpdate:
+    post:
+      operationId: ''
+      summary: 'bulkUpdate create entityType '
+      tags:
+        - entityType-API's
+      description: >-
+        You can use this API to update entityType by passing CSV file.
+
+
+        * The API Endpoint for updating a form is `/v1/entityTypes/bulkUpdate`
+
+        * It is mandatory to provide values for parameters which are marked as
+        `required`
+
+        * This is a mandatory parameter and cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use this API, you require an X-auth-token. This token is
+            available in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_0
+          required: true
+      requestBody: {}
+      responses:
+        '200':
+          description: ok
+          content:
+            text:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - type: string
+                    - type: string
+                    - type: string
+                    - type: string
+                    - type: string
+                    - type: string
+                    - type: string
+                    - type: string
+                    - type: string
+                    - type: string
+                    - type: boolean
+                    - type: boolean
+                    - type: string
+                    - type: string
+                    - type: string
+                    - type: string
+              examples:
+                example1:
+                  value: |-
+                    "name",
+                    "registryname",
+                    "isObservable",
+                    "toBeMappedToParentEntities",
+                    "immediateChildrenEntityType",
+                    "_SYSTEM_ID",
+                    "status"
+                    "ghj",
+                    "locationRegistry",
+                    true,
+                    true,
+                    "[""[\""school\"""",
+                    "" “high School”
+                    ]""
+                    ]","6679320261add28f7f681294","SUCCESS"
+        '400':
+          description: Bad Request
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: entityTypes
+                        msg: EntityTypes file is required
+  /v1/entityTypes/create:
+    post:
+      operationId: ''
+      summary: Create Single data
+      tags:
+        - entityType-API's
+      description: >-
+        You can use this API to create a single entityType data.
+
+
+        * The API Endpoint to read form data is `/v1/entityTypes/create/`
+
+        * It is mandatory to provide values for parameters which are marked as
+        `required`
+
+        * This is a mandatory parameter and cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use this API, you require an X-auth-token. This token is
+            available in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: &ref_1
+            type: string
+          required: true
+      requestBody:
+        content:
+          application.json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                registryDetails:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                isObservable:
+                  type: boolean
+                toBeMappedToParentEntities:
+                  type: boolean
+            examples:
+              example1:
+                value:
+                  name: school
+                  registryDetails:
+                    name: hub
+                  isObservable: true
+                  toBeMappedToParentEntities: true
+                  immediateChildrenEntityType: school,collage
+      responses:
+        '200':
+          description: ok
+          content:
+            application.json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      isObservable:
+                        type: boolean
+                      toBeMappedToParentEntities:
+                        type: boolean
+                      immediateChildrenEntityType:
+                        type: array
+                        items:
+                          type: string
+                      status:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    message: ENTITY_INFORMATION_CREATED
+                    status: 200
+                    result:
+                      name: school
+                      isObservable: true
+                      toBeMappedToParentEntities: true
+                      immediateChildrenEntityType:
+                        - school
+                        - collage
+                      status: SUCCESS
+        '400':
+          description: Bad Request
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: name
+                        msg: required name
+  /v1/entityTypes/update/_id:
+    post:
+      summary: Update single data
+      tags:
+        - entityType-API's
+      description: >-
+        You can use this API to update single API's.
+
+
+        * The API Endpoint for creating a user entity is
+        `/v1/entityTypes/update`
+
+        * It is mandatory to provide values for parameters which are marked as
+        `required`
+
+        * This is a mandatory parameter and cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use this API, you require an X-auth-token. This is available in
+            the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_1
+          required: true
+        - in: query
+          name: _id
+          description: ''
+          schema: &ref_3
+            type: string
+          required: true
+      requestBody:
+        content:
+          application.json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                registryDetails:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                isObservable:
+                  type: boolean
+                toBeMappedToParentEntities:
+                  type: boolean
+                immediateChildrenEntityType:
+                  type: string
+            examples:
+              example1:
+                value:
+                  name: school
+                  registryDetails:
+                    name: hub
+                  isObservable: true
+                  toBeMappedToParentEntities: true
+                  immediateChildrenEntityType: collage
+      responses:
+        '200':
+          description: Created
+          content:
+            application.json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  result:
+                    type: object
+                    properties:
+                      profileForm:
+                        type: array
+                        items:
+                          type: string
+                      profileFields:
+                        type: array
+                        items:
+                          type: string
+                      types:
+                        type: array
+                        items:
+                          type: string
+                      callResponseTypes:
+                        type: array
+                        items:
+                          type: string
+                      isObservable:
+                        type: boolean
+                      immediateChildrenEntityType:
+                        type: array
+                        items:
+                          type: string
+                      createdBy:
+                        type: string
+                      updatedBy:
+                        type: string
+                      deleted:
+                        type: boolean
+                      _id:
+                        type: string
+                      isDeleted:
+                        type: boolean
+                      name:
+                        type: string
+                      registryDetails:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                      toBeMappedToParentEntities:
+                        type: boolean
+                      updatedAt:
+                        type: string
+                      createdAt:
+                        type: string
+                      __v:
+                        type: number
+              examples:
+                example1:
+                  value:
+                    status: 200
+                    result:
+                      profileForm: []
+                      profileFields: []
+                      types: []
+                      callResponseTypes: []
+                      isObservable: true
+                      immediateChildrenEntityType:
+                        - collage
+                      createdBy: SYSTEM
+                      updatedBy: SYSTEM
+                      deleted: false
+                      _id: 662f7d733f9b670521cadcff
+                      isDeleted: false
+                      name: school
+                      registryDetails:
+                        name: hub
+                      toBeMappedToParentEntities: true
+                      updatedAt: '2024-04-30T12:37:26.775Z'
+                      createdAt: '2024-04-29T10:58:59.862Z'
+                      __v: 0
+        '400':
+          description: Bad Request. User Entity already exists.
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: params
+                        param: _id
+                        msg: required _id
+                      - location: body
+                        param: name
+                        msg: required name
+    parameters:
+      - in: path
+        name: ''
+        description: ''
+        schema:
+          type: string
+  /v1/entityTypes/list:
+    get:
+      summary: list all entityTypes
+      tags:
+        - entityType-API's
+      description: >-
+        Use this API to update a user entity.
+
+
+        * The API Endpoint to update a user entity is
+        `/mentoring/v1/entity/update`
+
+        * It is mandatory to provide values for parameters which are marked as
+        `required`
+
+        * This is a mandatory parameter and cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use this API, you require an X-auth-token, which is available in
+            the login API response.
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application.json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                        - _id
+                        - name
+              examples:
+                example1:
+                  value:
+                    message: ENTITY_TYPES_FETCHED
+                    status: 200
+                    result:
+                      - _id: 661384681797bc00de520555
+                        name: school
+                      - _id: 661387f572fad002e57cce8f
+                        name: school
+        '400':
+          description: Bad Request. User Entity Not Found
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message: Bad request
+  /v1/entityTypes/find:
+    post:
+      summary: find the entityTypes
+      tags:
+        - entityType-API's
+      description: >-
+        Use this API to get the details of entityType data.
+
+
+        * The API Endpoint for reading the details of the user entity is
+        `/v1/entityTypes/find`
+
+        * It is mandatory to provide values for parameters which are marked as
+        `required`
+
+        * This is a mandatory parameter and cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use this API, you require an X-auth-token, which is available in
+            the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: &ref_2
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application.json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                        - _id
+                        - name
+              examples:
+                example1:
+                  value:
+                    message: ENTITY_TYPES_FETCHED
+                    status: 200
+                    result:
+                      - _id: 662f7dafcf215405591ce3af
+                        name: school
+                      - _id: 6630e4aaea015905f5b8fb19
+                        name: school
+        '400':
+          headers: {}
+          content:
+            application/json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: query
+                        msg: required name
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                projection:
+                  type: object
+                  properties:
+                    _id:
+                      type: number
+                    name:
+                      type: number
+                skipFields:
+                  type: object
+                  properties:
+                    createdAt:
+                      type: number
+            examples:
+              example1:
+                value:
+                  query:
+                    name: school
+                  projection:
+                    _id: 1
+                    name: 1
+                  skipFields:
+                    createdAt: 1
+    parameters: []
+  /v1/entities/bulkCreate?type=school:
+    post:
+      summary: Bulk create of entites
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to create bulk entities based on type and CSV file
+        we pass.
+
+
+        * The API Endpoint for deleting a user entity is
+        `/v1/entities/bulkCreate`
+
+        * It is mandatory to provide values for parameters which are marked as
+        `required`
+
+        * This is a mandatory parameter and cannot be empty or null
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use this API, you require an X-auth-token. This token is
+            available in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: type
+          description: type we need to pass to match the entityType
+          schema: *ref_2
+          required: true
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_2
+          required: true
+      responses:
+        '200':
+          description: Accepted
+          content:
+            text:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                example1:
+                  value: |-
+                    "Staff_id",
+                    "externalId",
+                    "name",
+                    "region",
+                    "capital",
+                    "_arrayFields",
+                    "_existingKeyField",
+                    "_SYSTEM_ID"
+                    "",
+                    "PBS",
+                    "Punjab",
+                    "North east",
+                    "Chandigarh",
+                    "",
+                    "externalId",
+                    "6679336f61add28f7f681298"
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: entities
+                        msg: entities file is required
+  /v1/entities/bulkUpdate:
+    post:
+      summary: bulk updates of entities
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to entities data based on the type and ID we pass
+        throw CSV file
+
+
+        * The API Endpoint for getting a list of sessions is
+        `/v1/entities/bulkCreate`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null
+      parameters:
+        - name: X-auth-token
+          required: true
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema:
+            type: string
+          required: true
+        - in: header
+          name: content-type
+          description: ''
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: ok
+          content:
+            text:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                example1:
+                  value: |-
+                    "externalId",
+                    "name",
+                    "region",
+                    "capital",
+                    "_arrayFields",
+                    "_existingKeyField",
+                    "_SYSTEM_ID",
+                    "UPDATE_STATUS"
+                    "entity506",
+                    "bijapur",
+                    "North east",
+                    "Chandigarh",
+                    "",
+                    "externalId",
+                    "6679336f61add28f7f681298",
+                    "SUCCESS"
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: entities
+                        msg: entities file is required
+      requestBody:
+        description: ''
+  /v1/entities/add?type=hub:
+    post:
+      summary: add single entities
+      tags:
+        - entities-API's
+      description: >-
+        TheAPI is used to create single entities creation based on type
+
+
+        * The API Endpoint for getting the details of the session is
+        `/v1/entities/add`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: type
+          required: true
+          description: Please append a valid sessionId to the Request URL.
+          schema:
+            type: string
+          example: 1
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        childHierarchyPath:
+                          type: array
+                          items:
+                            type: string
+                        allowedRoles:
+                          type: array
+                          items:
+                            type: string
+                        createdBy:
+                          type: string
+                        updatedBy:
+                          type: string
+                        _id:
+                          type: string
+                        deleted:
+                          type: boolean
+                        entityTypeId:
+                          type: string
+                        entityType:
+                          type: string
+                        registryDetails:
+                          type: object
+                          properties:
+                            locationId:
+                              type: string
+                            code:
+                              type: string
+                        metaInformation:
+                          type: object
+                          properties:
+                            externalId:
+                              type: string
+                        updatedAt:
+                          type: string
+                        createdAt:
+                          type: string
+                        __v:
+                          type: number
+              examples:
+                example1:
+                  value:
+                    message: ENTITY_ADDED
+                    status: 200
+                    result:
+                      - childHierarchyPath:
+                          - district
+                          - beat
+                          - cluster
+                          - school
+                          - block
+                        allowedRoles: []
+                        createdBy: SYSTEM
+                        updatedBy: SYSTEM
+                        _id: 6634b0767411a605fdbaca71
+                        deleted: false
+                        entityTypeId: 5f32d8228e0dc83124040567
+                        entityType: school
+                        registryDetails:
+                          locationId: entity123
+                          code: entity123
+                        metaInformation:
+                          externalId: entity123
+                        updatedAt: '2024-05-03T09:37:58.425Z'
+                        createdAt: '2024-05-03T09:37:58.425Z'
+                        __v: 0
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: entityTypeId
+                        msg: 'required entityTypeId '
+                      - location: body
+                        param: externalId
+                        msg: 'required externalId '
+                      - location: body
+                        param: name
+                        msg: 'required name '
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entityTypeId:
+                  type: string
+                externalId:
+                  type: string
+                entityType:
+                  type: string
+                childHierarchyPath:
+                  type: array
+                  items:
+                    type: string
+                allowedRoles:
+                  type: array
+                  items:
+                    type: string
+            examples:
+              example1:
+                value:
+                  entityTypeId: 663335e2a766490014aead0a
+                  externalId: entity123
+                  childHierarchyPath:
+                    - district
+                    - beat
+                    - cluster
+                    - school
+                    - block
+                  allowedRoles:
+                    - role1
+                    - role2
+  /v1/entities/details/_id:
+    get:
+      summary: Provide details of an entities based on ID
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to get details based on ID.
+
+
+        * The API Endpoint for sharing a session is: `/v1/entities/details`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null.
+      parameters:
+        - in: path
+          name: _id
+          required: true
+          description: Please append a valid sessionId to the Request URL..
+          schema:
+            type: string
+          example: 1
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: &ref_4
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        childHierarchyPath:
+                          type: array
+                          items:
+                            type: string
+                        allowedRoles:
+                          type: array
+                          items:
+                            type: string
+                        createdBy:
+                          type: string
+                        updatedBy:
+                          type: string
+                        deleted:
+                          type: boolean
+                        entityTypeId:
+                          type: string
+                        entityType:
+                          type: string
+                        metaInformation:
+                          type: object
+                          properties:
+                            externalId:
+                              type: string
+                        updatedAt:
+                          type: string
+                        createdAt:
+                          type: string
+                        __v:
+                          type: number
+              examples:
+                example1:
+                  value:
+                    message: ENTITY_INFORMATION_FETCHED
+                    status: 200
+                    result:
+                      - _id: 662f856a4b41910591c2fde9
+                        childHierarchyPath: []
+                        allowedRoles:
+                          - role1
+                          - role2
+                        createdBy: user123
+                        updatedBy: user123
+                        deleted: false
+                        entityTypeId: 627a13928ce12806f5803f57
+                        entityType: block
+                        metaInformation:
+                          externalId: entity123
+                        updatedAt: '2024-04-30T13:16:23.597Z'
+                        createdAt: '2024-04-29T11:32:58.439Z'
+                        __v: 0
+        '400':
+          description: 'Bad Request. '
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: params
+                        param: _id
+                        msg: required state location id
+  /v1/entities/update/_id:
+    post:
+      summary: Update single entities
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to update single entities data
+
+
+        * The API Endpoint to enroll for a session is: `/v1/entities/update`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API., which is available in
+            the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: _id
+          required: true
+          description: Please append a valid sessionId to the Request URL..
+          schema:
+            type: string
+          example: 1
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_3
+          required: true
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application.json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: object
+                    properties:
+                      metaInformation:
+                        type: object
+                        properties:
+                          externalId:
+                            type: string
+                      childHierarchyPath:
+                        type: array
+                        items:
+                          type: string
+                      allowedRoles:
+                        type: array
+                        items:
+                          type: string
+                      createdBy:
+                        type: string
+                      updatedBy:
+                        type: string
+                      deleted:
+                        type: boolean
+                      _id:
+                        type: string
+                      entityTypeId:
+                        type: string
+                      entityType:
+                        type: string
+                      updatedAt:
+                        type: string
+                      createdAt:
+                        type: string
+                      __v:
+                        type: number
+              examples:
+                example1:
+                  value:
+                    message: ASSETS_FETCHED_SUCCESSFULLY
+                    status: 200
+                    result:
+                      metaInformation:
+                        externalId: entity123
+                      childHierarchyPath: []
+                      allowedRoles:
+                        - role1
+                        - role2
+                      createdBy: user123
+                      updatedBy: user123
+                      deleted: false
+                      _id: 662f856a4b41910591c2fde9
+                      entityTypeId: 627a13928ce12806f5803f57
+                      entityType: block
+                      updatedAt: '2024-04-30T13:16:23.597Z'
+                      createdAt: '2024-04-29T11:32:58.439Z'
+                      __v: 0
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: externalId
+                        msg: required externalId
+                      - location: params
+                        param: _id
+                        msg: required _id
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                externalId:
+                  type: string
+                name:
+                  type: string
+                childHierarchyPath:
+                  type: array
+                  items:
+                    type: string
+                allowedRoles:
+                  type: array
+                  items:
+                    type: string
+                createdBy:
+                  type: string
+                updatedBy:
+                  type: string
+            examples:
+              example1:
+                value:
+                  externalId: entity123
+                  name: ' school'
+                  childHierarchyPath: []
+                  allowedRoles:
+                    - role1
+                    - role2
+                  createdBy: user123
+                  updatedBy: user123
+  /v1/entities/mappingUpload:
+    post:
+      summary: Cancel enrollment from a session
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to map the childEntity to parentEntity
+
+
+        * The API Endpoint for cancelling enrollment for a session is
+        `/v1/entities/mappingUpload`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_4
+          required: true
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application.json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                      message:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    message: ENTITY_INFORMATION_UPDATE
+                    status: 200
+                    result:
+                      success: true
+                      message: ENTITY_INFORMATION_UPDATE
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: entityMap
+                        msg: entityMap file is required
+  /v1/entities/listByEntityType/_id:
+    get:
+      summary: Start Session
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to list entities based on its type
+
+
+        * The API Endpoint for starting a session is:
+        `v1/entities/listByEntityType/_id`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: _id
+          required: true
+          description: Please append a valid session id to the Request URL.
+          schema:
+            type: string
+          example: 1
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_4
+          required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        externalId:
+                          type: string
+                        name:
+                          type: string
+                        locationId:
+                          type: string
+                        _id:
+                          type: string
+                      required:
+                        - externalId
+                        - name
+                        - locationId
+                        - _id
+              examples:
+                example1:
+                  value:
+                    message: ASSETS_FETCHED_SUCCESSFULLY
+                    status: 200
+                    result:
+                      - externalId: PBS
+                        name: Punjab
+                        locationId: ''
+                        _id: 6613b8142c7d9408449474bf
+                      - externalId: PBS
+                        name: Punjab
+                        locationId: ''
+                        _id: 6613b8f32c7d9408449474c2
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: params
+                        param: _id
+                        msg: required Entity type
+  /v1/entities/find:
+    post:
+      summary: find the entities based on querys
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to find entities based on query.
+
+
+        * The API Endpoint for creating a session is: `/v1/entities/find`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_4
+          required: true
+      requestBody:
+        content:
+          application.json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    metaInformation.externalId:
+                      type: string
+                projection:
+                  type: array
+                  items:
+                    type: string
+            examples:
+              example1:
+                value:
+                  query:
+                    metaInformation.externalId: PBS
+                  projection:
+                    - _id
+      responses:
+        '200':
+          description: created
+          content:
+            application.json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                      required:
+                        - _id
+              examples:
+                example1:
+                  value:
+                    message: ASSETS_FETCHED_SUCCESSFULLY
+                    status: 200
+                    result:
+                      - _id: 6613b8142c7d9408449474bf
+                      - _id: 6613b8f32c7d9408449474c2
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: query
+                        msg: required query
+  /v1/entities/list/_id?page=1&limit=100&type=school:
+    get:
+      summary: list entities based on ID
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to list the entities based on ID
+
+
+        * The API Endpoint for deleting a session is: `/v1/entities/list`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: _id
+          required: true
+          description: Please append a valid sessionId to the Request URL.
+          schema:
+            type: string
+          example: 1
+        - in: path
+          name: page
+          description: ''
+          schema: *ref_4
+          required: false
+        - in: path
+          name: limit
+          description: ''
+          schema: *ref_4
+          required: false
+        - in: path
+          name: type
+          description: ''
+          schema: *ref_4
+          required: true
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_4
+          required: true
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application.json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  status:
+                    type: number
+                  result:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            entityType:
+                              type: string
+                            externalId:
+                              type: string
+                            label:
+                              type: string
+                            value:
+                              type: string
+                      count:
+                        type: number
+              examples:
+                example1:
+                  value:
+                    status: 200
+                    result:
+                      data:
+                        - _id: 627a13928ce12806f5803f57
+                          entityType: school
+                          externalId: entity123
+                          label: undefined - entity123
+                          value: 627a13928ce12806f5803f57
+                      count: 1
+        '400':
+          description: 'Bad Request. '
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: query
+                        param: type
+                        msg: required type
+                      - location: params
+                        param: _id
+                        msg: required entity id
+  /v1/entities/relatedEntities/_id:
+    get:
+      summary: get related entities based on ID
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to get the realted entities data based on ID
+
+
+        * The API Endpoint to get the recording of a session is:
+        `/v1/entities/relatedEntities`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: _id
+          required: true
+          description: Please append a valid sessionId to the Request URL.
+          schema:
+            type: string
+          example: 1
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application.json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: object
+                    properties:
+                      relatedEntities:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            entityTypeId:
+                              type: string
+                            entityType:
+                              type: string
+                            metaInformation:
+                              type: object
+                              properties:
+                                externalId:
+                                  type: string
+                                name:
+                                  type: string
+                          required:
+                            - _id
+                            - entityTypeId
+                            - entityType
+                            - metaInformation
+              examples:
+                example1:
+                  value:
+                    message: ENTITY_FETCHED
+                    status: 200
+                    result:
+                      relatedEntities:
+                        - _id: 6613b8142c7d9408449474bf
+                          entityTypeId: 661384681797bc00de520555
+                          entityType: teacher
+                          metaInformation:
+                            externalId: PBS
+                            name: Punjab
+                        - _id: 6613b8f32c7d9408449474c2
+                          entityTypeId: 661384681797bc00de520555
+                          entityType: school
+                          metaInformation:
+                            externalId: PBS
+                            name: Punjab
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: params
+                        param: _id
+                        msg: required Entity id
+  /v1/entities/listByLocationIds:
+    get:
+      summary: list the entities based on location ID
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to get entities based on locations
+
+
+        * Endpoint for update session `/v1/entities/listByLocationIds`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: &ref_5
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application.json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        entityTypeId:
+                          type: string
+                        entityType:
+                          type: string
+                        registryDetails:
+                          type: object
+                          properties:
+                            locationId:
+                              type: string
+                            code:
+                              type: string
+                        metaInformation:
+                          type: object
+                          properties:
+                            externalId:
+                              type: string
+                      required:
+                        - _id
+                        - entityTypeId
+                        - entityType
+                        - registryDetails
+                        - metaInformation
+              examples:
+                example1:
+                  value:
+                    message: ENTITY_FETCHED
+                    status: 200
+                    result:
+                      - _id: 5f33c3d85f637784791cd830
+                        entityTypeId: 5f32d8228e0dc8312404056e
+                        entityType: state
+                        metaInformation:
+                          externalId: MH
+                          name: Maharashtra
+                          region: West
+                          capital: Mumbai
+                        registryDetails:
+                          locationId: db331a8c-b9e2-45f8-b3c0-7ec1e826b6df
+                          code: db331a8c-b9e2-45f8-b3c0-7ec1e826b6df
+                      - _id: 627a13928ce12806f5803f57
+                        entityTypeId: 5f32d8228e0dc8312404056e
+                        entityType: block
+                        metaInformation:
+                          externalId: MH
+                          name: Maharashtra
+                          region: West
+                          capital: Mumbai
+                        registryDetails:
+                          locationId: db331a8c-b9e2-45f8-b3c0-7ec1e826b6df
+                          code: db331a8c-b9e2-45f8-b3c0-7ec1e826b6df
+        '400':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: string
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: locationIds
+                        msg: Location ids is required
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locationIds:
+                  type: array
+                  items:
+                    type: string
+            examples:
+              example1:
+                value:
+                  locationIds:
+                    - entity44123
+  /v1/entities/subEntityListBasedOnRoleAndLocation/_id:
+    get:
+      summary: list all the entities based on location ID
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to update session recording url
+
+
+        * Endpoint for update session recording url
+        `/v1/entities/subEntityListBasedOnRoleAndLocation`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: _id
+          required: true
+          description: Please append a valid internalSessionId To the Request URL
+          schema:
+            type: string
+          example: 1
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_5
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application.json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        childHierarchyPath:
+                          type: array
+                          items:
+                            type: string
+                      required:
+                        - _id
+                        - childHierarchyPath
+              examples:
+                example1:
+                  value:
+                    message: ENTITIES_CHILD_HIERACHY_PATH
+                    status: 200
+                    result:
+                      - _id: 5fd1b52ab53a6416aaeefb1f
+                        childHierarchyPath:
+                          - school
+                          - cluster
+                      - _id: 6153158e5bec1d28882358ab
+                        childHierarchyPath:
+                          - school
+                          - cluster
+                          - state
+                          - district
+                          - beat
+                          - block
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: params
+                        param: _id
+                        msg: required state location id
+  /v1/entities/subEntityList/_id?type=school&search=&page=1&limit=100:
+    get:
+      summary: will provide the sub entity based on types
+      tags:
+        - entities-API's
+      description: >-
+        This API will help to get thew entities based on id.
+
+
+        * Endpoint for list session `/v1/entities/subEntityList/_id`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: page
+          description: Please add page number
+          schema:
+            type: number
+          example: 1
+        - in: path
+          name: limit
+          description: number of record to limit
+          schema:
+            type: number
+          example: 2
+        - in: path
+          name: type
+          description: ''
+          schema: *ref_5
+        - in: path
+          name: serach
+          description: ''
+          schema: *ref_5
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_5
+          required: true
+        - in: path
+          name: _id
+          description: ''
+          schema: *ref_3
+          required: true
+      responses:
+        '200':
+          description: ok
+          content:
+            application.json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  result:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            entityType:
+                              type: string
+                            externalId:
+                              type: string
+                            label:
+                              type: string
+                            value:
+                              type: string
+                            name:
+                              type: string
+                          required:
+                            - _id
+                            - entityType
+                            - externalId
+                            - label
+                            - value
+                      count:
+                        type: number
+              examples:
+                Success Response:
+                  value:
+                    status: 200
+                    result:
+                      data:
+                        - _id: 627a13928ce12806f5803f57
+                          entityType: school
+                          externalId: entity123
+                          label: undefined - entity123
+                          value: 627a13928ce12806f5803f57
+                      count: 1
+        '400':
+          description: 'Bad Request. '
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: query
+                        param: type
+                        msg: required type
+                      - location: params
+                        param: _id
+                        msg: required _id
+  /v1/entities/listByIds:
+    get:
+      summary: list the entities based on ID
+      tags:
+        - entities-API's
+      description: >-
+        This API will help to list the entities based on ID's
+
+
+        * The API Endpoint forjoin session `/v1/entities/listByIds`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_5
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        entityType:
+                          type: string
+              examples:
+                example1:
+                  value:
+                    message: ENTITIES_FETCHED
+                    status: 200
+                    result:
+                      - _id: 66738b75c05aa58f89ba1300
+                        entityType: block
+        '400':
+          description: 'Bad Request. '
+          content:
+            application.json:
+              schema: null
+              examples:
+                example1:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: entities
+                        msg: required entities
