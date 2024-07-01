@@ -1,0 +1,994 @@
+{
+	"info": {
+		"_postman_id": "8575daae-4a41-4d06-9767-58d201d49a8f",
+		"name": "Entity Management Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33513401"
+	},
+	"item": [
+		{
+			"name": "EntityType",
+			"item": [
+				{
+					"name": "Registration OTP",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "priyanka@tunerlabs.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Priyanka",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "entitiesCreate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"entityTypeId\": \"661384681797bc00de520555\",\n    \"externalId\": \"entity123\",\n     \"name\": \"rahul \",\n    \"childHierarchyPath\": [],\n    \"allowedRoles\": [\"role1\", \"role2\"],\n    \"createdBy\": \"user123\",\n    \"updatedBy\": \"user123\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entities/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"create"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "rahul",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "entitiesUpdate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"externalId\": \"entity123\",\n     \"name\": \" prajwal\",\n    \"childHierarchyPath\": [],\n    \"allowedRoles\": [\"rahul\", \"prajwal\"],\n    \"createdBy\": \"user123\",\n    \"updatedBy\": \"user123\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entities/update/660d1de443321a0711ddf49a",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"update",
+								"660d1de443321a0711ddf49a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"name\": \"prajwal\",\n\"registryDetails\": {\n    \"name\": \"bijapure\"\n},\n\"isObservable\": true,\n\"toBeMappedToParentEntities\": true,\n\"immediateChildrenEntityType\": \"collage\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entityTypes/update/661384681797bc00de520555",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"update",
+								"661384681797bc00de520555"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"name\": \"rahul\",\n\"registryDetails\": {\n    \"name\": \"pawan\"\n},\n\"isObservable\": true,\n\"toBeMappedToParentEntities\": true,\n\"immediateChildrenEntityType\": \"school,collage\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entityTypes/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:5001/entity/v1/entities/listByEntityType",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entities/listByEntityType",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"listByEntityType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "entitiesBulkCreate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "entities",
+									"type": "file",
+									"src": "/home/user3/Downloads/Input sheet - Punjab Entities_Production_Main - State.csv"
+								},
+								{
+									"key": "entityType",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entities/bulkCreate?type=rahul",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"bulkCreate"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "rahul"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkUpdate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "content-type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "entityTypes",
+									"type": "file",
+									"src": "/home/user3/Pictures/EntityType-Upload_2024_03_28_14_20.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entityTypes/bulkUpdate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"bulkUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "entitesBulkUpdate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "content-type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "entityTypes",
+									"type": "file",
+									"src": "/home/user3/Music/Entity-Upload_2024_04_08_14_59.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entities/bulkUpdate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"bulkUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entityTypes/list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EntitesFind",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"metaInformation\": {\n        \"externalId\": \"PBS\"\n    },\n    \"projection\": [\n        \"_id\"\n    ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entities/find",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"find"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonBody = JSON.parse(responseBody);",
+									"pm.environment.set(\"userToken\", jsonBody.result.access_token);",
+									"pm.environment.set(\"token\", jsonBody.result.access_token);",
+									"pm.environment.set(\"authorization\", 'Bearer '+ jsonBody.result.access_token);",
+									"pm.environment.set(\"refresh_token\", jsonBody.result.refresh_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{UserBaseURL}}user/v1/account/create",
+							"host": [
+								"{{UserBaseURL}}user"
+							],
+							"path": [
+								"v1",
+								"account",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkCreate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "content-type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "entityTypes",
+									"type": "file",
+									"src": "/home/user3/Pictures/EntityType-Upload_2024_03_28_14_20.csv"
+								},
+								{
+									"key": "",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entityTypes/bulkCreate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"bulkCreate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonBody = JSON.parse(responseBody);",
+									"pm.environment.set(\"userToken\", jsonBody.result.access_token);",
+									"pm.environment.set(\"token\", jsonBody.result.access_token);",
+									"pm.environment.set(\"authorization\", 'Bearer '+ jsonBody.result.access_token);",
+									"pm.environment.set(\"refresh_token\", jsonBody.result.refresh_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"email\": \"rahul@yahoo.com\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{UserBaseURL}}user/v1/account/login",
+							"host": [
+								"{{UserBaseURL}}user"
+							],
+							"path": [
+								"v1",
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "entitieslist",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entities/list/5f33c3d85f637784791cd830?page=1&limit=5&type=school",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"list",
+								"5f33c3d85f637784791cd830"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "type",
+									"value": "school"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "entitesDetails",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entities/details/6613b8142c7d9408449474bf?type=teacher",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"details",
+								"6613b8142c7d9408449474bf"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "teacher"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "relatedEntities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entities/relatedEntities/5f33c3d85f637784791cd830",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"relatedEntities",
+								"5f33c3d85f637784791cd830"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "jso",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "entitesAdd",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-authenticated-token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"entityTypeId\": \"6613dc3866ee460cb81b5349\",\n    \"externalId\": \"entity123\",\n    \"childHierarchyPath\": [],\n    \"allowedRoles\": [\"role1\", \"role2\"],\n    \"createdBy\": \"user123\",\n    \"updatedBy\": \"user123\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/entity/v1/entities/add?type=block",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"add"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "block"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "Registration OTP",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "priyanka@tunerlabs.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Priyanka",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonBody = JSON.parse(responseBody);",
+									"pm.environment.set(\"userToken\", jsonBody.result.access_token);",
+									"pm.environment.set(\"token\", jsonBody.result.access_token);",
+									"pm.environment.set(\"authorization\", 'Bearer '+ jsonBody.result.access_token);",
+									"pm.environment.set(\"refresh_token\", jsonBody.result.refresh_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Riyo\",\n    \"email\": \"rifyovarto2@gufum.com\",\n    \"password\": \"password\",\n    \"otp\": \"871826\",\n    \"has_accepted_terms_and_conditions\": true\n}"
+						},
+						"url": {
+							"raw": "{{UserBaseURL}}user/v1/account/create",
+							"host": [
+								"{{UserBaseURL}}user"
+							],
+							"path": [
+								"v1",
+								"account",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonBody = JSON.parse(responseBody);",
+									"pm.environment.set(\"userToken\", jsonBody.result.access_token);",
+									"pm.environment.set(\"token\", jsonBody.result.access_token);",
+									"pm.environment.set(\"authorization\", 'Bearer '+ jsonBody.result.access_token);",
+									"pm.environment.set(\"refresh_token\", jsonBody.result.refresh_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"rahul@yahoo.com\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{UserBaseURL}}user/v1/account/login",
+							"host": [
+								"{{UserBaseURL}}user"
+							],
+							"path": [
+								"v1",
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
