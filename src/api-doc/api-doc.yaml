@@ -2,7 +2,10 @@ openapi: 3.0.0
 info:
   title: Entity-Management-Service
   version: 1.0.0
-  description: '* This API enables the creation and management of various entities .It provides functionalities for entities, ensuring seamless integration and maintenance of entity-related data across the platform.'
+  description: >-
+    * This API enables the creation and management of various entities .It
+    provides functionalities for entities, ensuring seamless integration and
+    maintenance of entity-related data across the platform.
   contact:
     email: tech-infra@shikshalokam.org
 servers:
@@ -18,7 +21,8 @@ paths:
       tags:
         - entityType-API's
       description: >-
-        This api is use to create entity types in bulk by passing a csv file which contain entity information
+        This api is use to create entity types in bulk by passing a csv file
+        which contain entity information
 
 
         * The API Endpoint for creating a form is `/v1/entityType/bulkCreate`
@@ -261,7 +265,6 @@ paths:
                       name: state
                       isObservable: true
                       toBeMappedToParentEntities: true
-                     
                       status: SUCCESS
         '400':
           description: Bad Request
@@ -275,7 +278,7 @@ paths:
                       - location: body
                         param: name
                         msg: required name
-  /v1/entityTypes/update/_id:
+  /v1/entityTypes/update/{_id}:
     post:
       summary: Update single entities based on the Id's
       tags:
@@ -963,8 +966,9 @@ paths:
       description: >-
         You can use this API to get details based on ID.
 
-        * The API to get details of an entities based on entitie ID: `/v1/entities/details`
-        
+        * The API to get details of an entities based on entitie ID:
+        `/v1/entities/details`
+
         * It is mandatory to provide values for parameters marked with
         `required`
 
@@ -977,8 +981,8 @@ paths:
           schema:
             type: string
           example: 1
-        - in: 
-          schema: &ref_4
+        - in: null
+          schema: null
       responses:
         '200':
           description: Accepted
@@ -1240,7 +1244,7 @@ paths:
         - in: header
           name: internal-access-token
           description: ''
-          schema: *ref_4
+          schema: null
           required: true
       responses:
         '200':
@@ -1316,7 +1320,7 @@ paths:
         - in: header
           name: internal-access-token
           description: ''
-          schema: *ref_4
+          schema: null
           required: true
       responses:
         '200':
@@ -1384,7 +1388,8 @@ paths:
         You can use this API to find entities based on query.
 
 
-        * The API Endpoint for finding entities based on query: `/v1/entities/find`
+        * The API Endpoint for finding entities based on query:
+        `/v1/entities/find`
 
         * It is mandatory to provide values for parameters marked with
         `required`
@@ -1402,7 +1407,7 @@ paths:
         - in: header
           name: internal-access-token
           description: ''
-          schema: *ref_4
+          schema: null
           required: true
       requestBody:
         content:
@@ -1476,7 +1481,8 @@ paths:
         You can use this API to list the entities based on ID and entity Type
 
 
-        * The API Endpoint for listing the entities based on ID and entity Type: `/v1/entities/list`
+        * The API Endpoint for listing the entities based on ID and entity Type:
+        `/v1/entities/list`
 
         * It is mandatory to provide values for parameters marked with
         `required`
@@ -1501,22 +1507,22 @@ paths:
         - in: path
           name: page
           description: ''
-          schema: *ref_4
+          schema: null
           required: false
         - in: path
           name: limit
           description: ''
-          schema: *ref_4
+          schema: null
           required: false
         - in: path
           name: type
           description: ''
-          schema: *ref_4
+          schema: null
           required: true
         - in: header
           name: internal-access-token
           description: ''
-          schema: *ref_4
+          schema: null
           required: true
       responses:
         '200':
@@ -1575,7 +1581,7 @@ paths:
                       - location: params
                         param: _id
                         msg: required entity id
-  /v1/entities/relatedEntities/_id:
+  /v1/entities/relatedEntities/{_id}:
     get:
       summary: get related entities based on ID
       tags:
@@ -1691,7 +1697,8 @@ paths:
         You can use this API to get entities based on locations Id
 
 
-        * Endpoint to get entities based on locations Id `/v1/entities/listByLocationIds`
+        * Endpoint to get entities based on locations Id
+        `/v1/entities/listByLocationIds`
 
         * It is mandatory to provide values for parameters marked with
         `required`
@@ -1709,7 +1716,7 @@ paths:
         - in: header
           name: internal-access-token
           description: ''
-          schema: &ref_5
+          schema: &ref_4
             type: string
       responses:
         '200':
@@ -1814,20 +1821,22 @@ paths:
   /v1/entities/subEntityListBasedOnRoleAndLocation/{_id}:
     get:
       summary: list all the entities based on location ID
-      tags:
+      tags: &ref_5
         - entities-API's
       description: >-
-        You can use this API to  list entity based on location ID
+        You can use this API to list entity based on location ID
 
-        *Endpoint to list entity based on location ID
+        \*Endpoint to list entity based on location ID
         `/v1/entities/subEntityListBasedOnRoleAndLocation`
+
 
         * It is mandatory to provide values for parameters marked with
         `required`
 
         * Mandatory parameter cannot be empty or null
       parameters:
-        - name: X-auth-token
+        - &ref_6
+          name: X-auth-token
           in: header
           description: >-
             You require an X-auth-token to use this API. This token is available
@@ -1839,19 +1848,20 @@ paths:
           name: _id
           required: true
           description: Please append a valid entitie Id To the Request URL
-          schema:
+          schema: &ref_7
             type: string
           example: 1
-        - in: header
+        - &ref_8
+          in: header
           name: internal-access-token
           description: ''
-          schema: *ref_5
+          schema: *ref_4
       responses:
         '200':
           description: Accepted
           content:
             application.json:
-              schema:
+              schema: &ref_9
                 type: object
                 properties:
                   message:
@@ -1909,11 +1919,13 @@ paths:
       tags:
         - entities-API's
       description: >-
-        This API will help to get entities based on parent id and entity type we pass.
+        This API will help to get entities based on parent id and entity type we
+        pass.
 
-        This API will help to get entities based on parent id and entity type we pass.
-        * It is mandatory to provide values for parameters marked with
+        This API will help to get entities based on parent id and entity type we
+        pass. \* It is mandatory to provide values for parameters marked with
         `required`
+
 
         * Mandatory parameter cannot be empty or null
       parameters:
@@ -1940,15 +1952,15 @@ paths:
         - in: path
           name: type
           description: ''
-          schema: *ref_5
+          schema: *ref_4
         - in: path
           name: serach
           description: ''
-          schema: *ref_5
+          schema: *ref_4
         - in: header
           name: internal-access-token
           description: ''
-          schema: *ref_5
+          schema: *ref_4
           required: true
         - in: path
           name: _id
@@ -2029,7 +2041,8 @@ paths:
         This API will help to list the entities based on ID's
 
 
-        * The API Endpoint to list the entities based on ID's `/v1/entities/listByIds`
+        * The API Endpoint to list the entities based on ID's
+        `/v1/entities/listByIds`
 
         * It is mandatory to provide values for parameters marked with
         `required`
@@ -2047,7 +2060,7 @@ paths:
         - in: header
           name: internal-access-token
           description: ''
-          schema: *ref_5
+          schema: *ref_4
       responses:
         '200':
           description: Accepted
@@ -2089,3 +2102,64 @@ paths:
                       - location: body
                         param: entities
                         msg: required entities
+  /v1/entities/entityListBasedOnEntityType?entityType={entityType}:
+    get:
+      summary: list all the entities based on location ID
+      tags: *ref_5
+      description: >-
+        You can use this API to list entity based on location ID
+
+        \*Endpoint to list entity based on location ID
+        `/v1/entities/subEntityListBasedOnRoleAndLocation`
+
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null
+      parameters:
+        - *ref_6
+        - in: path
+          name: entityType
+          required: true
+          description: Please append a valid entitie Id To the Request URL
+          schema: *ref_7
+          example: 1
+        - *ref_8
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application.json:
+              schema: *ref_9
+              examples:
+                SuccessResponse:
+                  value:
+                    message: ASSETS_FETCHED_SUCCESSFULLY
+                    status: 200
+                    result:
+                      - _id: 6682714d5fb8bc3e93ceae52
+                        name: Mysore Rural
+                      - _id: 66827210a845ef3e891daf05
+                        name: 'T Narasipura '
+                      - _id: 668273665fb8bc3e93ceae65
+                        name: 'North Chennai '
+                      - _id: 668273bda845ef3e891daf15
+                        name: 'South Chennai '
+                      - _id: 668276d45fb8bc3e93ceaeaf
+                        name: 'Bangalore East* '
+                      - _id: 6682771aa845ef3e891db070
+                        name: 'Bangalore South '
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                FailureResponse:
+                  value:
+                    status: 400
+                    message:
+                      - location: query
+                        param: entityType
+                        msg: required entityType
