@@ -523,29 +523,20 @@ module.exports = class Entities extends Abstract {
 	subEntityListBasedOnRoleAndLocation(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let currentMaximumCountOfRequiredEntities = 0
+				let currentMaximumCountOfRequiredEntities = 0 //Initialize currentMaximumCountOfRequiredEntities
 				let subEntityTypeListData = new Array() // Initialize array to store sub-entity type list data
-				let data = req.userDetails.userInformation.entityTypes // Get user's entity types from userDetails
 
-				// Loop through each role in the user's entity types
-				for (let roleCount = 0; roleCount < data.split(',').length; roleCount++) {
-					const eachRole = data.split(',')[roleCount]
+				// Call 'entitiesHelper.subEntityListBasedOnRoleAndLocation' to retrieve sub-entity list
+				const entityTypeMappingData = await entitiesHelper.subEntityListBasedOnRoleAndLocation(req.params._id)
 
-					// Call 'entitiesHelper.subEntityListBasedOnRoleAndLocation' to retrieve sub-entity list
-					const entityTypeMappingData = await entitiesHelper.subEntityListBasedOnRoleAndLocation(
-						req.params._id,
-						eachRole
-					)
-
-					// Check if the retrieved sub-entity list has more entities than current maximum
-					if (
-						entityTypeMappingData.result &&
-						entityTypeMappingData.result.length > currentMaximumCountOfRequiredEntities
-					) {
-						currentMaximumCountOfRequiredEntities = entityTypeMappingData.result.length
-						subEntityTypeListData = entityTypeMappingData
-						subEntityTypeListData.result = entityTypeMappingData.result
-					}
+				// Check if the retrieved sub-entity list has more entities than current maximum
+				if (
+					entityTypeMappingData.result &&
+					entityTypeMappingData.result.length > currentMaximumCountOfRequiredEntities
+				) {
+					currentMaximumCountOfRequiredEntities = entityTypeMappingData.result.length
+					subEntityTypeListData = entityTypeMappingData
+					subEntityTypeListData.result = entityTypeMappingData.result
 				}
 
 				return resolve(subEntityTypeListData)
