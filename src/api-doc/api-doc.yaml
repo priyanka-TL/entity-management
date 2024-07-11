@@ -3,13 +3,13 @@ info:
   title: Entity-Management-Service
   version: 1.0.0
   description: >-
-    * This API enables the creation and management of various entities .It
+    * This Service enables the creation and management of various entities and entityType .It
     provides functionalities for entities, ensuring seamless integration and
     maintenance of entity-related data across the platform.
   contact:
     email: tech-infra@shikshalokam.org
 servers:
-  - url: http://localhost:5001
+  - url:  http://{{baseurl}}/entity
     description: local server
   - url: https://dev.elevate-apis.shikshalokam.org
     description: dev server
@@ -46,6 +46,17 @@ paths:
           schema: &ref_0
             type: string
           required: true
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The CSV file to upload
       responses:
         '200':
           headers: {}
@@ -87,6 +98,7 @@ paths:
                         param: entityTypes
                         msg: EntityTypes file is required
     parameters: []
+  
   /v1/entityTypes/bulkUpdate:
     post:
       operationId: ''
@@ -117,7 +129,17 @@ paths:
           description: ''
           schema: *ref_0
           required: true
-      requestBody: {}
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The CSV file to upload
       responses:
         '200':
           description: ok
@@ -183,7 +205,7 @@ paths:
         You can use this API to create a single entityType data.
 
 
-        * The API Endpoint to read form data is `/v1/entityTypes/create/`
+        * The API Endpoint to read form data is `/v1/entityTypes/create`
 
         * It is mandatory to provide values for parameters which are marked as
         `required`
@@ -226,7 +248,7 @@ paths:
                 value:
                   name: state
                   registryDetails:
-                    name: state
+                    name: govt school
                   isObservable: true
                   toBeMappedToParentEntities: true
       responses:
@@ -280,11 +302,11 @@ paths:
                         msg: required name
   /v1/entityTypes/update/{_id}:
     post:
-      summary: Update single entities based on the Id's
+      summary: Update single entities based on the entityType id
       tags:
         - entityType-API's
       description: >-
-        You can use this API to update single entities based on the Id passing.
+        You can use this API to update single entities based on the entityType id passing.
 
 
         * The API Endpoint for creating a user entity is
@@ -505,9 +527,9 @@ paths:
                     status: 200
                     result:
                       - _id: 661384681797bc00de520555
-                        name: school
+                        name: district
                       - _id: 661387f572fad002e57cce8f
-                        name: school
+                        name: state
         '400':
           description: Bad Request. User Entity Not Found
           content:
@@ -665,6 +687,17 @@ paths:
           description: ''
           schema: *ref_2
           required: true
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The CSV file to upload
       responses:
         '200':
           description: Accepted
@@ -711,7 +744,7 @@ paths:
       tags:
         - entities-API's
       description: >-
-        You can use this API to entities data based on the type and ID we pass
+        You can use this API to update entities data based on the type and entity id we pass
         throw CSV file  that contain information to update.
 
 
@@ -743,6 +776,7 @@ paths:
           schema:
             type: string
           required: true
+      
       responses:
         '200':
           description: ok
@@ -784,6 +818,16 @@ paths:
                         param: entities
                         msg: entities file is required
       requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The CSV file to upload
         description: ''
   /v1/entities/add?type={entity_type}:
     post:
@@ -791,7 +835,7 @@ paths:
       tags:
         - entities-API's
       description: >-
-        The API is used to create single entities creation based on type
+        The API is used to create single entities creation based on entityType
 
 
         * The API Endpoint to create single entities creation based on type
@@ -960,13 +1004,13 @@ paths:
                     - role2
   /v1/entities/details/{_id}:
     get:
-      summary: Provide details of an entities based on entitie ID.
+      summary: Provide details of an entities based on entity id.
       tags:
         - entities-API's
       description: >-
-        You can use this API to get details based on ID.
+        You can use this API to get details based on entity id.
 
-        * The API to get details of an entities based on entitie ID:
+        * The API to get details of an entities based on entity id:
         `/v1/entities/details`
 
         * It is mandatory to provide values for parameters marked with
@@ -977,7 +1021,7 @@ paths:
         - in: path
           name: _id
           required: true
-          description: Please append a valid entitie id to the Request URL..
+          description: Please append a valid entity id to the Request URL.
           schema:
             type: string
           example: 1
@@ -1091,7 +1135,7 @@ paths:
         - in: path
           name: _id
           required: true
-          description: Please append a valid entities Id to the Request URL..
+          description: Please append a valid entities Id to the Request URL.
           schema:
             type: string
           example: 1
@@ -1246,6 +1290,17 @@ paths:
           description: ''
           schema: null
           required: true
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The CSV file to upload
       responses:
         '200':
           description: Accepted
@@ -1287,7 +1342,7 @@ paths:
                         msg: entityMap file is required
   /v1/entities/listByEntityType/{_id}:
     get:
-      summary: You can use this API to list entities based on its type
+      summary: You can use this API to list entities based on its entity type
       tags:
         - entities-API's
       description: >-
@@ -1313,7 +1368,7 @@ paths:
         - in: path
           name: _id
           required: true
-          description: Please append a valid entitie id to the Request URL.
+          description: Please append a valid entity id to the Request URL.
           schema:
             type: string
           example: 1
@@ -1474,14 +1529,14 @@ paths:
                         msg: required query
   /v1/entities/list/_id?page={page_no}&limit={page_limit}&type={entity_type}:
     get:
-      summary: list entities based on ID
+      summary: list entities based on entity id
       tags:
         - entities-API's
       description: >-
-        You can use this API to list the entities based on ID and entity Type
+        You can use this API to list the entities based on entity id and entity Type
 
 
-        * The API Endpoint for listing the entities based on ID and entity Type:
+        * The API Endpoint for listing the entities based on entity id and entity Type:
         `/v1/entities/list`
 
         * It is mandatory to provide values for parameters marked with
@@ -1583,14 +1638,14 @@ paths:
                         msg: required entity id
   /v1/entities/relatedEntities/{_id}:
     get:
-      summary: get related entities based on ID
+      summary: get related entities based on entity id
       tags:
         - entities-API's
       description: >-
-        You can use this API to get the realted entities data based on ID
+        You can use this API to get the realted entities data based on entity id
 
 
-        * The API Endpoint to get the realted entities data based on ID:
+        * The API Endpoint to get the related entities data based on entity id:
         `/v1/entities/relatedEntities`
 
         * It is mandatory to provide values for parameters marked with
@@ -1690,7 +1745,7 @@ paths:
                         msg: required Entity id
   /v1/entities/listByLocationIds:
     get:
-      summary: list the entities based on location ID
+      summary: list the entities based on location id
       tags:
         - entities-API's
       description: >-
@@ -1820,13 +1875,13 @@ paths:
                     - entity44123
   /v1/entities/subEntityListBasedOnRoleAndLocation/{_id}:
     get:
-      summary: list all the entities based on location ID
+      summary: list all the entities based on location id
       tags: &ref_5
         - entities-API's
       description: >-
-        You can use this API to list entity based on location ID
+        You can use this API to list entity based on location id
 
-        \*Endpoint to list entity based on location ID
+        \*Endpoint to list entity based on location id
         `/v1/entities/subEntityListBasedOnRoleAndLocation`
 
 
@@ -2006,7 +2061,7 @@ paths:
                       count:
                         type: number
               examples:
-                Success Response:
+                SuccessResponse:
                   value:
                     status: 200
                     result:
@@ -2034,14 +2089,14 @@ paths:
                         msg: required _id
   /v1/entities/listByIds:
     get:
-      summary: list the entities based on ID
+      summary: list the entities based on entity id
       tags:
         - entities-API's
       description: >-
-        This API will help to list the entities based on ID's
+        This API will help to list the entities based on entity id
 
 
-        * The API Endpoint to list the entities based on ID's
+        * The API Endpoint to list the entities based on entity id
         `/v1/entities/listByIds`
 
         * It is mandatory to provide values for parameters marked with
@@ -2104,12 +2159,12 @@ paths:
                         msg: required entities
   /v1/entities/entityListBasedOnEntityType?entityType={entityType}:
     get:
-      summary: list all the entities based on location ID
+      summary: list all the entities based on location id
       tags: *ref_5
       description: >-
-        You can use this API to list entity based on location ID
+        You can use this API to list entity based on location id
 
-        \*Endpoint to list entity based on location ID
+        \*Endpoint to list entity based on location id
         `/v1/entities/subEntityListBasedOnRoleAndLocation`
 
 
