@@ -1,16 +1,16 @@
 {
 	"info": {
 		"_postman_id": "fa7d1558-cdcb-493a-8767-55758ac735da",
-		"name": "Entity Management API's",
+		"name": "Entity-Management API's",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "33513401"
 	},
 	"item": [
 		{
-			"name": "entity",
+			"name": "entityType",
 			"item": [
 				{
-					"name": "Find",
+					"name": "find",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -40,7 +40,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entityTypes/find",
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/find",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -55,7 +55,7 @@
 					"response": []
 				},
 				{
-					"name": "Update",
+					"name": "update",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -85,7 +85,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entityTypes/update/663335e2a766490014aead0a",
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/update/663335e2a766490014aead0a",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -101,7 +101,7 @@
 					"response": []
 				},
 				{
-					"name": "Create",
+					"name": "create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -131,7 +131,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entityTypes/create",
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/create",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -177,7 +177,7 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entityTypes/bulkUpdate",
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/bulkUpdate",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -192,7 +192,7 @@
 					"response": []
 				},
 				{
-					"name": "List",
+					"name": "list",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -213,7 +213,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entityTypes/list",
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/list",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -265,7 +265,7 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entityTypes/bulkCreate",
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/bulkCreate",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -306,7 +306,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/listByEntityType/5f32d8228e0dc8312404056e?page=1",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/listByEntityType/5f32d8228e0dc8312404056e?page=1",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -328,7 +328,7 @@
 					"response": []
 				},
 				{
-					"name": "Update",
+					"name": "update",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -358,7 +358,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/update/663364443c990eaa179e289e",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/update/663364443c990eaa179e289e",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -374,7 +374,7 @@
 					"response": []
 				},
 				{
-					"name": "BulkCreate",
+					"name": "bulkCreate",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -411,7 +411,7 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/bulkCreate?type=school",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/bulkCreate?type=school",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -432,7 +432,7 @@
 					"response": []
 				},
 				{
-					"name": "BulkUpdate",
+					"name": "bulkUpdate",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -463,7 +463,7 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/bulkUpdate",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/bulkUpdate",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -509,7 +509,7 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/mappingUpload",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/mappingUpload",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -545,7 +545,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/list/5f33c3d85f637784791cd830?page=1&limit=100&type=school",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/list/5f33c3d85f637784791cd830?page=1&limit=100&type=school",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -608,7 +608,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/relatedEntities/6153158e5bec1d28882358ab",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/relatedEntities/6153158e5bec1d28882358ab",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -624,7 +624,7 @@
 					"response": []
 				},
 				{
-					"name": "Find",
+					"name": "find",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -649,7 +649,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/find",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/find",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -664,7 +664,7 @@
 					"response": []
 				},
 				{
-					"name": "Details",
+					"name": "details",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -685,7 +685,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/details/663339bc0cb19f01c459853b",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/details/663339bc0cb19f01c459853b",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -734,7 +734,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/listByLocationIds",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/listByLocationIds",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -749,7 +749,7 @@
 					"response": []
 				},
 				{
-					"name": "Add",
+					"name": "add",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -779,7 +779,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/add?type=state",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/add?type=state",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -816,7 +816,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/subEntityListBasedOnRoleAndLocation/entity123",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/subEntityListBasedOnRoleAndLocation/entity123",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -848,7 +848,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/subEntityList/663354e56109810671aec49f?type=school&search=&page=1&limit=100",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/subEntityList/663354e56109810671aec49f?type=school&search=&page=1&limit=100",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -916,7 +916,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/listByIds",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/listByIds",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -951,7 +951,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/entityListBasedOnEntityType?entityType=state",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/entityListBasedOnEntityType?entityType=state",
 							"host": [
 								"{{baseUrl}}"
 							],

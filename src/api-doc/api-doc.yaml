@@ -9,7 +9,7 @@ info:
   contact:
     email: tech-infra@shikshalokam.org
 servers:
-  - url:  http://{{baseurl}}/entity
+  - url:  http://{{baseurl}}/entity-management
     description: local server
   - url: https://dev.elevate-apis.shikshalokam.org
     description: dev server
@@ -22,7 +22,7 @@ paths:
         - entityType-API's
       description: >-
         This api is use to create entity types in bulk by passing a csv file
-        which contain entity information
+        which contain entity type information
 
 
         * The API Endpoint for creating a form is `/v1/entityType/bulkCreate`
@@ -198,7 +198,7 @@ paths:
   /v1/entityTypes/create:
     post:
       operationId: ''
-      summary: This api will reate's Single entity Type data
+      summary: This api will create's Single entity Type data
       tags:
         - entityType-API's
       description: >-
@@ -306,7 +306,7 @@ paths:
       tags:
         - entityType-API's
       description: >-
-        You can use this API to update single entities based on the entityType id passing.
+        You can use this API to update single entities based on the entityType id .
 
 
         * The API Endpoint for creating a user entity is
@@ -332,7 +332,7 @@ paths:
           required: true
         - in: query
           name: _id
-          description: ''
+          description: 'to update the data we need to match its id'
           schema: &ref_3
             type: string
           required: true
@@ -472,7 +472,7 @@ paths:
           type: string
   /v1/entityTypes/list:
     get:
-      summary: This api will list all entityTypes
+      summary: This API can be used to list all entity types
       tags:
         - entityType-API's
       description: >-
@@ -545,10 +545,10 @@ paths:
       tags:
         - entityType-API's
       description: >-
-        Use this API to get the details of entityType data.
+        Use this API to get the details of entityType data based on the request body passed.
 
 
-        * The API Endpoint for reading the details of the user entity is
+        * The API Endpoint for reading the details of the entity type is
         `/v1/entityTypes/find`
 
         * It is mandatory to provide values for parameters which are marked as
@@ -653,7 +653,7 @@ paths:
     parameters: []
   /v1/entities/bulkCreate?type={entity_type}:
     post:
-      summary: Bulk creation of entites
+      summary: Bulk creation of entities
       tags:
         - entities-API's
       description: >-
@@ -661,7 +661,8 @@ paths:
         we pass.
 
 
-        * The API Endpoint for deleting a user entity is
+        * The API Endpoint for creating bulk entities based on type and CSV file
+        we pass.
         `/v1/entities/bulkCreate`
 
         * It is mandatory to provide values for parameters which are marked as
@@ -679,7 +680,7 @@ paths:
             type: string
         - in: query
           name: type
-          description: type we need to pass to match the entityType
+          description: entity type of the entities we need to pass to match the entityType
           schema: *ref_2
           required: true
         - in: header
@@ -745,7 +746,7 @@ paths:
         - entities-API's
       description: >-
         You can use this API to update entities data based on the type and entity id we pass
-        throw CSV file  that contain information to update.
+        through CSV file  that contain information to update.
 
 
         * The API Endpoint for updating entities by passing csv file
@@ -831,11 +832,11 @@ paths:
         description: ''
   /v1/entities/add?type={entity_type}:
     post:
-      summary: add single entities
+      summary: Add single entities
       tags:
         - entities-API's
       description: >-
-        The API is used to create single entities creation based on entityType
+        The API is used to create single entities based on entityType
 
 
         * The API Endpoint to create single entities creation based on type
@@ -1004,7 +1005,7 @@ paths:
                     - role2
   /v1/entities/details/{_id}:
     get:
-      summary: Provide details of an entities based on entity id.
+      summary: Provide details of an entity based on the entity id. This API returns the details of a single entity at a time.
       tags:
         - entities-API's
       description: >-
@@ -1110,12 +1111,11 @@ paths:
                         msg: required state location id
   /v1/entities/update/{_id}:
     post:
-      summary: Update single entities
+      summary: Update an entity
       tags:
         - entities-API's
       description: >-
-        You can use this API to update single entities data
-
+        You can use this API to update the entity data.
 
         * The API Endpoint to update single entities : `/v1/entities/update`
 
@@ -1340,9 +1340,9 @@ paths:
                       - location: body
                         param: entityMap
                         msg: entityMap file is required
-  /v1/entities/listByEntityType/{_id}:
+  /v1/entities/listByEntityType/{_id}?page={page_no}:
     get:
-      summary: You can use this API to list entities based on its entity type
+      summary: You can use this API to list entity based on id.
       tags:
         - entities-API's
       description: >-
@@ -1371,6 +1371,12 @@ paths:
           description: Please append a valid entity id to the Request URL.
           schema:
             type: string
+          example: 1
+        - in: path
+          name: page
+          description: Please appenda number for pagination.
+          schema:
+            type: number
           example: 1
         - in: header
           name: internal-access-token
@@ -1436,7 +1442,7 @@ paths:
                         msg: required Entity type
   /v1/entities/find:
     post:
-      summary: find the entities based on queries
+      summary: Find the entities based on queries
       tags:
         - entities-API's
       description: >-
@@ -1529,7 +1535,7 @@ paths:
                         msg: required query
   /v1/entities/list/_id?page={page_no}&limit={page_limit}&type={entity_type}:
     get:
-      summary: list entities based on entity id
+      summary: List entities based on entity id
       tags:
         - entities-API's
       description: >-
@@ -1638,7 +1644,7 @@ paths:
                         msg: required entity id
   /v1/entities/relatedEntities/{_id}:
     get:
-      summary: get related entities based on entity id
+      summary: Get related entities based on entity id
       tags:
         - entities-API's
       description: >-
@@ -1664,7 +1670,7 @@ paths:
         - in: path
           name: _id
           required: true
-          description: Please append a valid entitie Id to the Request URL.
+          description: Please append a valid entity Id to the Request URL.
           schema:
             type: string
           example: 1
@@ -1745,7 +1751,7 @@ paths:
                         msg: required Entity id
   /v1/entities/listByLocationIds:
     get:
-      summary: list the entities based on location id
+      summary: List the entities based on location id
       tags:
         - entities-API's
       description: >-
@@ -1875,7 +1881,7 @@ paths:
                     - entity44123
   /v1/entities/subEntityListBasedOnRoleAndLocation/{_id}:
     get:
-      summary: list all the entities based on location id
+      summary: List all the entities based on location id
       tags: &ref_5
         - entities-API's
       description: >-
@@ -1902,7 +1908,7 @@ paths:
         - in: path
           name: _id
           required: true
-          description: Please append a valid entitie Id To the Request URL
+          description: Please append a valid entity Id To the Request URL
           schema: &ref_7
             type: string
           example: 1
@@ -1970,7 +1976,7 @@ paths:
                         msg: required state location id
   /v1/entities/subEntityList/{_id}?type={entity_type}&search=&page={page_no}&limit={page_limit}:
     get:
-      summary: will provide the sub entity based on types
+      summary: Will provide the sub entity based on types
       tags:
         - entities-API's
       description: >-
@@ -2019,7 +2025,7 @@ paths:
           required: true
         - in: path
           name: _id
-          description: ''
+          description: 'Please append a valid entity id'
           schema: *ref_3
           required: true
       responses:
@@ -2089,7 +2095,7 @@ paths:
                         msg: required _id
   /v1/entities/listByIds:
     get:
-      summary: list the entities based on entity id
+      summary: List the entities based on entity id
       tags:
         - entities-API's
       description: >-
@@ -2157,15 +2163,15 @@ paths:
                       - location: body
                         param: entities
                         msg: required entities
-  /v1/entities/entityListBasedOnEntityType?entityType={entityType}:
+  /v1/entities/entityListBasedOnEntityType?entityType={entity_Type}:
     get:
-      summary: list all the entities based on location id
+      summary: list all the entities based on entity type.
       tags: *ref_5
       description: >-
-        You can use this API to list entity based on location id
+        You can use this API to list entity based on entity type
 
-        \*Endpoint to list entity based on location id
-        `/v1/entities/subEntityListBasedOnRoleAndLocation`
+        \*Endpoint to list entity based on entity type
+        `/v1/entities/entityListBasedOnEntityType?entityType={entity_Type}`
 
 
         * It is mandatory to provide values for parameters marked with
@@ -2177,7 +2183,7 @@ paths:
         - in: path
           name: entityType
           required: true
-          description: Please append a valid entitie Id To the Request URL
+          description: Please append a valid entity type to the Request URL
           schema: *ref_7
           example: 1
         - *ref_8
