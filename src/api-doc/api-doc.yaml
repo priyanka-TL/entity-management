@@ -17,15 +17,15 @@ paths:
   /v1/entityTypes/bulkCreate:
     post:
       operationId: ''
-      summary: 'bulkCreate create entity type '
+      summary: 'BulkCreate create entity type '
       tags:
         - entityType-API's
       description: >-
         This api is use to create entity types in bulk by passing a csv file
         which contain entity type information
 
-
-        * The API Endpoint for creating a form is `/v1/entityType/bulkCreate`
+        * The API Endpoint for creating entity types in bulk by passing a csv file
+        which contain entity type information is `/v1/entityType/bulkCreate`
 
         * It is mandatory to provide values for parameters which are marked as
         `required`
@@ -109,7 +109,7 @@ paths:
         You can use this API to update entityType by passing CSV file.
 
 
-        * The API Endpoint for updating a form is `/v1/entityTypes/bulkUpdate`
+        * The API Endpoint for updating entityType by passing CSV file is `/v1/entityTypes/bulkUpdate`
 
         * It is mandatory to provide values for parameters which are marked as
         `required`
@@ -205,7 +205,7 @@ paths:
         You can use this API to create a single entityType data.
 
 
-        * The API Endpoint to read form data is `/v1/entityTypes/create`
+        * The API Endpoint tocreate a single entityType data is `/v1/entityTypes/create`
 
         * It is mandatory to provide values for parameters which are marked as
         `required`
@@ -309,7 +309,7 @@ paths:
         You can use this API to update single entities based on the entityType id .
 
 
-        * The API Endpoint for creating a user entity is
+        * The API Endpoint to update single entities based on the entityType id is
         `/v1/entityTypes/update`
 
         * It is mandatory to provide values for parameters which are marked as
@@ -541,7 +541,7 @@ paths:
                     message: Bad request
   /v1/entityTypes/find:
     post:
-      summary: find the entityTypes
+      summary: Find the entityTypes
       tags:
         - entityType-API's
       description: >-
@@ -657,7 +657,7 @@ paths:
       tags:
         - entities-API's
       description: >-
-        You can use this API to create bulk entities based on type and CSV file
+        You can use this API to create bulk create entities based on type and CSV file
         we pass.
 
 
@@ -1115,7 +1115,7 @@ paths:
       tags:
         - entities-API's
       description: >-
-        You can use this API to update the entity data.
+        You can use this API to update the entity data based on entiy id.
 
         * The API Endpoint to update single entities : `/v1/entities/update`
 
@@ -1340,7 +1340,7 @@ paths:
                       - location: body
                         param: entityMap
                         msg: entityMap file is required
-  /v1/entities/listByEntityType/{_id}?page={page_no}:
+  /v1/entities/listByEntityType/{_id}?page={page_no}&limit={page_limit}:
     get:
       summary: You can use this API to list entity based on id.
       tags:
@@ -1378,6 +1378,12 @@ paths:
           schema:
             type: number
           example: 1
+        - in: path
+          name: limit
+          description: number of record to limit
+          schema:
+            type: number
+          example: 2
         - in: header
           name: internal-access-token
           description: ''
@@ -2165,7 +2171,7 @@ paths:
                         msg: required entities
   /v1/entities/entityListBasedOnEntityType?entityType={entity_Type}:
     get:
-      summary: list all the entities based on entity type.
+      summary: List all the entities based on entity type.
       tags: *ref_5
       description: >-
         You can use this API to list entity based on entity type
