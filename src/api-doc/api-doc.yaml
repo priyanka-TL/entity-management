@@ -17,7 +17,7 @@ paths:
   /v1/entityTypes/bulkCreate:
     post:
       operationId: ''
-      summary: 'bulkCreate create entityType '
+      summary: 'bulkCreate create entity type '
       tags:
         - entityType-API's
       description: >-
@@ -332,7 +332,7 @@ paths:
           required: true
         - in: query
           name: _id
-          description: 'to update the data we need to match its id'
+          description: 'The unique identifier for the data that needs to be updated. This id ensures the correct record is matched for the update operation.'
           schema: &ref_3
             type: string
           required: true
@@ -680,7 +680,7 @@ paths:
             type: string
         - in: query
           name: type
-          description: entity type of the entities we need to pass to match the entityType
+          description: Please pass entity type value for the entity.
           schema: *ref_2
           required: true
         - in: header
@@ -858,7 +858,7 @@ paths:
         - in: path
           name: type
           required: true
-          description: Please append a valid entitie Id to the Request URL.
+          description: Please pass entity type value for the entity.
           schema:
             type: string
           example: 1
@@ -1374,7 +1374,7 @@ paths:
           example: 1
         - in: path
           name: page
-          description: Please appenda number for pagination.
+          description: Please append number for pagination.
           schema:
             type: number
           example: 1
@@ -1577,7 +1577,7 @@ paths:
           required: false
         - in: path
           name: type
-          description: ''
+          description: 'Please pass entity type value for the entity'
           schema: null
           required: true
         - in: header
@@ -2012,7 +2012,7 @@ paths:
           example: 2
         - in: path
           name: type
-          description: ''
+          description: 'Please pass entity type value for the entity'
           schema: *ref_4
         - in: path
           name: serach
@@ -2183,7 +2183,7 @@ paths:
         - in: path
           name: entityType
           required: true
-          description: Please append a valid entity type to the Request URL
+          description: Please pass entity type value for the entity.
           schema: *ref_7
           example: 1
         - *ref_8
