@@ -205,7 +205,7 @@ paths:
         You can use this API to create a single entityType data.
 
 
-        * The API Endpoint tocreate a single entityType data is `/v1/entityTypes/create`
+        * The API Endpoint to create a single entityType data is `/v1/entityTypes/create`
 
         * It is mandatory to provide values for parameters which are marked as
         `required`
