@@ -9,6 +9,8 @@
 const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
 const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
 const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
+const userService = require(PROJECT_ROOT_DIRECTORY + '/generics/services/user')
+
 const _ = require('lodash')
 
 /**
@@ -173,6 +175,82 @@ module.exports = class UserProjectsHelper {
 				resolve({
 					message: CONSTANTS.apiResponses.ENTITIES_FETCHED,
 					result: result,
+				})
+			} catch (error) {
+				return reject(error)
+			}
+		})
+	}
+
+	/**
+	 * Fetches targeted roles based on the provided entity IDs.
+	 * @param {Array<string>} entityid - An array of entity IDs to filter roles.
+	 * @param {string} userToken - The token for user authentication.
+	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
+	 */
+	static targetedRoles(entityid, userToken) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Construct the filter to retrieve entities based on provided entity IDs
+				const filter = {
+					_id: {
+						$in: entityid,
+					},
+				}
+				const projectionFields = ['childHierarchyPath']
+				// Retrieve entities based on provided entity IDs
+				const entities = await entitiesQueries.entityDocuments(filter, projectionFields)
+				if (!entities[0].childHierarchyPath) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITYTYPE_NOT_FOUND,
+					}
+				}
+				// Extract child hierarchy paths from the retrieved entities
+				const childHierarchyPaths = entities[0].childHierarchyPath
+
+				// Construct the filter to retrieve entity type IDs based on child hierarchy paths
+				const entityTypeFilter = {
+					name: {
+						$in: childHierarchyPaths,
+					},
+				}
+				const entityTypeProjection = ['_id']
+				// Retrieve entity type IDs based on child hierarchy paths
+				const fetchEntityTypeId = await entityTypeQueries.entityTypesDocument(
+					entityTypeFilter,
+					entityTypeProjection
+				)
+				if (!fetchEntityTypeId[0]._id) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_ID_NOT_FOUND,
+					}
+				}
+				// Initialize results object to aggregate data and count
+				let results = {
+					data: [],
+					count: 0,
+				}
+
+				// Loop through each fetched entity type ID to retrieve user roles
+				for (const entityType of fetchEntityTypeId) {
+					const userRoleFilter = { entityTypeId: entityType._id }
+					const userRolesResponse = await userService.userRole(userRoleFilter)
+
+					// Aggregate the results
+					results.data.push(...userRolesResponse.rows)
+					results.count += userRolesResponse.count
+				}
+				if (results.data.length < 0) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ROLES_NOT_FOUND,
+					}
+				}
+				return resolve({
+					message: CONSTANTS.apiResponses.ROLES_FETCHED_SUCCESSFULLY,
+					result: results,
 				})
 			} catch (error) {
 				return reject(error)

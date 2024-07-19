@@ -230,6 +230,71 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
+	 * Handles the request to fetch targeted roles based on the provided entity IDs in the request parameters.
+	  * @api {GET} v1/entities/targetedRoles/5f33c3d85f637784791cd831
+	  * @apiVersion 1.0.0
+	  * @apiName targetedRoles
+	  * @apiGroup Entities
+	  * @apiUse successBody
+	  * @apiUse errorBody
+	 * @param {Object} req - The request object containing parameters and user details.
+	 * @param {Object} req.params - The request parameters.
+	 * @param {string} req.params._id - The entity ID to filter roles.
+	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
+	 * * @returns {JSON} - Message of successfully response.
+     * 
+     * {
+    "message": "ROLES_FETCHED_SUCCESSFULLY",
+    "status": 200,
+    "result": {
+        "data": [
+            {
+                "id": 10,
+                "title": "headmaster",
+                "user_type": 1,
+                "visibility": "PUBLIC",
+                "status": "ACTIVE",
+                "organization_id": 1
+            },
+            {
+                "id": 15,
+                "title": "TEACHER",
+                "user_type": 1,
+                "visibility": "PUBLIC",
+                "status": "ACTIVE",
+                "organization_id": 1
+            },
+            {
+                "id": 14,
+                "title": "BEO",
+                "user_type": 1,
+                "visibility": "PUBLIC",
+                "status": "ACTIVE",
+                "organization_id": 1
+            }
+        ],
+        "count": 3
+    }
+    }
+    */
+	targetedRoles(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Calls the 'targetedRoles' function from 'entitiesHelper' to retrieve entity data
+				let userRole = await entitiesHelper.targetedRoles(req.params._id)
+				// Resolves the promise with the retrieved entity data
+				return resolve(userRole)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+	/**
 	 * details of the entities.
 	 * @api {get} v1/entities/details provide the details 
 	 * @apiVersion 1.0.0

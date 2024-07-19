@@ -26,7 +26,9 @@ module.exports = {
 	PROFILE_CONFIG_FORM_KEY: 'profileConfig_v2',
 	GET_METHOD: 'GET',
 	GET_FORM_DATA: '/plugin/v1/form/read',
+	USER_LIST: '/v1/user-role/read',
 	FORM_SERVICE_URL: 'http://player:3000',
 	ENTITYTYPE: 'entityType',
 	GROUPS: 'groups',
+	SERVER_TIME_OUT: 5000,
 }
