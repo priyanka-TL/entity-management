@@ -18,7 +18,7 @@ const userRole = function (filterData) {
 	return new Promise(async (resolve, reject) => {
 		try {
 			// Construct the URL for the user service
-			let url = userServiceUrl + CONSTANTS.common.USER_LIST
+			let url = userServiceUrl + CONSTANTS.endpoints.USER_READ
 			// Set the options for the HTTP GET request
 			const options = {
 				headers: {
@@ -26,10 +26,9 @@ const userRole = function (filterData) {
 					internal_access_token: process.env.INTERNAL_ACCESS_TOKEN,
 				},
 				json: {
-					entityTypeId: filterData.entityTypeId,
+					entityTypeId: filterData,
 				},
 			}
-
 			// Make the GET request to the user service
 			request.get(url, options, userReadCallback)
 			let result = {

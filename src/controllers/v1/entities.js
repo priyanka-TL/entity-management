@@ -281,9 +281,9 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Calls the 'targetedRoles' function from 'entitiesHelper' to retrieve entity data
-				let userRole = await entitiesHelper.targetedRoles(req.params._id)
+				let userRoleDetails = await entitiesHelper.targetedRoles(req.params._id)
 				// Resolves the promise with the retrieved entity data
-				return resolve(userRole)
+				return resolve(userRoleDetails)
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,

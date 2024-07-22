@@ -6,5 +6,5 @@
  */
 
 module.exports = {
-    // GET_IMPROVEMENT_PROJECTS : "/v1/template/getImprovementProjects", // Unnati service
+	USER_READ: '/v1/user-role/read',
 }

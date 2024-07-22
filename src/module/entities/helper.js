@@ -184,36 +184,42 @@ module.exports = class UserProjectsHelper {
 
 	/**
 	 * Fetches targeted roles based on the provided entity IDs.
-	 * @param {Array<string>} entityid - An array of entity IDs to filter roles.
+	 * @param {Array<string>} entityId - An array of entity IDs to filter roles.
 	 * @param {string} userToken - The token for user authentication.
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 */
-	static targetedRoles(entityid, userToken) {
+	static targetedRoles(entityId, userToken) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Construct the filter to retrieve entities based on provided entity IDs
 				const filter = {
 					_id: {
-						$in: entityid,
+						$in: entityId,
 					},
 				}
 				const projectionFields = ['childHierarchyPath']
-				// Retrieve entities based on provided entity IDs
-				const entities = await entitiesQueries.entityDocuments(filter, projectionFields)
-				if (!entities[0].childHierarchyPath) {
+				// Retrieve entityDetails based on provided entity IDs
+				const entityDetails = await entitiesQueries.entityDocuments(filter, projectionFields)
+				// if (!entityDetails[0].childHierarchyPath) {
+				if (
+					!entityDetails ||
+					!entityDetails[0].childHierarchyPath ||
+					entityDetails[0].childHierarchyPath.length < 0
+				) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
-						message: CONSTANTS.apiResponses.ENTITYTYPE_NOT_FOUND,
+						message: CONSTANTS.apiResponses.ENTITY_TYPE_NOT_FOUND,
 					}
 				}
 				// Extract child hierarchy paths from the retrieved entities
-				const childHierarchyPaths = entities[0].childHierarchyPath
+				const childHierarchyPaths = entityDetails[0].childHierarchyPath
 
 				// Construct the filter to retrieve entity type IDs based on child hierarchy paths
 				const entityTypeFilter = {
 					name: {
 						$in: childHierarchyPaths,
 					},
+					isDeleted: false,
 				}
 				const entityTypeProjection = ['_id']
 				// Retrieve entity type IDs based on child hierarchy paths
@@ -221,36 +227,31 @@ module.exports = class UserProjectsHelper {
 					entityTypeFilter,
 					entityTypeProjection
 				)
+
+				// Check if entity type IDs are retrieved successfully
 				if (!fetchEntityTypeId[0]._id) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
-						message: CONSTANTS.apiResponses.ENTITY_ID_NOT_FOUND,
+						message: CONSTANTS.apiResponses.ENTITY_TYPE_DETAILS_NOT_FOUND,
 					}
 				}
-				// Initialize results object to aggregate data and count
-				let results = {
-					data: [],
-					count: 0,
-				}
+				// Extract the _id fields from the fetched entity types to use as a filter for user roles
+				const userRoleFilter = fetchEntityTypeId.map((entityType) => entityType._id)
 
-				// Loop through each fetched entity type ID to retrieve user roles
-				for (const entityType of fetchEntityTypeId) {
-					const userRoleFilter = { entityTypeId: entityType._id }
-					const userRolesResponse = await userService.userRole(userRoleFilter)
+				// Retrieve user roles based on the filtered entity type IDs
+				const userRolesResponse = await userService.userRole(userRoleFilter)
 
-					// Aggregate the results
-					results.data.push(...userRolesResponse.rows)
-					results.count += userRolesResponse.count
-				}
-				if (results.data.length < 0) {
+				// Check if user roles are retrieved successfully
+				if (userRolesResponse.data.length < 0) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ROLES_NOT_FOUND,
 					}
 				}
+
 				return resolve({
 					message: CONSTANTS.apiResponses.ROLES_FETCHED_SUCCESSFULLY,
-					result: results,
+					result: userRolesResponse,
 				})
 			} catch (error) {
 				return reject(error)
