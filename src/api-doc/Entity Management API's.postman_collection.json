@@ -1,0 +1,977 @@
+{
+	"info": {
+		"_postman_id": "fa7d1558-cdcb-493a-8767-55758ac735da",
+		"name": "Entity-Management API's",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33513401"
+	},
+	"item": [
+		{
+			"name": "entityType",
+			"item": [
+				{
+					"name": "find",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": {\n        \"name\": \"Goa\"\n    },\n    \"projection\": {\n        \"immediateChildrenEntityType\": 1,\n        \"name\": 1\n    },\n    \"skipFields\": {\n        \"createdAt\": 1\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/find",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"find"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"name\": \"state\",\n\"registryDetails\": {\n    \"name\": \"goa\"\n},\n\"isObservable\": true,\n\"toBeMappedToParentEntities\": true,\n\"immediateChildrenEntityType\": \"collage\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/update/663335e2a766490014aead0a",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"update",
+								"663335e2a766490014aead0a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"state\",\n    \"registryDetails\": {\n        \"name\": \"schoolRegistry\"\n    },\n    \"isObservable\": true,\n    \"toBeMappedToParentEntities\": true\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkUpdate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "entityTypes",
+									"type": "file",
+									"src": "/home/user3/Documents/EntityType-Upload_2024_05_07_09_21.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/bulkUpdate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"bulkUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/list",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkCreate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "entityTypes",
+									"type": "file",
+									"src": "/home/user3/Downloads/EntityType Upload - EntityType create.csv"
+								},
+								{
+									"key": "",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entityTypes/bulkCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entityTypes",
+								"bulkCreate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "entities",
+			"item": [
+				{
+					"name": "listByEntityType",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/listByEntityType/5f32d8228e0dc8312404056e?page=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"listByEntityType",
+								"5f32d8228e0dc8312404056e"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"externalId\": \"entity123\",\n     \"name\": \" block\",\n    \"childHierarchyPath\": [],\n    \"allowedRoles\": [\"role2\", \"role1\"],\n    \"createdBy\": \"user123\",\n    \"updatedBy\": \"user123\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/update/663364443c990eaa179e289e",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"update",
+								"663364443c990eaa179e289e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkCreate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "entities",
+									"type": "file",
+									"src": "/home/user3/Downloads/Input sheet - Punjab Entities_Production_Main - State.csv"
+								},
+								{
+									"key": "entityType",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/bulkCreate?type=school",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"bulkCreate"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "school"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkUpdate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "entities",
+									"type": "file",
+									"src": "/home/user3/Music/Entity-Upload_2024_04_08_14_59.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/bulkUpdate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"bulkUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mappingUpload",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "content-type",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "entityMap",
+									"type": "file",
+									"src": "/home/user3/Videos/mapping.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/mappingUpload",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"mappingUpload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/list/5f33c3d85f637784791cd830?page=1&limit=100&type=school",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"list",
+								"5f33c3d85f637784791cd830"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "type",
+									"value": "school"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "relatedEntities",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/relatedEntities/6153158e5bec1d28882358ab",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"relatedEntities",
+								"6153158e5bec1d28882358ab"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"query\": {\n        \"_id\": {\n            \"$in\": [\"5fd1b52ab53a6416aaeefb1f\", \"5fd1b52ab53a6416aaeefb24\",\"5f33c3d85f637784791cd830\",\"5fd1b52ab53a6416aaeefb26\",\"5fd098e2e049735a86b748ae\"]\n        }\n    },\n    \"projection\": [\n        \"_id\",\"metaInformation.name\"\n    ]}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/find",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"find"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/details/663339bc0cb19f01c459853b",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"details",
+								"663339bc0cb19f01c459853b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listByLocationIds",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"metaInformation.name\": [\n    \"Maharashtra\"\n  ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/listByLocationIds",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"listByLocationIds"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"entityTypeId\": \"663335e2a766490014aead0a\",\n    \"externalId\": \"entity44123\",\n    \"name\": \"Arunachal Pradesh\",\n     \"childHierarchyPath\" : [ \n        \"district\", \n        \"beat\", \n        \"cluster\", \n        \"school\", \n        \"block\"\n    ],\n    \"allowedRoles\": [\"role1\", \"role2\"]\n    \n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/add?type=state",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"add"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "state"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "subEntityListBasedOnRoleAndLocation",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/subEntityListBasedOnRoleAndLocation/entity123",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"subEntityListBasedOnRoleAndLocation",
+								"entity123"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "subEntityList",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/subEntityList/663354e56109810671aec49f?type=school&search=&page=1&limit=100",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"subEntityList",
+								"663354e56109810671aec49f"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "school"
+								},
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listByIds",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"entities\": [\n        \"5f33c3d85f637784791cd830\"\n    ],\n    \"fields\": [\n        \"entityType\"\n    ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/listByIds",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"listByIds"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "entityListBasedOnEntityType",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"disabled": true
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/entityListBasedOnEntityType?entityType=state",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"entityListBasedOnEntityType"
+							],
+							"query": [
+								{
+									"key": "entityType",
+									"value": "state"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
