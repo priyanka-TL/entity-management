@@ -6,5 +6,5 @@
  */
 
 module.exports = {
-	USER_READ: '/v1/user-role/read',
+	USER_READ: '/v1/user-role/readUserRolesBasedOnEntityType',
 }

@@ -185,10 +185,9 @@ module.exports = class UserProjectsHelper {
 	/**
 	 * Fetches targeted roles based on the provided entity IDs.
 	 * @param {Array<string>} entityId - An array of entity IDs to filter roles.
-	 * @param {string} userToken - The token for user authentication.
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 */
-	static targetedRoles(entityId, userToken) {
+	static targetedRoles(entityId) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Construct the filter to retrieve entities based on provided entity IDs
@@ -227,9 +226,8 @@ module.exports = class UserProjectsHelper {
 					entityTypeFilter,
 					entityTypeProjection
 				)
-
 				// Check if entity type IDs are retrieved successfully
-				if (!fetchEntityTypeId[0]._id) {
+				if (fetchEntityTypeId.length < 0) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ENTITY_TYPE_DETAILS_NOT_FOUND,
@@ -239,10 +237,9 @@ module.exports = class UserProjectsHelper {
 				const userRoleFilter = fetchEntityTypeId.map((entityType) => entityType._id)
 
 				// Retrieve user roles based on the filtered entity type IDs
-				const userRolesResponse = await userService.userRole(userRoleFilter)
-
+				const fetchUserRoles = await userService.readUserRolesBasedOnEntityType(userRoleFilter)
 				// Check if user roles are retrieved successfully
-				if (userRolesResponse.data.length < 0) {
+				if (!fetchUserRoles.data || fetchUserRoles.data.length < 0) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ROLES_NOT_FOUND,
@@ -251,7 +248,7 @@ module.exports = class UserProjectsHelper {
 
 				return resolve({
 					message: CONSTANTS.apiResponses.ROLES_FETCHED_SUCCESSFULLY,
-					result: userRolesResponse,
+					result: fetchUserRoles,
 				})
 			} catch (error) {
 				return reject(error)

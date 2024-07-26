@@ -14,7 +14,7 @@ const userServiceUrl = process.env.USER_SERVICE_URL
  * @param {string} filterData.entityTypeId - The ID of the entity type to filter user roles.
  * @returns {Promise<Object>} A promise that resolves to the response containing the fetched user roles or an error object.
  */
-const userRole = function (filterData) {
+const readUserRolesBasedOnEntityType = function (filterData) {
 	return new Promise(async (resolve, reject) => {
 		try {
 			// Construct the URL for the user service
@@ -63,5 +63,5 @@ const userRole = function (filterData) {
 }
 
 module.exports = {
-	userRole: userRole,
+	readUserRolesBasedOnEntityType: readUserRolesBasedOnEntityType,
 }
