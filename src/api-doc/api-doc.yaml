@@ -2230,3 +2230,125 @@ paths:
                       - location: query
                         param: entityType
                         msg: required entityType
+  /v1/entities/targetedRoles?{entity_id}:
+    get:
+      summary: Fetch Targeted Roles
+      tags: *ref_5
+      description: >-
+        You can use this API to fetch targeted roles based on the provided
+        entity id in the request parameters.
+
+        \*Endpoint to list entity based on entity type
+        `/v1/entities/targetedRoles?{entity_id}`
+
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: false
+          schema: *ref_7
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: *ref_4
+          required: true
+        - in: path
+          name: entity_id
+          description: Please append a valid entity Id to the Request URL.
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application.json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            title:
+                              type: string
+                            user_type:
+                              type: number
+                            visibility:
+                              type: string
+                            status:
+                              type: string
+                            organization_id:
+                              type: number
+                          required:
+                            - id
+                            - title
+                            - user_type
+                            - visibility
+                            - status
+                            - organization_id
+                      count:
+                        type: number
+              examples:
+                SuccessResponse:
+                  value:
+                    message: ROLES_FETCHED_SUCCESSFULLY
+                    status: 200
+                    result:
+                      data:
+                        - id: 13
+                          title: AMO
+                          user_type: 1
+                          visibility: PUBLIC
+                          status: ACTIVE
+                          organization_id: 1
+                        - id: 15
+                          title: TEACHER
+                          user_type: 1
+                          visibility: PUBLIC
+                          status: ACTIVE
+                          organization_id: 1
+                        - id: 10
+                          title: headmaster
+                          user_type: 1
+                          visibility: PUBLIC
+                          status: ACTIVE
+                          organization_id: 1
+                        - id: 14
+                          title: BEO
+                          user_type: 1
+                          visibility: PUBLIC
+                          status: ACTIVE
+                          organization_id: 1
+                      count: 4
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              schema: null
+              examples:
+                FailureResponse:
+                  value:
+                    status: 400
+                    message:
+                      - location: params
+                        param: _id
+                        msg: The entity ID (_id) is required.

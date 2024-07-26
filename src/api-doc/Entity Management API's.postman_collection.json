@@ -970,6 +970,40 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "targetedRoles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/entity/v1/entities/targetedRoles/5f33c3d85f637784791cd831",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"entities",
+								"targetedRoles",
+								"5f33c3d85f637784791cd831"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
