@@ -18,7 +18,7 @@ const readUserRolesBasedOnEntityType = function (filterData) {
 	return new Promise(async (resolve, reject) => {
 		try {
 			// Construct the URL for the user service
-			let url = userServiceUrl + CONSTANTS.endpoints.USER_READ
+			let url = userServiceUrl + CONSTANTS.endpoints.READ_USER_ROLES_BASED_ON_ENTITY_TYPE
 			// Set the options for the HTTP GET request
 			const options = {
 				headers: {
@@ -30,7 +30,7 @@ const readUserRolesBasedOnEntityType = function (filterData) {
 				},
 			}
 			// Make the GET request to the user service
-			request.get(url, options, userReadCallback)
+			request.post(url, options, userReadCallback)
 			let result = {
 				success: true,
 			}
