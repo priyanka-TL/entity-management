@@ -238,8 +238,14 @@ module.exports = class UserProjectsHelper {
 
 				// Retrieve user roles based on the filtered entity type IDs
 				const fetchUserRoles = await userService.readUserRolesBasedOnEntityType(userRoleFilter)
+
 				// Check if user roles are retrieved successfully
-				if (!fetchUserRoles.data || fetchUserRoles.data.length < 0) {
+				if (
+					!fetchUserRoles.success ||
+					!fetchUserRoles.data ||
+					!fetchUserRoles.data.data ||
+					fetchUserRoles.data.data.length < 0
+				) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ROLES_NOT_FOUND,

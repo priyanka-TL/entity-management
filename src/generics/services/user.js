@@ -41,7 +41,7 @@ const readUserRolesBasedOnEntityType = function (filterData) {
 				} else {
 					let response = data.body
 					if (response.responseCode === HTTP_STATUS_CODE['ok'].code) {
-						result = response.result
+						result.data = response.result
 					} else {
 						result.success = false
 					}
