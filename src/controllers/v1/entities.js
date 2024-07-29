@@ -739,7 +739,7 @@ module.exports = class Entities extends Abstract {
 			if (!(req.params._id || req.body.entities)) {
 				return resolve({
 					status: HTTP_STATUS_CODE.bad_request.status,
-					message: constants.apiResponses.ENTITY_ID_NOT_FOUND,
+					message: constants.apiResponses.ENTITY_ID_OR_LOCATION_ID_NOT_FOUND,
 				})
 			}
 
