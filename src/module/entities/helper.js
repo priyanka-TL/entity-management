@@ -196,10 +196,9 @@ module.exports = class UserProjectsHelper {
 						$in: entityId,
 					},
 				}
-				const projectionFields = ['childHierarchyPath']
+				const projectionFields = ['childHierarchyPath', 'entityType']
 				// Retrieve entityDetails based on provided entity IDs
 				const entityDetails = await entitiesQueries.entityDocuments(filter, projectionFields)
-				// if (!entityDetails[0].childHierarchyPath) {
 				if (
 					!entityDetails ||
 					!entityDetails[0].childHierarchyPath ||
@@ -210,13 +209,16 @@ module.exports = class UserProjectsHelper {
 						message: CONSTANTS.apiResponses.ENTITYTYPE_NOT_FOUND,
 					}
 				}
-				// Extract child hierarchy paths from the retrieved entities
-				const childHierarchyPaths = entityDetails[0].childHierarchyPath
+				// Extract the childHierarchyPath and entityType
+				const { childHierarchyPath, entityType } = entityDetails[0]
+
+				// Append entityType to childHierarchyPath array
+				const updatedChildHierarchyPaths = [...childHierarchyPath, entityType]
 
 				// Construct the filter to retrieve entity type IDs based on child hierarchy paths
 				const entityTypeFilter = {
 					name: {
-						$in: childHierarchyPaths,
+						$in: updatedChildHierarchyPaths,
 					},
 					isDeleted: false,
 				}
