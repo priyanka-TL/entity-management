@@ -1006,6 +1006,154 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "userRoleExtension",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userRoleId\": \"13\",\n    \"title\": \"DC\",\n    \"userType\": 1,\n    \"entityTypes\": [\n        {\n            \"entityType\": \"district\",\n            \"entityTypeId\": \"5f32d8228e0dc83104056e\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity/v1/userRoleExtension/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"userRoleExtension",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "internal-access-token",
+								"value": "8c3a94f0931e01a4940a"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"DM\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity/v1/userRoleExtension/update/66a94c06fff8abb34f9d800f",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"userRoleExtension",
+								"update",
+								"66a94c06fff8abb34f9d800f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internal_access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": {\n        \"entityTypes.entityTypeId\": {\n            \"$in\": [\n                \"5f32d8228e0dc8312404056b\",\n                \"5f32d8228e0dc8312404056c\",\n                \"5f32d8228e0dc83124040567\",\n                \"5f32d8228e0dc8312404056e\"\n            ]\n        }\n    },\n    \"projection\": [\n        \"_id\", \"title\"\n    ]\n}\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity/v1/userRoleExtension/find",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"userRoleExtension",
+								"find"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/entity/v1/userRoleExtension/delete/66a94fc1fdf2d5dda4b689dc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"entity",
+								"v1",
+								"userRoleExtension",
+								"delete",
+								"66a94fc1fdf2d5dda4b689dc"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
