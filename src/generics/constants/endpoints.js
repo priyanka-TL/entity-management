@@ -6,5 +6,5 @@
  */
 
 module.exports = {
-	READ_USER_ROLES_BASED_ON_ENTITY_TYPE: '/v1/user-role/readUserRolesBasedOnEntityType',
+	// End points to be added here
 }

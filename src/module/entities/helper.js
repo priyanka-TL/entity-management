@@ -9,7 +9,7 @@
 const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
 const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
 const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
-const userService = require(PROJECT_ROOT_DIRECTORY + '/generics/services/user')
+const userServiceHelper = require(MODULES_BASE_PATH + '/userRoleExtension/helper')
 
 const _ = require('lodash')
 
@@ -238,16 +238,24 @@ module.exports = class UserProjectsHelper {
 				// Extract the _id fields from the fetched entity types to use as a filter for user roles
 				const userRoleFilter = fetchEntityTypeId.map((entityType) => entityType._id)
 
-				// Retrieve user roles based on the filtered entity type IDs
-				const fetchUserRoles = await userService.readUserRolesBasedOnEntityType(userRoleFilter)
+				// Construct the filter for finding user roles based on entityTypeIds and status
+				const userRoleExtensionFilter = {
+					'entityTypes.entityTypeId': {
+						$in: userRoleFilter,
+					},
+					status: CONSTANTS.common.ACTIVE_STATUS,
+				}
+				// Specify the fields to include in the result set
+				const userRoleExtensionProjection = ['_id', 'title', 'userRoleId', 'userType']
 
-				// Check if user roles are retrieved successfully
-				if (
-					!fetchUserRoles.success ||
-					!fetchUserRoles.data ||
-					!fetchUserRoles.data.data ||
-					fetchUserRoles.data.data.length < 0
-				) {
+				// Fetch the user roles based on the filter and projection
+				const fetchUserRoles = await userServiceHelper.find(
+					userRoleExtensionFilter,
+					userRoleExtensionProjection
+				)
+
+				// Check if the fetchUserRoles operation was successful and returned data
+				if (!fetchUserRoles.success || !fetchUserRoles.result || fetchUserRoles.result.length < 0) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ROLES_NOT_FOUND,

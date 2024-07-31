@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-	ACTIVE_STATUS: 'active',
+	ACTIVE_STATUS: 'ACTIVE',
 	INTERNAL_ACCESS_URLS: [
 		'/entityTypes/bulkCreate',
 		'/entityTypes/bulkUpdate',
@@ -18,6 +18,9 @@ module.exports = {
 		'/entityTypes/create',
 		'/entityTypes/update',
 		'/entities/find',
+		'/userRoleExtension/find',
+		'/userRoleExtension/create',
+		'/userRoleExtension/update',
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',
@@ -27,5 +30,4 @@ module.exports = {
 	GET_METHOD: 'GET',
 	ENTITYTYPE: 'entityType',
 	GROUPS: 'groups',
-	SERVER_TIME_OUT: 5000,
 }

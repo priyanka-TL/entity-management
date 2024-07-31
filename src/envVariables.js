@@ -28,10 +28,6 @@ let enviromentVariables = {
 		message: 'Required internal access token',
 		optional: false,
 	},
-	USER_SERVICE_URL: {
-		message: 'Required user-service url',
-		optional: false,
-	},
 }
 
 let success = true
