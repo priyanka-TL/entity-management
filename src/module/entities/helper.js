@@ -261,10 +261,10 @@ module.exports = class UserProjectsHelper {
 						message: CONSTANTS.apiResponses.ROLES_NOT_FOUND,
 					}
 				}
-
 				return resolve({
 					message: CONSTANTS.apiResponses.ROLES_FETCHED_SUCCESSFULLY,
-					result: fetchUserRoles,
+					result: fetchUserRoles.result,
+					count: fetchUserRoles.result.length,
 				})
 			} catch (error) {
 				return reject(error)

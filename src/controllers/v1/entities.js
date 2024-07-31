@@ -246,35 +246,33 @@ module.exports = class Entities extends Abstract {
      * {
     "message": "ROLES_FETCHED_SUCCESSFULLY",
     "status": 200,
-    "result": {
-        "data": [
-            {
-                "id": 10,
-                "title": "headmaster",
-                "user_type": 1,
-                "visibility": "PUBLIC",
-                "status": "ACTIVE",
-                "organization_id": 1
-            },
-            {
-                "id": 15,
-                "title": "TEACHER",
-                "user_type": 1,
-                "visibility": "PUBLIC",
-                "status": "ACTIVE",
-                "organization_id": 1
-            },
-            {
-                "id": 14,
-                "title": "BEO",
-                "user_type": 1,
-                "visibility": "PUBLIC",
-                "status": "ACTIVE",
-                "organization_id": 1
-            }
-        ],
-        "count": 3
-    }
+    "result": [
+        {
+            "_id": "66a8df494efa6ccce9113da6",
+            "userRoleId": 10,
+            "title": "headmaster",
+            "userType": 1
+        },
+        {
+            "_id": "66a8df824efa6ccce9113dac",
+            "userRoleId": 12,
+            "title": "BEO",
+            "userType": 1
+        },
+        {
+            "_id": "66a8df654efa6ccce9113da9",
+            "userRoleId": 11,
+            "title": "AMO",
+            "userType": 1
+        },
+        {
+            "_id": "66a8dfc44efa6ccce9113db5",
+            "userRoleId": 13,
+            "title": "EducationMinister",
+            "userType": 1
+        }
+    ],
+    "count": 5
     }
     */
 	targetedRoles(req) {
