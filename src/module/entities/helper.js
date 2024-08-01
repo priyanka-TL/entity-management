@@ -206,7 +206,7 @@ module.exports = class UserProjectsHelper {
 				) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
-						message: CONSTANTS.apiResponses.ENTITYTYPE_NOT_FOUND,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
 					}
 				}
 				// Extract the childHierarchyPath and entityType

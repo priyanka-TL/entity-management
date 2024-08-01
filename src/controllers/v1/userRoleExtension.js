@@ -59,7 +59,6 @@ module.exports = class userRoleExtension extends Abstract {
         "deleted": false,
         "userRoleId": 13,
         "title": "EducationMinister",
-        "userType": 1,
         "entityTypes": [
             {
                 "_id": "66a8dfc44efa6ccce9113db6",
@@ -119,7 +118,6 @@ module.exports = class userRoleExtension extends Abstract {
         "_id": "66a8cd21ea22bf3e86e2939b",
         "userRoleId": 1,
         "title": "BEO",
-        "userType": 1,
         "entityTypes": [
             {
                 "_id": "66a8cd21ea22bf3e86e2939c",

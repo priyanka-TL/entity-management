@@ -17,17 +17,13 @@ module.exports = {
 			type: String,
 			index: true,
 		},
-		userType: {
-			type: Number,
-			index: true,
-		},
 		status: {
 			type: String,
 			default: 'ACTIVE',
 		},
 		entityTypes: [
 			{
-				entityType: { type: String, index: true },
+				entityType: { type: String },
 				entityTypeId: { type: String, index: true },
 			},
 		],
