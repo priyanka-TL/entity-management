@@ -8,10 +8,10 @@
 module.exports = {
 	name: 'userRoleExtension',
 	schema: {
-		userRoleExtensionId: 'ObjectId',
 		userRoleId: {
-			type: Number,
+			type: String,
 			index: true,
+			unique: true,
 		},
 		title: {
 			type: String,
@@ -34,7 +34,6 @@ module.exports = {
 		createdBy: {
 			type: String,
 			default: 'SYSTEM',
-			index: true,
 		},
 		updatedBy: {
 			type: String,

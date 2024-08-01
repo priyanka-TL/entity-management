@@ -9,7 +9,7 @@
 const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
 const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
 const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
-const userServiceHelper = require(MODULES_BASE_PATH + '/userRoleExtension/helper')
+const userRoleExtensionHelper = require(MODULES_BASE_PATH + '/userRoleExtension/helper')
 
 const _ = require('lodash')
 
@@ -249,7 +249,7 @@ module.exports = class UserProjectsHelper {
 				const userRoleExtensionProjection = ['_id', 'title', 'userRoleId', 'userType']
 
 				// Fetch the user roles based on the filter and projection
-				const fetchUserRoles = await userServiceHelper.find(
+				const fetchUserRoles = await userRoleExtensionHelper.find(
 					userRoleExtensionFilter,
 					userRoleExtensionProjection
 				)

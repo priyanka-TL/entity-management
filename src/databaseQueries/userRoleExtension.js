@@ -2,7 +2,7 @@
  * name : userRoleExtension.js
  * author : Mallanagouda R Biradar
  * created-date : 21-Mar-2024
- * Description : user role related information.
+ * Description : userRoleExtension helper for DB interactions.
  */
 
 module.exports = class userRoleExtension {
