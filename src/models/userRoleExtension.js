@@ -10,7 +10,6 @@ module.exports = {
 	schema: {
 		userRoleId: {
 			type: String,
-			index: true,
 			unique: true,
 		},
 		title: {
