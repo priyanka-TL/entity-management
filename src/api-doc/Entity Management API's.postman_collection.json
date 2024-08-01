@@ -977,10 +977,6 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "internal-access-token",
-								"value": "{{internalToken}}"
-							},
-							{
 								"key": "content-type",
 								"value": "application/json"
 							},
