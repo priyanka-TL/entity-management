@@ -246,7 +246,7 @@ module.exports = class UserProjectsHelper {
 					status: CONSTANTS.common.ACTIVE_STATUS,
 				}
 				// Specify the fields to include in the result set
-				const userRoleExtensionProjection = ['_id', 'title', 'userRoleId', 'userType']
+				const userRoleExtensionProjection = ['_id', 'title', 'userRoleId']
 
 				// Fetch the user roles based on the filter and projection
 				const fetchUserRoles = await userRoleExtensionHelper.find(
@@ -261,10 +261,19 @@ module.exports = class UserProjectsHelper {
 						message: CONSTANTS.apiResponses.ROLES_NOT_FOUND,
 					}
 				}
+				// Transforming the data
+				const transformedData = fetchUserRoles.result.map((item) => {
+					// For each item in the result array, create a new object with modified keys
+					return {
+						_id: item._id,
+						value: item.userRoleId,
+						label: item.title,
+					}
+				})
 				return resolve({
 					message: CONSTANTS.apiResponses.ROLES_FETCHED_SUCCESSFULLY,
-					result: fetchUserRoles.result,
-					count: fetchUserRoles.result.length,
+					result: transformedData,
+					count: transformedData.length,
 				})
 			} catch (error) {
 				return reject(error)
