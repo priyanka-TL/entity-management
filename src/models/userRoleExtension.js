@@ -8,11 +8,11 @@
 module.exports = {
 	name: 'userRoleExtension',
 	schema: {
-		userRoleId: {
+		value: {
 			type: String,
 			unique: true,
 		},
-		title: {
+		label: {
 			type: String,
 			index: true,
 		},
