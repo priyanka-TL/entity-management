@@ -8,7 +8,7 @@
 module.exports = (req) => {
 	let userRoleValidator = {
 		create: function () {
-			req.checkBody('label').exists().withMessage('required label ')
+			req.checkBody('title').exists().withMessage('required title ')
 			req.checkBody('entityTypes[0].entityType').exists().withMessage('entityType name ')
 			req.checkBody('entityTypes[0].entityTypeId').exists().withMessage('entityTypeId name ')
 		},
