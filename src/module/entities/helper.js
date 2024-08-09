@@ -9,6 +9,8 @@
 const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
 const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
 const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
+const userRoleExtensionHelper = require(MODULES_BASE_PATH + '/userRoleExtension/helper')
+
 const _ = require('lodash')
 
 /**
@@ -173,6 +175,105 @@ module.exports = class UserProjectsHelper {
 				resolve({
 					message: CONSTANTS.apiResponses.ENTITIES_FETCHED,
 					result: result,
+				})
+			} catch (error) {
+				return reject(error)
+			}
+		})
+	}
+
+	/**
+	 * Fetches targeted roles based on the provided entity IDs.
+	 * @param {Array<string>} entityId - An array of entity IDs to filter roles.
+	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
+	 */
+	static targetedRoles(entityId) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Construct the filter to retrieve entities based on provided entity IDs
+				const filter = {
+					_id: {
+						$in: entityId,
+					},
+				}
+				const projectionFields = ['childHierarchyPath', 'entityType']
+				// Retrieve entityDetails based on provided entity IDs
+				const entityDetails = await entitiesQueries.entityDocuments(filter, projectionFields)
+				if (
+					!entityDetails ||
+					!entityDetails[0].childHierarchyPath ||
+					entityDetails[0].childHierarchyPath.length < 0
+				) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
+				// Extract the childHierarchyPath and entityType
+				const { childHierarchyPath, entityType } = entityDetails[0]
+
+				// Append entityType to childHierarchyPath array
+				const updatedChildHierarchyPaths = [...childHierarchyPath, entityType]
+
+				// Construct the filter to retrieve entity type IDs based on child hierarchy paths
+				const entityTypeFilter = {
+					name: {
+						$in: updatedChildHierarchyPaths,
+					},
+					isDeleted: false,
+				}
+				const entityTypeProjection = ['_id']
+				// Retrieve entity type IDs based on child hierarchy paths
+				const fetchEntityTypeId = await entityTypeQueries.entityTypesDocument(
+					entityTypeFilter,
+					entityTypeProjection
+				)
+				// Check if entity type IDs are retrieved successfully
+				if (fetchEntityTypeId.length < 0) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_TYPE_DETAILS_NOT_FOUND,
+					}
+				}
+				// Extract the _id fields from the fetched entity types to use as a filter for user roles
+				const userRoleFilter = fetchEntityTypeId.map((entityType) => entityType._id)
+
+				// Construct the filter for finding user roles based on entityTypeIds and status
+				const userRoleExtensionFilter = {
+					'entityTypes.entityTypeId': {
+						$in: userRoleFilter,
+					},
+					status: CONSTANTS.common.ACTIVE_STATUS,
+				}
+				// Specify the fields to include in the result set
+				const userRoleExtensionProjection = ['_id', 'title', 'userRoleId']
+
+				// Fetch the user roles based on the filter and projection
+				const fetchUserRoles = await userRoleExtensionHelper.find(
+					userRoleExtensionFilter,
+					userRoleExtensionProjection
+				)
+
+				// Check if the fetchUserRoles operation was successful and returned data
+				if (!fetchUserRoles.success || !fetchUserRoles.result || fetchUserRoles.result.length < 0) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ROLES_NOT_FOUND,
+					}
+				}
+				// Transforming the data
+				const transformedData = fetchUserRoles.result.map((item) => {
+					// For each item in the result array, create a new object with modified keys
+					return {
+						_id: item._id,
+						value: item.userRoleId,
+						label: item.title,
+					}
+				})
+				return resolve({
+					message: CONSTANTS.apiResponses.ROLES_FETCHED_SUCCESSFULLY,
+					result: transformedData,
+					count: transformedData.length,
 				})
 			} catch (error) {
 				return reject(error)
