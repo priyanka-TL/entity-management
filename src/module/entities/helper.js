@@ -968,7 +968,7 @@ module.exports = class UserProjectsHelper {
 						message: CONSTANTS.apiResponses.ENTITYTYPE_NOT_FOUND,
 					}
 				}
-				const projection = ['_id', 'metaInformation.name']
+				const projection = ['_id', 'metaInformation.name', 'metaInformation.externalId']
 				// Fetch documents for the matching entity type
 				let fetchList = await entitiesQueries.entityDocuments(
 					{
@@ -989,6 +989,7 @@ module.exports = class UserProjectsHelper {
 				const result = fetchList.map((entity) => ({
 					_id: entity._id,
 					name: entity.metaInformation.name,
+					externalId: entity.metaInformation.externalId,
 				}))
 
 				return resolve({
