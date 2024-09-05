@@ -2238,7 +2238,8 @@ paths:
         You can use this API to fetch targeted roles based on the provided
         entity id in the request parameters.
 
-        \*Endpoint to list entity based on entity type
+        \*Endpoint to fetch targeted roles based on the provided
+        entity id
         `/v1/entities/targetedRoles?{entity_id}`
 
 
@@ -2371,12 +2372,6 @@ paths:
           schema: &ref_10
             type: string
           required: false
-        - in: header
-          name: internal-access-token
-          description: ''
-          schema: &ref_11
-            type: string
-          required: true
       requestBody:
         content:
           application/json:
@@ -2526,7 +2521,7 @@ paths:
     post:
       summary: To update a single user role extension data
       description: >-
-        You can use this API to to update user role extension data.
+        You can use this API to to update user role extension data based on user role id.
         `/v1/userRoleExtension/update`
 
 
@@ -2544,11 +2539,6 @@ paths:
             in the login API Response.
           schema: *ref_10
           required: false
-        - in: header
-          name: internal-access-token
-          description: ''
-          schema: *ref_11
-          required: true
       requestBody:
         content:
           application/json:
@@ -2802,11 +2792,6 @@ paths:
             in the login API Response.
           schema: *ref_10
           required: true
-        - in: header
-          name: internal-access-token
-          description: ''
-          schema: *ref_15
-          required: false
       responses:
         '200':
           description: Accepted
