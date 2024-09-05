@@ -2254,11 +2254,6 @@ paths:
             in the login API Response.
           required: false
           schema: *ref_7
-        - in: header
-          name: internal-access-token
-          description: ''
-          schema: *ref_4
-          required: true
         - in: path
           name: entity_id
           description: Please append a valid entity Id to the Request URL.
@@ -2354,9 +2349,9 @@ paths:
                         msg: The entity ID (_id) is required.
   /v1/userRoleExtension/create:
     post:
-      summary: To create a single user-role data
+      summary: To create a single user role extension data
       description: >-
-        You can use this API to to create user-role data.
+        You can use this API to to create user role extension data.
         `/v1/userRoleExtension/create`
 
 
@@ -2529,9 +2524,9 @@ paths:
                         msg: 'entityTypeId name '
   /v1/userRoleExtension/update/66a94c06fff8abb34f9d800f:
     post:
-      summary: To update a single user-role data
+      summary: To update a single user role extension data
       description: >-
-        You can use this API to to update user-role data.
+        You can use this API to to update user role extension data.
         `/v1/userRoleExtension/update`
 
 
@@ -2670,9 +2665,9 @@ paths:
                         msg: required _id
   /v1/userRoleExtension/find:
     post:
-      summary: Find the user-role
+      summary: Find the user role extension data.
       description: >-
-        Use this API to get the details of user-role data based on the request
+        Use this API to get the details of user role extension data based on the request
         body passed.
         `/v1/userRoleExtension/find`
 
@@ -2787,9 +2782,9 @@ paths:
                         msg: required query
   /v1/userRoleExtension/delete:
     delete:
-      summary: Delete user-role data.
+      summary: Delete user role extension data.
       description: >-
-        Use this API to delete user-role data by passing it's id.
+        Use this API to delete user role extension data by passing it's id.
         `/v1/userRoleExtension/delete`
 
 
