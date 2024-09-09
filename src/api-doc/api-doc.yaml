@@ -2517,7 +2517,7 @@ paths:
                       - location: body
                         param: entityTypes[0].entityTypeId
                         msg: 'entityTypeId name '
-  /v1/userRoleExtension/update/66a94c06fff8abb34f9d800f:
+  /v1/userRoleExtension/update/{_id}:
     post:
       summary: To update a single user role extension data
       description: >-

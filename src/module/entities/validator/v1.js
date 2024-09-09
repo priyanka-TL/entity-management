@@ -14,7 +14,7 @@ module.exports = (req) => {
 			req.checkBody('name').exists().withMessage('required name ')
 		},
 		update: function () {
-			req.checkBody('externalId').exists().withMessage('required externalId')
+			req.checkBody('metaInformation.externalId').exists().withMessage('required externalId')
 			req.checkParams('_id').exists().withMessage('required _id')
 		},
 		subEntityList: function () {
