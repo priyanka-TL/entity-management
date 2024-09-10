@@ -2521,7 +2521,7 @@ paths:
     post:
       summary: To update a single user role extension data
       description: >-
-        You can use this API to to update user role extension data based on user role id.
+        You can use this API to update user role extension data by passing id in the path param.
         `/v1/userRoleExtension/update`
 
 
