@@ -1323,10 +1323,6 @@ module.exports = class UserProjectsHelper {
 	static update(entityId, bodyData) {
 		return new Promise(async (resolve, reject) => {
 			try {
-			    // Check if metaInformation is provided and contains externalId
-				if (bodyData.metaInformation && !bodyData.metaInformation.externalId) {
-					return reject({ status: 400, message: "Metainformation must contain externalId." });
-				}
 				// Update the entity using findOneAndUpdate
 				let entityInformation = await entitiesQueries.findOneAndUpdate({ _id: ObjectId(entityId) }, bodyData, {
 					new: true,
