@@ -28,6 +28,10 @@ let enviromentVariables = {
 		message: 'Required internal access token',
 		optional: false,
 	},
+	API_DOC_URL: {
+		message: 'Required api doc url',
+		optional: false,
+	},
 }
 
 let success = true
