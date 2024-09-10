@@ -310,7 +310,7 @@ paths:
 
 
         * The API Endpoint to update single entities based on the entityType id is
-        `/v1/entityTypes/update`
+        `/v1/entityTypes/update/{_id}`
 
         * It is mandatory to provide values for parameters which are marked as
         `required`
@@ -1117,7 +1117,7 @@ paths:
       description: >-
         You can use this API to update the entity data based on entiy id.
 
-        * The API Endpoint to update single entities : `/v1/entities/update`
+        * The API Endpoint to update single entities : `/v1/entities/update/{_id}`
 
         * It is mandatory to provide values for parameters marked with
         `required`
@@ -2522,7 +2522,7 @@ paths:
       summary: To update a single user role extension data
       description: >-
         You can use this API to update user role extension data by passing id in the path param.
-        `/v1/userRoleExtension/update`
+        `/v1/userRoleExtension/update/{_id}`
 
 
         * It is mandatory to provide values for parameters marked with
