@@ -6,5 +6,5 @@
  */
 
 module.exports = {
-    // GET_IMPROVEMENT_PROJECTS : "/v1/template/getImprovementProjects", // Unnati service
+	// End points to be added here
 }
