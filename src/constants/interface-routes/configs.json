@@ -8,7 +8,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -21,7 +21,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -34,7 +34,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -47,7 +47,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -60,7 +60,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -73,7 +73,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -86,7 +86,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -99,7 +99,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -112,7 +112,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -125,7 +125,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -138,7 +138,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -151,7 +151,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -164,7 +164,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -177,7 +177,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -190,7 +190,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -203,7 +203,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -216,7 +216,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -229,7 +229,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -242,7 +242,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -255,7 +255,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -268,7 +268,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -281,7 +281,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -294,7 +294,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -307,7 +307,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -320,7 +320,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -333,7 +333,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -346,7 +346,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -359,7 +359,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -372,7 +372,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -385,7 +385,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -398,7 +398,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -411,7 +411,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -424,7 +424,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
@@ -437,7 +437,7 @@
             "orchestrated": false,
             "targetPackages": [
                 {
-                    "basePackageName": "entity_management",
+                    "basePackageName": "entity-management",
                     "packageName": "elevate-entity-management"
                 }
             ]
