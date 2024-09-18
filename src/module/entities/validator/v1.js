@@ -9,9 +9,13 @@ module.exports = (req) => {
 	let entitiesValidator = {
 		add: function () {
 			req.checkQuery('type').exists().withMessage('required type')
-			req.checkBody('entityTypeId').exists().withMessage('required entityTypeId ')
 			req.checkBody('externalId').exists().withMessage('required externalId ')
-			req.checkBody('name').exists().withMessage('required name ')
+			req.checkBody('name')
+				.exists()
+				.withMessage('The name field is required.')
+				.trim() // Removes leading and trailing spaces
+				.notEmpty()
+				.withMessage('The name field cannot be empty.')
 		},
 		update: function () {
 			req.checkParams('_id').exists().withMessage('required _id')
