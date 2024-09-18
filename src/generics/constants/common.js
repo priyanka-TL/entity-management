@@ -6,5 +6,28 @@
  */
 
 module.exports = {
-    "ACTIVE_STATUS" : "active"
+	ACTIVE_STATUS: 'ACTIVE',
+	INTERNAL_ACCESS_URLS: [
+		'/entityTypes/bulkCreate',
+		'/entityTypes/bulkUpdate',
+		'/entityTypes/find',
+		'/entities/bulkCreate',
+		'/entities/bulkUpdate',
+		'/entities/add',
+		'/entities/update',
+		'/entityTypes/create',
+		'/entityTypes/update',
+		'/entities/find',
+		'/userRoleExtension/find',
+		'/userRoleExtension/create',
+		'/userRoleExtension/update',
+	],
+	SYSTEM: 'SYSTEM',
+	SUCCESS: 'SUCCESS',
+	FAILURE: 'FAILURE',
+	CACHE_TTL: '43200',
+	PROFILE_CONFIG_FORM_KEY: 'profileConfig_v2',
+	GET_METHOD: 'GET',
+	ENTITYTYPE: 'entityType',
+	GROUPS: 'groups',
 }
