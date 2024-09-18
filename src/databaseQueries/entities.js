@@ -15,8 +15,8 @@ module.exports = class entities {
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
@@ -40,8 +40,8 @@ module.exports = class entities {
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
@@ -64,8 +64,8 @@ module.exports = class entities {
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
@@ -90,8 +90,8 @@ module.exports = class entities {
 				return resolve(updatedCategories)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
@@ -144,8 +144,8 @@ module.exports = class entities {
 				return resolve(document)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
@@ -204,8 +204,8 @@ module.exports = class entities {
 				return resolve(entitiesDocuments)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}

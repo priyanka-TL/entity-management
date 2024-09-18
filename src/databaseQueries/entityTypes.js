@@ -74,14 +74,13 @@ module.exports = class EntityTypes {
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
 		})
 	}
-
 
 	/**
 	 * find entityType documents.
@@ -129,15 +128,13 @@ module.exports = class EntityTypes {
 				return resolve(document)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
 		})
 	}
-
-
 
 	/**
 	 * Update entityTypes documents.
@@ -161,8 +158,8 @@ module.exports = class EntityTypes {
 				return resolve(entityTypeData)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
