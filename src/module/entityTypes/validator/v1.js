@@ -23,7 +23,12 @@ module.exports = (req, res) => {
 			req.checkBody('name').exists().withMessage('required name')
 		},
 		create: function () {
-			req.checkBody('name').exists().withMessage('required name')
+			req.checkBody('name')
+				.exists()
+				.withMessage('The name field is required.')
+				.trim()
+				.notEmpty()
+				.withMessage('The name field cannot be empty.')
 		},
 
 		find: function () {
