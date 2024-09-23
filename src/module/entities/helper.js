@@ -512,7 +512,12 @@ module.exports = class UserProjectsHelper {
 						childHierarchyPath: 1,
 					}
 				)
-
+				if (!childEntity) {
+					return reject({
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.DOCUMENT_NOT_FOUND,
+					})
+				}
 				if (childEntity.entityType) {
 					let parentEntityQueryObject = {
 						_id: ObjectId(parentEntityId),
@@ -1027,7 +1032,15 @@ module.exports = class UserProjectsHelper {
 
 				for (let pointer = 0; pointer < dataArray.length; pointer++) {
 					let singleEntity = dataArray[pointer]
-
+					// Check if an entity with the same name exists in the database
+					let existingEntity = await entitiesQueries.findOne({ 'metaInformation.name': singleEntity.name })
+					if (existingEntity) {
+						// Throw 400 error if the name already exists
+						return reject({
+							status: HTTP_STATUS_CODE.bad_request.status,
+							message: `Entity with name '${singleEntity.name}' already exists.`,
+						})
+					}
 					if (singleEntity.createdByProgramId) {
 						singleEntity.createdByProgramId = ObjectId(singleEntity.createdByProgramId)
 					}
