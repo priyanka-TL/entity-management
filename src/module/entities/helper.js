@@ -514,7 +514,7 @@ module.exports = class UserProjectsHelper {
 				)
 				if (!childEntity) {
 					return reject({
-						status: 404,
+						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.DOCUMENT_NOT_FOUND,
 					})
 				}
