@@ -610,7 +610,12 @@ module.exports = class UserProjectsHelper {
 								toBeMappedToParentEntities: 1,
 							}
 						)
-
+						if (!checkParentEntitiesMappedValue) {
+							return reject({
+								status: HTTP_STATUS_CODE.bad_request.status,
+								message: CONSTANTS.apiResponses.DOCUMENT_NOT_FOUND,
+							})
+						}
 						// Update entityTypeMap with the updateParentHierarchy status
 						if (checkParentEntitiesMappedValue.toBeMappedToParentEntities) {
 							updateParentHierarchy = true
