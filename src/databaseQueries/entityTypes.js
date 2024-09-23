@@ -82,7 +82,6 @@ module.exports = class EntityTypes {
 		})
 	}
 
-
 	/**
 	 * find entityType documents.
 	 * @method
@@ -119,12 +118,6 @@ module.exports = class EntityTypes {
 
 				// Find one document matching the queryObject with specified projection and return as plain JavaScript object
 				let document = await database.models.entityTypes.findOne(queryObject, projection).lean()
-				if (!document) {
-					return reject({
-						status: 404,
-						message: CONSTANTS.apiResponses.DOCUMENT_NOT_FOUND,
-					})
-				}
 
 				return resolve(document)
 			} catch (error) {
@@ -136,8 +129,6 @@ module.exports = class EntityTypes {
 			}
 		})
 	}
-
-
 
 	/**
 	 * Update entityTypes documents.

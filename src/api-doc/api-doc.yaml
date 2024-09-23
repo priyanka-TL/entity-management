@@ -975,8 +975,6 @@ paths:
             schema:
               type: object
               properties:
-                entityTypeId:
-                  type: string
                 externalId:
                   type: string
                 entityType:
@@ -992,7 +990,6 @@ paths:
             examples:
               sampleBodyData:
                 value:
-                  entityTypeId: 663335e2a766490014aead0a
                   externalId: entity123
                   childHierarchyPath:
                     - district
@@ -1193,23 +1190,25 @@ paths:
               examples:
                 SuccessResponse:
                   value:
-                    message: ASSETS_FETCHED_SUCCESSFULLY
+                    message: ENTITY_UPDATATED
                     status: 200
                     result:
                       metaInformation:
-                        externalId: entity123
+                        externalId: SCH
+                        name: school
+                      registryDetails:
+                        locationId: rajAPSTATEDummy4
+                        code: rajAPSTATEDummy4
                       childHierarchyPath: []
-                      allowedRoles:
-                        - role1
-                        - role2
+                      allowedRoles: []
                       createdBy: user123
                       updatedBy: user123
                       deleted: false
-                      _id: 662f856a4b41910591c2fde9
-                      entityTypeId: 627a13928ce12806f5803f57
-                      entityType: block
-                      updatedAt: '2024-04-30T13:16:23.597Z'
-                      createdAt: '2024-04-29T11:32:58.439Z'
+                      _id: 66ea64fa68cd063346a10365
+                      entityTypeId: 6672ce0fc05aa58f89ba12f1
+                      entityType: state
+                      updatedAt: '2024-09-18T10:07:39.407Z'
+                      createdAt: '2024-09-18T05:28:26.148Z'
                       __v: 0
         '400':
           description: Bad Request.
@@ -1233,15 +1232,11 @@ paths:
             schema:
               type: object
               properties:
-                externalId:
+                metaInformation.externalId:
                   type: string
-                name:
+                metaInformation.name:
                   type: string
                 childHierarchyPath:
-                  type: array
-                  items:
-                    type: string
-                allowedRoles:
                   type: array
                   items:
                     type: string
@@ -1252,12 +1247,9 @@ paths:
             examples:
               sampleBodyData:
                 value:
-                  externalId: entity123
-                  name: ' school'
+                  metaInformation.externalId: SCH
+                  metaInformation.name: school
                   childHierarchyPath: []
-                  allowedRoles:
-                    - role1
-                    - role2
                   createdBy: user123
                   updatedBy: user123
   /v1/entities/mappingUpload:
@@ -1495,9 +1487,11 @@ paths:
               sampleBodyData:
                 value:
                   query:
-                    metaInformation.externalId: PBS
+                    metaInformation.externalId: rajAP
                   projection:
-                    - _id
+                    - metaInformation.externalId
+                    - metaInformation.name
+                    - registryDetails.locationId
       responses:
         '200':
           description: created
@@ -1517,16 +1511,30 @@ paths:
                       properties:
                         _id:
                           type: string
-                      required:
-                        - _id
+                        registryDetails:
+                          type: object
+                          properties:
+                            locationId:
+                              type: string
+                        metaInformation:
+                          type: object
+                          properties:
+                            externalId:
+                              type: string
+                            name:
+                              type: string
               examples:
                 SuccessResponse:
                   value:
                     message: ASSETS_FETCHED_SUCCESSFULLY
                     status: 200
                     result:
-                      - _id: 6613b8142c7d9408449474bf
-                      - _id: 6613b8f32c7d9408449474c2
+                      - _id: 66e2b4bd7165395fcea49814
+                        registryDetails:
+                          locationId: rajAP
+                        metaInformation:
+                          externalId: rajAP
+                          name: RAJANDHRA
         '400':
           description: Bad Request.
           content:
@@ -2100,7 +2108,7 @@ paths:
                         param: _id
                         msg: required _id
   /v1/entities/listByIds:
-    get:
+    post:
       summary: List the entities based on entity id
       tags:
         - entities-API's
@@ -2169,6 +2177,28 @@ paths:
                       - location: body
                         param: entities
                         msg: required entities
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entities:
+                  type: array
+                  items:
+                    type: string
+                fields:
+                  type: array
+                  items:
+                    type: string
+            examples:
+              sampleBodyData:
+                value:
+                  entities:
+                    - 66738b75c05aa58f89ba1300
+                  fields:
+                    - entityType
   /v1/entities/entityListBasedOnEntityType?entityType={entity_Type}:
     get:
       summary: List all the entities based on entity type.
@@ -2361,7 +2391,7 @@ paths:
 
         * Mandatory parameter cannot be empty or null
       operationId: ''
-      tags: &ref_9
+      tags: &ref_10
         - userRoleExtension-API's
       parameters:
         - in: header
@@ -2369,7 +2399,7 @@ paths:
           description: >-
             You require an X-auth-token to use this API. This token is available
             in the login API Response.
-          schema: &ref_10
+          schema: &ref_11
             type: string
           required: false
       requestBody:
@@ -2530,14 +2560,14 @@ paths:
 
         * Mandatory parameter cannot be empty or null
       operationId: ''
-      tags: *ref_9
+      tags: *ref_10
       parameters:
         - in: header
           name: X-auth-token
           description: >-
             You require an X-auth-token to use this API. This token is available
             in the login API Response.
-          schema: *ref_10
+          schema: *ref_11
           required: false
       requestBody:
         content:
@@ -2667,19 +2697,19 @@ paths:
 
         * Mandatory parameter cannot be empty or null
       operationId: ''
-      tags: *ref_9
+      tags: *ref_10
       parameters:
         - in: header
           name: X-auth-token
           description: >-
             You require an X-auth-token to use this API. This token is available
             in the login API Response.
-          schema: *ref_10
+          schema: *ref_11
           required: false
         - in: header
           name: internal-access-token
           description: ''
-          schema: &ref_15
+          schema:
             type: string
           required: true
       requestBody:
@@ -2783,14 +2813,14 @@ paths:
 
         * Mandatory parameter cannot be empty or null
       operationId: ''
-      tags: *ref_9
+      tags: *ref_10
       parameters:
         - in: header
           name: X-auth-token
           description: >-
             You require an X-auth-token to use this API. This token is available
             in the login API Response.
-          schema: *ref_10
+          schema: *ref_11
           required: true
       responses:
         '200':
