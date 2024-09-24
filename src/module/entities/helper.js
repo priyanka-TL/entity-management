@@ -1061,10 +1061,23 @@ module.exports = class UserProjectsHelper {
 					registryDetails['lastUpdatedAt'] = new Date()
 
 					let childHierarchyPath = []
-
-					// Update childHierarchyPath if it exists and is an array
 					if (Array.isArray(singleEntity.childHierarchyPath)) {
-						childHierarchyPath = singleEntity.childHierarchyPath.map(String)
+						// Fetch the valid childHierarchyPath from the entityType DB
+						let validEntityType = await entityTypeQueries.entityTypesDocument(
+							{
+								// Use the "$in" operator to check if any of the entityType names are present in the 'childHierarchyPath' array
+								name: {
+									$in: singleEntity.childHierarchyPath,
+								},
+							},
+							// Specify to return only the 'name' field of matching documents
+
+							{ name: 1 }
+						)
+						// Extract the 'name' field from the results into a new array
+						const validatedChildHierarchy = validEntityType.map((entityType) => entityType.name)
+						// Convert the names in 'validatedChildHierarchy' to strings and assign them to 'childHierarchyPath'
+						childHierarchyPath = validatedChildHierarchy.map(String)
 					}
 
 					// Construct the entity document to be created
