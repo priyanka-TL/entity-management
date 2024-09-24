@@ -61,7 +61,7 @@ Elevate entity-management services can be setup in local using two methods:
 ### Local Dependencies Steps
 
 
-1.  **Download Docker Compose File:** Retrieve the **[docker-compose.yml](https://raw.githubusercontent.com/ELEVATE-Project/entity-management/refs/heads/develop/docker-compose.yml)** file from the entity-management service repository and save it to the entity-management directory.
+1.  **Download Docker Compose File:** Retrieve the **[docker-compose.yml](https://raw.githubusercontent.com/ELEVATE-Project/entity-management/refs/heads/main/docker-compose.yml)** file from the entity-management service repository and save it to the entity-management directory.
 
 2. Run the docker container.
 
