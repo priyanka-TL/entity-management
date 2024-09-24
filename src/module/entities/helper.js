@@ -1057,9 +1057,9 @@ module.exports = class UserProjectsHelper {
 							{ name: 1 }
 						)
 						// Extract the 'name' field from the results into a new array
-						const userRoleFilter = validEntityType.map((entityType) => entityType.name)
-						// Convert the names in 'userRoleFilter' to strings and assign them to 'childHierarchyPath'
-						childHierarchyPath = userRoleFilter.map(String)
+						const validatedChildHierarchy = validEntityType.map((entityType) => entityType.name)
+						// Convert the names in 'validatedChildHierarchy' to strings and assign them to 'childHierarchyPath'
+						childHierarchyPath = validatedChildHierarchy.map(String)
 					}
 
 					// Construct the entity document to be created
