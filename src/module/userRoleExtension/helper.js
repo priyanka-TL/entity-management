@@ -9,6 +9,7 @@ const { result } = require('lodash')
 
 // Dependencies
 const userRoleExtensionQueries = require(DB_QUERY_BASE_PATH + '/userRoleExtension')
+const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
 
 module.exports = class userRoleExtensionHelper {
 	/**
@@ -19,6 +20,24 @@ module.exports = class userRoleExtensionHelper {
 	static create(body) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Using map to handle validation
+				await Promise.all(
+					body.entityTypes.map(async (entityTypeData) => {
+						// Validate that both entityType and entityTypeId exist in the entityType DB
+						let existingEntityType = await entityTypeQueries.findOne({
+							name: entityTypeData.entityType,
+							_id: ObjectId(entityTypeData.entityTypeId),
+						})
+
+						if (!existingEntityType) {
+							// If any entityType is invalid, reject the request
+							throw {
+								status: HTTP_STATUS_CODE.bad_request.status,
+								message: `EntityType '${entityTypeData.entityType}' with ID '${entityTypeData.entityTypeId}' does not exist.`,
+							}
+						}
+					})
+				)
 				// Call the queries function to create a new user role extension with the provided body data
 				let newUserRole = await userRoleExtensionQueries.create(body)
 
