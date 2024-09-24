@@ -60,34 +60,29 @@ Elevate entity-management services can be setup in local using two methods:
 
 ### Local Dependencies Steps
 
-1. Build the docker image.
-    ```
-    /ELEVATE/entity-management$ docker build -t elevate/entity-management:1.0 .
-    ```
+
+1.  **Download Docker Compose File:** Retrieve the **[docker-compose.yml](https://raw.githubusercontent.com/ELEVATE-Project/entity-management/refs/heads/develop/docker-compose.yml)** file from the entity-management service repository and save it to the entity-management directory.
+
 2. Run the docker container.
 
     - For Mac & Windows with docker v18.03+:
 
         ```
-        $ docker run --name entity-management elevate/entity-management:1.0
+        $ docker run --name entity-management shikshalokamqa/elevate-entity-management:1.0.0
         ```
 
     - For Linux:
         ```
-        $ docker run --name entity-management --add-host=host.docker.internal:host-gateway elevate/entity-management:1.0`
+        $ docker run --name entity-management --add-host=host.docker.internal:host-gateway shikshalokamqa/elevate-entity-management:1.0.0`
         ```
         Refer [this](https://stackoverflow.com/a/24326540) for more information.
 
 ### Remote Dependencies Steps
 
-1. Build the docker image.
-    ```
-    /ELEVATE/entity-management$ docker build -t elevate/entity-management:1.0 .
-    ```
-2. Run the docker container.
+1. Run the docker container.
 
     ```
-    $ docker run --name entity-management elevate/entity-management:1.0
+    $ docker run --name entity-management shikshalokamqa/elevate-entity-management:1.0.0
     ```
 
 </details>
@@ -163,7 +158,7 @@ USER_SERVICE_URL = http://localhost:3001/user
 INTERNAL_ACCESS_TOKEN="internal_access_token"
 
 #DB URL
-MONGODB_URL=mongodb://localhost:27017/elevate-entity-management
+MONGODB_URL=mongodb://mongo:27017/elevate-entity-management
 
 #service name
 SERVICE_NAME = elevate-entity-service
