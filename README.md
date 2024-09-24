@@ -201,22 +201,6 @@ $ pm2 ls
 
 <br>
 
-# Run tests
-
-## Integration tests
-
-```
-npm run test:integration
-```
-
-To know more about integration tests and their implementation refer to the project [Wiki](https://github.com/ELEVATE-Project/user/wiki/Integration-and-Unit-testing).
-
-## Unit tests
-
-```
-npm test
-```
-
 # Used in
 
 This project was built to be used with [Project Service](https://github.com/ELEVATE-Project/project-service) and [User Service](https://github.com/ELEVATE-Project/user.git).
