@@ -241,7 +241,7 @@ module.exports = class EntityTypes extends Abstract {
 				const newEntityTypeData = await entityTypesHelper.bulkCreate(entityTypesCSVData, req.userDetails)
 
 				// Check if entity types were created successfully
-				if (newEntityTypeData.length > 0) {
+				if (newEntityTypeData.length > 0 && newEntityTypeData[0].status === 'SUCCESS') {
 					const fileName = `EntityType-Upload`
 					let fileStream = new FileStream(fileName)
 					let input = fileStream.initStream()
@@ -263,7 +263,9 @@ module.exports = class EntityTypes extends Abstract {
 
 					input.push(null)
 				} else {
-					throw CONSTANTS.apiResponses.PROJECT_FAILED
+					const error = new Error(CONSTANTS.apiResponses.PROJECT_FAILED)
+					error.status = HTTP_STATUS_CODE.bad_request.status
+					throw error
 				}
 			} catch (error) {
 				return reject({

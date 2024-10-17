@@ -564,7 +564,7 @@ module.exports = class UserProjectsHelper {
 							new: true,
 						}
 					)
-					await this.mappedParentEntities(updatedParentEntity, childEntity)
+					// await this.mappedParentEntities(updatedParentEntity, childEntity)
 				}
 
 				return resolve()
