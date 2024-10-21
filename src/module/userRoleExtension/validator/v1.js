@@ -22,6 +22,7 @@ module.exports = (req) => {
 				.trim() // Removes leading and trailing spaces
 				.notEmpty()
 				.withMessage('The userRoleId field cannot be empty.')
+			req.checkBody('code').exists().withMessage('code is required')
 		},
 		update: function () {
 			req.checkBody('title').exists().withMessage('required title')
