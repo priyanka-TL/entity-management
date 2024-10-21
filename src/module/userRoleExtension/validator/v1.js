@@ -11,6 +11,7 @@ module.exports = (req) => {
 			req.checkBody('title').exists().withMessage('required title ')
 			req.checkBody('entityTypes[0].entityType').exists().withMessage('entityType name ')
 			req.checkBody('entityTypes[0].entityTypeId').exists().withMessage('entityTypeId name ')
+			req.checkBody('code').exists().withMessage('code is required')
 		},
 		update: function () {
 			req.checkBody('title').exists().withMessage('required title')
