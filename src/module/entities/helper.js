@@ -1467,7 +1467,7 @@ module.exports = class UserProjectsHelper {
 				}
 				resolve({
 					success: true,
-					message: CONSTANTS.apiResponses.ENTITY_UPDATATED,
+					message: CONSTANTS.apiResponses.ENTITY_UPDATED,
 					result: entityInformation,
 				})
 				// resolve({ entityInformation, message: CONSTANTS.apiResponses.ENTITYTYPE_UPDATED })
