@@ -34,5 +34,9 @@ module.exports = {
 			type: String,
 			default: 'SYSTEM',
 		},
+		code: {
+			type: String,
+			index: true,
+		},
 	},
 }
