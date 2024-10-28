@@ -9,7 +9,7 @@ info:
   contact:
     email: tech-infra@shikshalokam.org
 servers:
-  - url:  http://{{baseurl}}/entity-management
+  - url: http://{{baseurl}}/entity-management
     description: local server
   - url: https://dev.elevate-apis.shikshalokam.org
     description: dev server
@@ -98,7 +98,7 @@ paths:
                         param: entityTypes
                         msg: EntityTypes file is required
     parameters: []
-  
+
   /v1/entityTypes/bulkUpdate:
     post:
       operationId: ''
@@ -777,7 +777,7 @@ paths:
           schema:
             type: string
           required: true
-      
+
       responses:
         '200':
           description: ok
@@ -2428,11 +2428,12 @@ paths:
               sampleBodyData:
                 value:
                   userRoleId: '13'
-                  title: DC
+                  title: State Level Campaign Coordinator
                   userType: 1
                   entityTypes:
                     - entityType: district
                       entityTypeId: 5f32d8228e0dc83104056e
+                  code: state_level_campaign_coordinator
       responses:
         '200':
           description: Accepted
