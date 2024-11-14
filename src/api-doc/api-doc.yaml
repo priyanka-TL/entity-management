@@ -2424,6 +2424,8 @@ paths:
                         type: string
                       entityTypeId:
                         type: string
+                code:
+                  type: string
             examples:
               sampleBodyData:
                 value:
