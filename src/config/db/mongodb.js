@@ -26,8 +26,6 @@ const DB = function () {
 		useFindAndModify: false,
 		useUnifiedTopology: true,
 	})
-	console.log('mongodbconnection string : ', process.env.MONGODB_URL)
-	console.log('Mongo startup log :  ', db)
 	db.on('error', console.error.bind(console, 'connection error:'))
 	db.once('open', function () {
 		console.log('Connected to DB')

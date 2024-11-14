@@ -39,6 +39,7 @@
 		"cors": "^2.8.5",
 		"csvtojson": "^2.0.10",
 		"dotenv": "^8.2.0",
+		"elevate-logger": "^3.1.0",
 		"eslint": "^8.16.0",
 		"express": "^4.17.1",
 		"express-fileupload": "^1.5.0",
@@ -53,6 +54,7 @@
 		"lodash": "^4.17.15",
 		"log": "^1.4.0",
 		"mocha": "^6.2.2",
+		"module-alias": "^2.2.3",
 		"moment-timezone": "^0.5.31",
 		"mongodb": "^3.7.4",
 		"mongoose": "^5.9.4",
@@ -71,17 +73,34 @@
 		"xml-js": "^1.6.11"
 	},
 	"devDependencies": {
+		"eslint": "^8.16.0",
 		"grunt-apidoc": "^0.11.0",
 		"gulp": "^4.0.2",
 		"gulp-apidoc": "^0.2.8",
-		"eslint": "^8.16.0",
 		"husky": "^8.0.1",
 		"lint-staged": "^12.4.1",
-		"prettier": "^2.6.2",
-		"nodemon": "^2.0.20"
+		"nodemon": "^2.0.20",
+		"prettier": "^2.6.2"
 	},
 	"lint-staged": {
 		"../*": "prettier --ignore-unknown --write",
 		"*": "prettier --ignore-unknown --write"
+	},
+	"_moduleAliases": {
+		"@root": ".",
+		"@module": "module",
+		"@dbQueries": "databaseQueries",
+		"@generics": "generics",
+		"@helpers": "generics/helpers",
+		"@models": "models",
+		"@controllers": "controllers",
+		"@constants": "generics/constants",
+		"@kafkaConsumers": "generics/kafka/consumers",
+		"@utils": "utils",
+		"@config": "config",
+		"@routes": "routes",
+		"@healthCheck": "healthCheck",
+		"@apiDoc": "api-doc",
+		"@public": "public"
 	}
 }
