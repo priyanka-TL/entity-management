@@ -718,40 +718,9 @@ module.exports = class UserProjectsHelper {
 	 * @returns {Array} - returns an array of related entities data.
 	 */
 
-	static relatedEntities(reqId) {
+	static relatedEntities(entityId, entityTypeId, entityType, projection = 'all') {
 		return new Promise(async (resolve, reject) => {
 			try {
-				// Define projection fields to retrieve from the entity document
-				let projection = [
-					'metaInformation.externalId',
-					'metaInformation.name',
-					'metaInformation.addressLine1',
-					'metaInformation.addressLine2',
-					'metaInformation.administration',
-					'metaInformation.city',
-					'metaInformation.country',
-					'entityTypeId',
-					'entityType',
-				]
-
-				// Retrieve entity document based on the provided request ID (reqId)
-				let entityDocument = await entitiesQueries.entityDocuments({ _id: reqId }, projection)
-				if (entityDocument.length < 1) {
-					throw {
-						status: HTTP_STATUS_CODE.not_found.status,
-						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
-					}
-				}
-
-				// Extract relevant information from the retrieved entity document
-				let entityId = entityDocument[0]._id
-				let entityTypeId = entityDocument[0].entityTypeId
-				let entityType = entityDocument[0].entityType
-				// this.entityMapProcessData = {
-				//     entityTypeMap : {},
-				//     relatedEntities : {},
-				//     entityToUpdate : {}
-				// }
 				// if (
 				// 	this.entityMapProcessData &&
 				// 	this.entityMapProcessData.relatedEntities &&
@@ -764,6 +733,7 @@ module.exports = class UserProjectsHelper {
 				let relatedEntitiesQuery = {}
 
 				if (entityTypeId && entityId && entityType) {
+					relatedEntitiesQuery[`groups.${entityType}`] = entityId
 					relatedEntitiesQuery['entityTypeId'] = {}
 					relatedEntitiesQuery['entityTypeId']['$ne'] = entityTypeId
 				} else {
@@ -772,7 +742,6 @@ module.exports = class UserProjectsHelper {
 						message: CONSTANTS.apiResponses.MISSING_ENTITYID,
 					}
 				}
-
 				// Retrieve related entities matching the query criteria
 				let relatedEntitiesDocument = await entitiesQueries.entityDocuments(relatedEntitiesQuery, projection)
 				relatedEntitiesDocument = relatedEntitiesDocument ? relatedEntitiesDocument : []
@@ -1038,13 +1007,17 @@ module.exports = class UserProjectsHelper {
 				for (let pointer = 0; pointer < dataArray.length; pointer++) {
 					let singleEntity = dataArray[pointer]
 					// Check if an entity with the same name exists in the database
-					let existingEntity = await entitiesQueries.findOne({ 'metaInformation.name': singleEntity.name })
-					if (existingEntity) {
-						// Throw 400 error if the name already exists
-						return reject({
-							status: HTTP_STATUS_CODE.bad_request.status,
-							message: `Entity with name '${singleEntity.name}' already exists.`,
+					if (queryParams.type == CONSTANTS.apiResponses.ENTITY_TYPE) {
+						let existingEntity = await entitiesQueries.findOne({
+							'metaInformation.name': singleEntity.name,
 						})
+						if (existingEntity) {
+							// Throw 400 error if the name already exists
+							return reject({
+								status: HTTP_STATUS_CODE.bad_request.status,
+								message: `Entity with name '${singleEntity.name}' already exists.`,
+							})
+						}
 					}
 					if (singleEntity.createdByProgramId) {
 						singleEntity.createdByProgramId = ObjectId(singleEntity.createdByProgramId)
