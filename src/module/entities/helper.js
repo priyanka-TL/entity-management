@@ -1007,7 +1007,7 @@ module.exports = class UserProjectsHelper {
 				for (let pointer = 0; pointer < dataArray.length; pointer++) {
 					let singleEntity = dataArray[pointer]
 					// Check if an entity with the same name exists in the database
-					if (queryParams.type == CONSTANTS.apiResponses.ENTITY_TYPE) {
+					if (queryParams.type == CONSTANTS.common.ENTITY_TYPE) {
 						let existingEntity = await entitiesQueries.findOne({
 							'metaInformation.name': singleEntity.name,
 						})
