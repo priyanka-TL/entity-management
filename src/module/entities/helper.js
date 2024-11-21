@@ -1006,19 +1006,7 @@ module.exports = class UserProjectsHelper {
 
 				for (let pointer = 0; pointer < dataArray.length; pointer++) {
 					let singleEntity = dataArray[pointer]
-					// Check if an entity with the same name exists in the database
-					if (queryParams.type == CONSTANTS.common.ENTITY_TYPE) {
-						let existingEntity = await entitiesQueries.findOne({
-							'metaInformation.name': singleEntity.name,
-						})
-						if (existingEntity) {
-							// Throw 400 error if the name already exists
-							return reject({
-								status: HTTP_STATUS_CODE.bad_request.status,
-								message: `Entity with name '${singleEntity.name}' already exists.`,
-							})
-						}
-					}
+
 					if (singleEntity.createdByProgramId) {
 						singleEntity.createdByProgramId = ObjectId(singleEntity.createdByProgramId)
 					}
