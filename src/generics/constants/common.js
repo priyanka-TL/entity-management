@@ -30,5 +30,4 @@ module.exports = {
 	GET_METHOD: 'GET',
 	ENTITYTYPE: 'entityType',
 	GROUPS: 'groups',
-	ENTITY_TYPE: 'state',
 }
