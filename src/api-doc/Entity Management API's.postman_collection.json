@@ -1026,7 +1026,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userRoleId\": \"13\",\n    \"title\": \"DC\",\n    \"userType\": 1,\n    \"entityTypes\": [\n        {\n            \"entityType\": \"district\",\n            \"entityTypeId\": \"5f32d8228e0dc83104056e\"\n        }\n    ]\n}",
+							"raw": "{\n    \"userRoleId\": \"13\",\n    \"title\": \"State Level Campaign Coordinator\",\n    \"userType\": 1,\n    \"entityTypes\": [\n        {\n            \"entityType\": \"district\",\n            \"entityTypeId\": \"5f32d8228e0dc83104056e\"\n        }\n    ],\n    \"code\":\"state_level_campaign_coordinator\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

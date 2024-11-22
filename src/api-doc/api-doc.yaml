@@ -2424,15 +2424,18 @@ paths:
                         type: string
                       entityTypeId:
                         type: string
+                code:
+                  type: string
             examples:
               sampleBodyData:
                 value:
                   userRoleId: '13'
-                  title: DC
+                  title: State Level Campaign Coordinator
                   userType: 1
                   entityTypes:
                     - entityType: district
                       entityTypeId: 5f32d8228e0dc83104056e
+                  code: state_level_campaign_coordinator
       responses:
         '200':
           description: Accepted
