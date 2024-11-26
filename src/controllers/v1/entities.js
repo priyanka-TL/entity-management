@@ -9,6 +9,7 @@
 const entitiesHelper = require(MODULES_BASE_PATH + '/entities/helper')
 const csv = require('csvtojson')
 const FileStream = require(PROJECT_ROOT_DIRECTORY + '/generics/file-stream')
+const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
 
 /**
  * entities
@@ -116,11 +117,33 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let result = {}
+				let projection = [
+					'metaInformation.externalId',
+					'metaInformation.name',
+					'metaInformation.addressLine1',
+					'metaInformation.addressLine2',
+					'metaInformation.administration',
+					'metaInformation.city',
+					'metaInformation.country',
+					'entityTypeId',
+					'entityType',
+				]
+				let entityDocument = await entitiesQueries.entityDocuments({ _id: req.params._id }, projection)
 
-				// Retrieve related entities using 'entitiesHelper.relatedEntities'
-				let relatedEntities = await entitiesHelper.relatedEntities(req.params._id)
+				if (entityDocument.length < 1) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
 
-				// Store the retrieved relatedEntities in the 'result' object
+				let relatedEntities = await entitiesHelper.relatedEntities(
+					entityDocument[0]._id,
+					entityDocument[0].entityTypeId,
+					entityDocument[0].entityType,
+					projection
+				)
+				_.merge(result, entityDocument[0])
 				result['relatedEntities'] = relatedEntities.length > 0 ? relatedEntities : []
 
 				return resolve({
