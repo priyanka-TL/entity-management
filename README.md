@@ -201,6 +201,10 @@ $ pm2 ls
 
 <br>
 
+# Postman Collections
+
+-   [Entity-Management Service](https://github.com/ELEVATE-Project/entity-management/tree/main/src/api-doc)
+
 # Used in
 
 This project was built to be used with [Project Service](https://github.com/ELEVATE-Project/project-service) and [User Service](https://github.com/ELEVATE-Project/user.git).
