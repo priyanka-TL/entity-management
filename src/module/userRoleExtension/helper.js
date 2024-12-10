@@ -74,7 +74,7 @@ module.exports = class userRoleExtensionHelper {
 
 				resolve({
 					success: true,
-					message: CONSTANTS.apiResponses.USER_ROLE_UPDATATED,
+					message: CONSTANTS.apiResponses.USER_ROLE_UPDATED,
 					result: userInformation,
 				})
 			} catch (error) {
