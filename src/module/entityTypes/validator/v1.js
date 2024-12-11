@@ -20,7 +20,7 @@ module.exports = (req, res) => {
 		},
 		update: function () {
 			req.checkParams('_id').exists().withMessage('required _id')
-			req.checkParams('_id').exists().isMongoId().withMessage('Invalid MongoDB ID')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid EntityType ID')
 			req.checkBody('name').exists().withMessage('required name')
 		},
 		create: function () {

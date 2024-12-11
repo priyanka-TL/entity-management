@@ -263,7 +263,7 @@ module.exports = class EntityTypes extends Abstract {
 
 					input.push(null)
 				} else {
-					const error = new Error(CONSTANTS.apiResponses.PROJECT_FAILED)
+					const error = new Error(CONSTANTS.apiResponses.ENTITYTYPE_CREATION_FAILED)
 					error.status = HTTP_STATUS_CODE.bad_request.status
 					throw error
 				}

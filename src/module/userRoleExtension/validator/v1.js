@@ -27,14 +27,14 @@ module.exports = (req) => {
 		update: function () {
 			req.checkBody('title').exists().withMessage('required title')
 			req.checkParams('_id').exists().withMessage('required _id')
-			req.checkParams('_id').exists().isMongoId().withMessage('Invalid MongoDB ID')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid userRoleExtension ID')
 		},
 		find: function () {
 			req.checkBody('query').exists().withMessage('required query')
 		},
 		delete: function () {
 			req.checkParams('_id').exists().withMessage('required id')
-			req.checkParams('_id').exists().isMongoId().withMessage('Invalid MongoDB ID')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid userRoleExtension ID')
 		},
 	}
 
