@@ -9,7 +9,7 @@ info:
   contact:
     email: tech-infra@shikshalokam.org
 servers:
-  - url:  http://{{baseurl}}/entity-management
+  - url: http://{{baseurl}}/entity-management
     description: local server
   - url: https://dev.elevate-apis.shikshalokam.org
     description: dev server
@@ -98,7 +98,7 @@ paths:
                         param: entityTypes
                         msg: EntityTypes file is required
     parameters: []
-  
+
   /v1/entityTypes/bulkUpdate:
     post:
       operationId: ''
@@ -777,7 +777,7 @@ paths:
           schema:
             type: string
           required: true
-      
+
       responses:
         '200':
           description: ok
@@ -977,6 +977,8 @@ paths:
               properties:
                 externalId:
                   type: string
+                name:
+                  type: string
                 entityType:
                   type: string
                 childHierarchyPath:
@@ -991,6 +993,7 @@ paths:
               sampleBodyData:
                 value:
                   externalId: entity123
+                  name: entityName
                   childHierarchyPath:
                     - district
                     - beat
@@ -1764,7 +1767,7 @@ paths:
                         param: _id
                         msg: required Entity id
   /v1/entities/listByLocationIds:
-    get:
+    POST:
       summary: List the entities based on location id
       tags:
         - entities-API's
@@ -2638,7 +2641,7 @@ paths:
               examples:
                 SuccessResponse:
                   value:
-                    message: USER_ROLE_UPDATATED
+                    message: USER_ROLE_UPDATED
                     status: 200
                     result:
                       status: ACTIVE
