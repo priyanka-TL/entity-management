@@ -19,18 +19,32 @@ module.exports = (req) => {
 		},
 		update: function () {
 			req.checkParams('_id').exists().withMessage('required _id')
-			if (req.body.metaInformation) {
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid MongoDB ID')
+			if (req.body['metaInformation.name']) {
+				req.checkBody('metaInformation.name')
+					.exists()
+					.withMessage('The name field is required.')
+					.trim()
+					.notEmpty()
+					.withMessage('The name field cannot be empty.')
+			}
+			if (req.body['metaInformation.externalId']) {
 				req.checkBody('metaInformation.externalId')
 					.exists()
-					.withMessage('Metainformation must contain externalId.')
+					.withMessage('The name field is required.')
+					.trim()
+					.notEmpty()
+					.withMessage('The name field cannot be empty.')
 			}
 		},
 		subEntityList: function () {
 			req.checkQuery('type').exists().withMessage('required type')
 			req.checkParams('_id').exists().withMessage('required _id')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid MongoDB ID')
 		},
 		targetedRoles: function () {
 			req.checkParams('_id').exists().withMessage('The entity ID (_id) is required.')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid MongoDB ID')
 		},
 		entityListBasedOnEntityType: function () {
 			req.checkQuery('entityType').exists().withMessage('required entityType')
@@ -44,19 +58,23 @@ module.exports = (req) => {
 		},
 		listByEntityType: function () {
 			req.checkParams('_id').exists().withMessage('required Entity type')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid MongoDB ID')
 		},
 		subEntityListBasedOnRoleAndLocation: function () {
 			req.checkParams('_id').exists().withMessage('required state location id')
 		},
 		details: function () {
-			req.checkParams('_id').exists().withMessage('required state location id')
+			req.checkParams('_id').exists().withMessage('required id')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid MongoDB ID')
 		},
 		list: function () {
 			req.checkQuery('type').exists().withMessage('required type')
 			req.checkParams('_id').exists().withMessage('required entity id')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid MongoDB ID')
 		},
 		relatedEntities: function () {
 			req.checkParams('_id').exists().withMessage('required Entity id')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid MongoDB ID')
 		},
 		bulkCreate: function () {
 			if (!req.files || !req.files.entities) {
