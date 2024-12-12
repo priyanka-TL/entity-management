@@ -7,8 +7,8 @@
 
 // dependencies
 const jwt = require('jsonwebtoken')
+console.log(process.env.IS_AUTH_TOKEN_BEARER, 'process.env.IS_AUTH_TOKEN_BEARER')
 const isBearerRequired = process.env.IS_AUTH_TOKEN_BEARER === 'true'
-
 var respUtil = function (resp) {
 	return {
 		status: resp.errCode,
@@ -38,6 +38,9 @@ module.exports = async function (req, res, next, token = '') {
 		delete req.headers[e]
 	})
 
+	if (!req.rspObj) req.rspObj = {}
+	var rspObj = req.rspObj
+
 	// Check if a Bearer token is required for authentication
 	let authHeader = req.headers['x-auth-token']
 	if (isBearerRequired) {
@@ -52,9 +55,6 @@ module.exports = async function (req, res, next, token = '') {
 	} else {
 		token = authHeader.trim()
 	}
-
-	if (!req.rspObj) req.rspObj = {}
-	var rspObj = req.rspObj
 
 	let internalAccessApiPaths = CONSTANTS.common.INTERNAL_ACCESS_URLS
 	let performInternalAccessTokenCheck = false
