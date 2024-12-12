@@ -106,13 +106,13 @@ module.exports = function () {
 		}
 
 		if (
-			(!process.env[eachEnvironmentVariable] || process.env[eachEnvironmentVariable] == '') &&
-			enviromentVariables[eachEnvironmentVariable].default &&
-			enviromentVariables[eachEnvironmentVariable].default != ''
+			(!process.env[eachEnvironmentVariable] || process.env[eachEnvironmentVariable].trim() === '') &&
+			enviromentVariables[eachEnvironmentVariable]?.optional === true &&
+			enviromentVariables[eachEnvironmentVariable]?.default !== undefined
 		) {
 			process.env[eachEnvironmentVariable] = enviromentVariables[eachEnvironmentVariable].default
-			success = true
 			keyCheckPass = true
+			success = true
 		}
 
 		if (!keyCheckPass) {
