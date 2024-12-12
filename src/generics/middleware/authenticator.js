@@ -7,7 +7,6 @@
 
 // dependencies
 const jwt = require('jsonwebtoken')
-console.log(process.env.IS_AUTH_TOKEN_BEARER, 'process.env.IS_AUTH_TOKEN_BEARER')
 const isBearerRequired = process.env.IS_AUTH_TOKEN_BEARER === 'true'
 var respUtil = function (resp) {
 	return {
