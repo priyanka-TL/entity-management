@@ -1265,6 +1265,11 @@ module.exports = class UserProjectsHelper {
 							return _.startsWith(key, '_')
 						})
 
+						if (!entityCreation.metaInformation.name || !entityCreation.metaInformation.externalId) {
+							entityCreation.status = CONSTANTS.apiResponses.ENTITIES_FAILED
+							entityCreation.message = CONSTANTS.apiResponses.FIELD_MISSING
+							return entityCreation
+						}
 						// if (solutionsData && singleEntity._solutionId && singleEntity._solutionId != '')
 						// 	singleEntity['createdByProgramId'] = solutionsData[singleEntity._solutionId]['programId']
 						let newEntity = await entitiesQueries.create(entityCreation)
@@ -1273,6 +1278,11 @@ module.exports = class UserProjectsHelper {
 						}
 
 						singleEntity['_SYSTEM_ID'] = newEntity._id.toString()
+
+						if (singleEntity._SYSTEM_ID) {
+							singleEntity.status = CONSTANTS.apiResponses.SUCCESS
+							singleEntity.message = CONSTANTS.apiResponses.SUCCESS
+						}
 
 						// if (
 						// 	solutionsData &&
@@ -1373,6 +1383,12 @@ module.exports = class UserProjectsHelper {
 							updateData[`metaInformation.${key}`] = columnsToUpdate[key]
 						})
 
+						if (!updateData['metaInformation.name'] || !updateData['metaInformation.externalId']) {
+							singleEntity.status = CONSTANTS.apiResponses.ENTITIES_FAILED
+							singleEntity.message = CONSTANTS.apiResponses.FIELD_MISSING
+							return singleEntity
+						}
+
 						if (Object.keys(updateData).length > 0) {
 							let updateEntity = await entitiesQueries.findOneAndUpdate(
 								{ _id: singleEntity['_SYSTEM_ID'] },
@@ -1381,12 +1397,13 @@ module.exports = class UserProjectsHelper {
 							)
 
 							if (!updateEntity || !updateEntity._id) {
-								singleEntity['UPDATE_STATUS'] = CONSTANTS.apiResponses.ENTITY_NOT_FOUND
+								singleEntity['status'] = CONSTANTS.apiResponses.ENTITY_NOT_FOUND
 							} else {
-								singleEntity['UPDATE_STATUS'] = CONSTANTS.apiResponses.SUCCESS
+								singleEntity['status'] = CONSTANTS.apiResponses.SUCCESS
+								singleEntity['message'] = CONSTANTS.apiResponses.SUCCESS
 							}
 						} else {
-							singleEntity['UPDATE_STATUS'] = CONSTANTS.apiResponses.NO_INFORMATION_TO_UPDATE
+							singleEntity['status'] = CONSTANTS.apiResponses.NO_INFORMATION_TO_UPDATE
 						}
 
 						return singleEntity
