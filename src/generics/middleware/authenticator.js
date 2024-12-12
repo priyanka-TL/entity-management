@@ -38,8 +38,7 @@ module.exports = async function (req, res, next, token = '') {
 		delete req.headers[e]
 	})
 
-	//token 
-	let token
+	//token
 	let authHeader = req.headers['x-auth-token']
 	if (isBearerRequired) {
 		const [authType, extractedToken] = authHeader.split(' ')
