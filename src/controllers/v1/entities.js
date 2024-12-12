@@ -190,7 +190,11 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call helper function to fetch entity data based on entity type
-				let entityData = await entitiesHelper.entityListBasedOnEntityType(req.query.entityType)
+				let entityData = await entitiesHelper.entityListBasedOnEntityType(
+					req.query.entityType,
+					req.pageNo,
+					req.pageSize
+				)
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
@@ -302,7 +306,7 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Calls the 'targetedRoles' function from 'entitiesHelper' to retrieve entity data
-				let userRoleDetails = await entitiesHelper.targetedRoles(req.params._id)
+				let userRoleDetails = await entitiesHelper.targetedRoles(req.params._id, req.pageNo, req.pageSize)
 				// Resolves the promise with the retrieved entity data
 				return resolve(userRoleDetails)
 			} catch (error) {

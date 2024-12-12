@@ -80,24 +80,26 @@ module.exports = class userRoleExtension {
 				}
 
 				// Execute query with optional sorting, limiting, and skipping
-				let userDocuments
+				let result
 
 				// Perform find operation with sorting, limiting, skipping, and return as plain JavaScript object
 				if (sortedData !== '') {
-					userDocuments = await database.models.userRoleExtension
+					result = await database.models.userRoleExtension
 						.find(queryObject, projectionObject)
 						.sort(sortedData)
 						.limit(limitingValue)
 						.skip(skippingValue)
 						.lean()
 				} else {
-					userDocuments = await database.models.userRoleExtension
+					result = await database.models.userRoleExtension
 						.find(queryObject, projectionObject)
 						.limit(limitingValue)
 						.skip(skippingValue)
 						.lean()
 				}
-				return resolve(userDocuments)
+				const count = await database.models.userRoleExtension.countDocuments(queryObject)
+
+				return resolve({ result, count })
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
