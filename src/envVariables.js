@@ -35,7 +35,7 @@ let enviromentVariables = {
 	IS_AUTH_TOKEN_BEARER: {
 		message: 'Required specification: If auth token is bearer or not',
 		optional: true,
-		default: true,
+		default: false,
 	},
 }
 
