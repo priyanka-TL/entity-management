@@ -86,6 +86,13 @@ module.exports = class UserProjectsHelper {
 								userDetails && userDetails.userInformation.id
 									? userDetails && userDetails.userInformation.id
 									: CONSTANTS.common.SYSTEM
+
+							if (!entityType.name) {
+								entityType['_SYSTEM_ID'] = ''
+								entityType.status = CONSTANTS.apiResponses.ENTITY_TYPE_FAILED
+								entityType.message = CONSTANTS.apiResponses.FIELD_MISSING
+								return entityType
+							}
 							let newEntityType = await entityTypeQueries.create(
 								_.merge(
 									{
@@ -296,6 +303,12 @@ module.exports = class UserProjectsHelper {
 									? userDetails && userDetails.userInformation.id
 									: CONSTANTS.common.SYSTEM
 
+							if (!entityType.name) {
+								entityType['_SYSTEM_ID'] = ''
+								entityType.status = CONSTANTS.apiResponses.ENTITY_TYPE_FAILED
+								entityType.message = CONSTANTS.apiResponses.FIELD_MISSING
+								return entityType
+							}
 							// Find and update the entityType by _SYSTEM_ID with merged data
 							let updateEntityType = await entityTypeQueries.findOneAndUpdate(
 								{
