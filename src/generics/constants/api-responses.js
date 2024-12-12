@@ -55,8 +55,8 @@ module.exports = {
 	USER_ROLE_UPDATED: 'USER_ROLE_UPDATED',
 	USER_ROLE_DELETED: 'USER_ROLE_DELETED',
 	ENTITY_UPDATED: 'ENTITY_UPDATED',
-	ENTITIES_FAILED: 'Some entities could not be created due to missing required fields.',
-	ENTITY_TYPE_FAILED: 'Some entity type could not be created due to missing required fields.',
+	ENTITIES_FAILED: 'The creation of this entities was skipped due to missing required data.',
+	ENTITY_TYPE_FAILED: 'The creation of this entity type was skipped due to missing required data.',
 	FIELD_MISSING: 'Fields are missing',
 	ENTITY_TYPE_CREATION_FAILED: 'ENTITY TYPE CREATION FAILED',
 
