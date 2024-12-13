@@ -40,20 +40,7 @@ module.exports = async function (req, res, next, token = '') {
 	if (!req.rspObj) req.rspObj = {}
 	var rspObj = req.rspObj
 
-	// Check if a Bearer token is required for authentication
-	let authHeader = req.headers['x-auth-token']
-	if (isBearerRequired) {
-		const [authType, extractedToken] = authHeader.split(' ')
-		if (authType.toLowerCase() !== 'bearer') {
-			rspObj.errCode = CONSTANTS.apiResponses.TOKEN_INVALID_CODE
-			rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_INVALID_MESSAGE
-			rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
-			return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
-		}
-		token = extractedToken?.trim()
-	} else {
-		token = authHeader.trim()
-	}
+	token = req.headers['x-auth-token']
 
 	let internalAccessApiPaths = CONSTANTS.common.INTERNAL_ACCESS_URLS
 	let performInternalAccessTokenCheck = false
@@ -83,6 +70,20 @@ module.exports = async function (req, res, next, token = '') {
 		rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_MISSING_MESSAGE
 		rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
 		return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
+	}
+
+	// Check if a Bearer token is required for authentication
+	if (isBearerRequired) {
+		const [authType, extractedToken] = token.split(' ')
+		if (authType.toLowerCase() !== 'bearer') {
+			rspObj.errCode = CONSTANTS.apiResponses.TOKEN_INVALID_CODE
+			rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_INVALID_MESSAGE
+			rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
+			return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
+		}
+		token = extractedToken?.trim()
+	} else {
+		token = token.trim()
 	}
 
 	rspObj.errCode = CONSTANTS.apiResponses.TOKEN_INVALID_CODE
