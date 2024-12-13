@@ -83,7 +83,7 @@ module.exports = async function (req, res, next, token = '') {
 		}
 		token = extractedToken?.trim()
 	} else {
-		token = token.trim()
+		token = token?.trim()
 	}
 
 	rspObj.errCode = CONSTANTS.apiResponses.TOKEN_INVALID_CODE
