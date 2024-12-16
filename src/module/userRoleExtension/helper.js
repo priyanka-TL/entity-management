@@ -103,7 +103,7 @@ module.exports = class userRoleExtensionHelper {
 					'',
 					paginate
 				)
-				const result = userRoles.result
+				const result = userRoles.userRoleExtension
 				// If no user role extensions are found, throw an error with a 404 status and an error message
 				if (result.length < 1) {
 					throw {
