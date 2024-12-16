@@ -87,13 +87,23 @@ module.exports = class userRoleExtensionHelper {
 	 * Find user role extensions based on the provided query and projection.
 	 * @param {Object} bodyQuery - The query to filter user role extensions.
 	 * @param {Array<String>} projection - The fields to include in the returned documents.
+	 * @param {string} limit - limit for pagination
+	 * @param {string} offset - offset for pagination
 	 * @returns {Promise<Object>} - A promise that resolves with the found user role extensions or rejects with an error.
 	 */
-	static find(bodyQuery, projection) {
+	static find(bodyQuery, projection, limit, offset, paginate = false) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Fetch user role extensions based on the provided query and projection
-				const result = await userRoleExtensionQueries.userDocuments(bodyQuery, projection)
+				const userRoles = await userRoleExtensionQueries.userDocuments(
+					bodyQuery,
+					projection,
+					limit,
+					offset,
+					'',
+					paginate
+				)
+				const result = userRoles.result
 				// If no user role extensions are found, throw an error with a 404 status and an error message
 				if (result.length < 1) {
 					throw {
@@ -105,6 +115,7 @@ module.exports = class userRoleExtensionHelper {
 					success: true,
 					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
 					result: result,
+					count: userRoles.count,
 				})
 			} catch (error) {
 				return reject(error)

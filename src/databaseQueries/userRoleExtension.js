@@ -61,7 +61,14 @@ module.exports = class userRoleExtension {
 	 * @param {Object} [sortedData=''] - The sorting order for the retrieved documents.
 	 * @returns {Promise<Object[]>} - A promise that resolves with the retrieved user role extension documents or rejects with an error.
 	 */
-	static userDocuments(findQuery = 'all', fields = '', limitingValue = '', skippingValue = '', sortedData = '') {
+	static userDocuments(
+		findQuery = 'all',
+		fields = '',
+		limitingValue = '',
+		skippingValue = '',
+		sortedData = '',
+		paginate = false
+	) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let queryObject = {}
@@ -79,25 +86,20 @@ module.exports = class userRoleExtension {
 					})
 				}
 
-				// Execute query with optional sorting, limiting, and skipping
-				let userDocuments
+				let query = database.models.userRoleExtension.find(queryObject, projectionObject).lean()
 
 				// Perform find operation with sorting, limiting, skipping, and return as plain JavaScript object
-				if (sortedData !== '') {
-					userDocuments = await database.models.userRoleExtension
-						.find(queryObject, projectionObject)
-						.sort(sortedData)
-						.limit(limitingValue)
-						.skip(skippingValue)
-						.lean()
-				} else {
-					userDocuments = await database.models.userRoleExtension
-						.find(queryObject, projectionObject)
-						.limit(limitingValue)
-						.skip(skippingValue)
-						.lean()
-				}
-				return resolve(userDocuments)
+				if (sortedData !== '') query = query.sort(sortedData)
+
+				if ((paginate && limitingValue != '') || skippingValue != '')
+					query = query.limit(limitingValue).skip(skippingValue)
+
+				// Execute query with optional sorting, limiting, and skipping
+				const userRoleExtension = await query
+
+				const count = await database.models.userRoleExtension.countDocuments(queryObject)
+
+				return resolve({ userRoleExtension, count })
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.bad_request.status,
