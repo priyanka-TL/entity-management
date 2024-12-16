@@ -194,7 +194,7 @@ module.exports = class Entities extends Abstract {
 					req.query.entityType,
 					req.pageNo,
 					req.pageSize,
-					req?.query?.paginate.toLowerCase() == 'true' ? true : false
+					req?.query?.paginate?.toLowerCase() == 'true' ? true : false
 				)
 				return resolve(entityData)
 			} catch (error) {
@@ -311,7 +311,7 @@ module.exports = class Entities extends Abstract {
 					req.params._id,
 					req.pageNo,
 					req.pageSize,
-					req?.query?.paginate.toLowerCase() == 'true' ? true : false
+					req?.query?.paginate?.toLowerCase() == 'true' ? true : false
 				)
 				// Resolves the promise with the retrieved entity data
 				return resolve(userRoleDetails)
