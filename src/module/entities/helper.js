@@ -211,9 +211,11 @@ module.exports = class UserProjectsHelper {
 	/**
 	 * Fetches targeted roles based on the provided entity IDs.
 	 * @param {Array<string>} entityId - An array of entity IDs to filter roles.
+	 * @param {params} pageSize - page pageSize.
+	 * @param {params} pageNo - page no.
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 */
-	static targetedRoles(entityId, pageNo = '', pageSize = '') {
+	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Construct the filter to retrieve entities based on provided entity IDs
@@ -279,7 +281,8 @@ module.exports = class UserProjectsHelper {
 					userRoleExtensionFilter,
 					userRoleExtensionProjection,
 					pageSize,
-					pageSize * (pageNo - 1)
+					pageSize * (pageNo - 1),
+					paginate
 				)
 
 				// Check if the fetchUserRoles operation was successful and returned data
@@ -955,10 +958,12 @@ module.exports = class UserProjectsHelper {
 	 * @method
 	 * @name entityListBasedOnEntityType
 	 * @param {string} type - Type of entity to fetch documents for.
+	 * @param {string} pageNo - pageNo for pagination
+	 * @param {string} pageSize - pageSize for pagination
 	 * @returns {Promise<Object>} Promise that resolves with fetched documents or rejects with an error.
 	 */
 
-	static entityListBasedOnEntityType(type, pageNo, pageSize) {
+	static entityListBasedOnEntityType(type, pageNo, pageSize, paginate) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Fetch the list of entity types available
@@ -983,7 +988,9 @@ module.exports = class UserProjectsHelper {
 					},
 					projection,
 					pageSize,
-					pageSize * (pageNo - 1)
+					pageSize * (pageNo - 1),
+					'',
+					paginate
 				)
 				const count = await entitiesQueries.countEntityDocuments({ entityType: type })
 

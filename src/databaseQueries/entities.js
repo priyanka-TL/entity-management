@@ -159,11 +159,17 @@ module.exports = class entities {
 	 * @returns {Array} - returns an array of entities data.
 	 */
 
-	static entityDocuments(findQuery = 'all', fields = '', limitingValue = '', skippingValue = '', sortedData = '') {
+	static entityDocuments(
+		findQuery = 'all',
+		fields = '',
+		limitingValue = '',
+		skippingValue = '',
+		sortedData = '',
+		paginate = false
+	) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let queryObject = {}
-
 				// Set queryObject based on provided findQuery
 				if (findQuery != 'all') {
 					queryObject = findQuery
@@ -185,10 +191,9 @@ module.exports = class entities {
 				if (sortedData !== '') {
 					query = query.sort(sortedData)
 				}
-				if (limitingValue != '' || skippingValue != '') {
+				if (paginate && (limitingValue != '' || skippingValue != '')) {
 					query = query.limit(limitingValue).skip(skippingValue)
 				}
-
 				entitiesDocuments = await query
 
 				return resolve(entitiesDocuments)
