@@ -10,6 +10,7 @@ const entityTypesHelper = require(MODULES_BASE_PATH + '/entityTypes/helper')
 const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
 const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
 const userRoleExtensionHelper = require(MODULES_BASE_PATH + '/userRoleExtension/helper')
+const { ObjectId } = require('mongodb')
 
 const _ = require('lodash')
 
@@ -164,8 +165,33 @@ module.exports = class UserProjectsHelper {
 				}
 				// Modify data properties (e.g., 'label') of retrieved entities if necessary
 				if (result.data && result.data.length > 0) {
+					// fetch the entity ids to look for parent hierarchy
+					const entityIds = _.map(result.data, (item) => ObjectId(item._id))
+					// dynamically set the entityType to search inside the group
+					const key = 'groups.' + type
+					// create filter for fetching the parent data using group
+					let entityFilter = {}
+					entityFilter[key] = {
+						$in: entityIds,
+					}
+
+					// Retrieve all the entity documents with the entity ids in their gropu
+					const entityDocuments = await entitiesQueries.entityDocuments(entityFilter, [
+						'entityType',
+						'metaInformation.name',
+						key,
+					])
+
 					result.data = result.data.map((data) => {
 						let cloneData = { ...data }
+						// iterate through the data fetched to fetch the parent entity names
+						entityDocuments.forEach((eachEntity) => {
+							eachEntity[key.split('.')[0]][key.split('.')[1]].forEach((eachEntityGroup) => {
+								if (ObjectId(eachEntityGroup).equals(cloneData._id)) {
+									cloneData[eachEntity?.entityType] = eachEntity?.metaInformation?.name
+								}
+							})
+						})
 						cloneData['label'] = cloneData.name
 						cloneData['value'] = cloneData._id
 						return cloneData
@@ -185,9 +211,11 @@ module.exports = class UserProjectsHelper {
 	/**
 	 * Fetches targeted roles based on the provided entity IDs.
 	 * @param {Array<string>} entityId - An array of entity IDs to filter roles.
+	 * @param {params} pageSize - page pageSize.
+	 * @param {params} pageNo - page no.
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 */
-	static targetedRoles(entityId) {
+	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Construct the filter to retrieve entities based on provided entity IDs
@@ -201,8 +229,8 @@ module.exports = class UserProjectsHelper {
 				const entityDetails = await entitiesQueries.entityDocuments(filter, projectionFields)
 				if (
 					!entityDetails ||
-					!entityDetails[0].childHierarchyPath ||
-					entityDetails[0].childHierarchyPath.length < 0
+					!entityDetails[0]?.childHierarchyPath ||
+					entityDetails[0]?.childHierarchyPath.length < 0
 				) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
@@ -251,7 +279,10 @@ module.exports = class UserProjectsHelper {
 				// Fetch the user roles based on the filter and projection
 				const fetchUserRoles = await userRoleExtensionHelper.find(
 					userRoleExtensionFilter,
-					userRoleExtensionProjection
+					userRoleExtensionProjection,
+					pageSize,
+					pageSize * (pageNo - 1),
+					paginate
 				)
 
 				// Check if the fetchUserRoles operation was successful and returned data
@@ -273,7 +304,7 @@ module.exports = class UserProjectsHelper {
 				return resolve({
 					message: CONSTANTS.apiResponses.ROLES_FETCHED_SUCCESSFULLY,
 					result: transformedData,
-					count: transformedData.length,
+					count: fetchUserRoles.count,
 				})
 			} catch (error) {
 				return reject(error)
@@ -927,10 +958,12 @@ module.exports = class UserProjectsHelper {
 	 * @method
 	 * @name entityListBasedOnEntityType
 	 * @param {string} type - Type of entity to fetch documents for.
+	 * @param {string} pageNo - pageNo for pagination
+	 * @param {string} pageSize - pageSize for pagination
 	 * @returns {Promise<Object>} Promise that resolves with fetched documents or rejects with an error.
 	 */
 
-	static entityListBasedOnEntityType(type) {
+	static entityListBasedOnEntityType(type, pageNo, pageSize, paginate) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Fetch the list of entity types available
@@ -953,11 +986,16 @@ module.exports = class UserProjectsHelper {
 					{
 						entityType: type,
 					},
-					projection
+					projection,
+					pageSize,
+					pageSize * (pageNo - 1),
+					'',
+					paginate
 				)
+				const count = await entitiesQueries.countEntityDocuments({ entityType: type })
 
 				// Check if fetchList list is empty
-				if (!fetchList.length > 0) {
+				if (count <= 0) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
@@ -975,6 +1013,7 @@ module.exports = class UserProjectsHelper {
 					success: true,
 					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
 					result: result,
+					count,
 				})
 			} catch (error) {
 				return reject(error)
