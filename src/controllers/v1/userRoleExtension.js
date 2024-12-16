@@ -108,7 +108,7 @@ module.exports = class userRoleExtension extends Abstract {
 	 * 
 	 *  
 	{
-    "message": "USER_ROLE_UPDATATED",
+    "message": "USER_ROLE_UPDATED",
     "status": 200,
     "result": {
         "status": "ACTIVE",

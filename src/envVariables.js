@@ -32,6 +32,11 @@ let enviromentVariables = {
 		message: 'Required api doc url',
 		optional: false,
 	},
+	IS_AUTH_TOKEN_BEARER: {
+		message: 'Required specification: If auth token is bearer or not',
+		optional: true,
+		default: false,
+	},
 }
 
 let success = true
@@ -101,13 +106,13 @@ module.exports = function () {
 		}
 
 		if (
-			(!process.env[eachEnvironmentVariable] || process.env[eachEnvironmentVariable] == '') &&
-			enviromentVariables[eachEnvironmentVariable].default &&
-			enviromentVariables[eachEnvironmentVariable].default != ''
+			(!process.env[eachEnvironmentVariable] || process.env[eachEnvironmentVariable].trim() === '') &&
+			enviromentVariables[eachEnvironmentVariable]?.optional === true &&
+			enviromentVariables[eachEnvironmentVariable]?.default !== undefined
 		) {
 			process.env[eachEnvironmentVariable] = enviromentVariables[eachEnvironmentVariable].default
-			success = true
 			keyCheckPass = true
+			success = true
 		}
 
 		if (!keyCheckPass) {

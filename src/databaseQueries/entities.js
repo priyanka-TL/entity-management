@@ -15,8 +15,8 @@ module.exports = class entities {
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
@@ -40,8 +40,8 @@ module.exports = class entities {
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
@@ -64,8 +64,8 @@ module.exports = class entities {
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
@@ -90,8 +90,8 @@ module.exports = class entities {
 				return resolve(updatedCategories)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
@@ -138,8 +138,8 @@ module.exports = class entities {
 				return resolve(document)
 			} catch (error) {
 				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
 					errorObject: error,
 				})
 			}
@@ -159,11 +159,17 @@ module.exports = class entities {
 	 * @returns {Array} - returns an array of entities data.
 	 */
 
-	static entityDocuments(findQuery = 'all', fields = '', limitingValue = '', skippingValue = '', sortedData = '') {
+	static entityDocuments(
+		findQuery = 'all',
+		fields = '',
+		limitingValue = '',
+		skippingValue = '',
+		sortedData = '',
+		paginate = false
+	) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let queryObject = {}
-
 				// Set queryObject based on provided findQuery
 				if (findQuery != 'all') {
 					queryObject = findQuery
@@ -180,22 +186,48 @@ module.exports = class entities {
 				// Execute query with optional sorting, limiting, and skipping
 				let entitiesDocuments
 
-				// Perform find operation with sorting, limiting, skipping, and return as plain JavaScript object
+				let query = database.models.entities.find(queryObject, projectionObject).lean()
+
 				if (sortedData !== '') {
-					entitiesDocuments = await database.models.entities
-						.find(queryObject, projectionObject)
-						.sort(sortedData)
-						.limit(limitingValue)
-						.skip(skippingValue)
-						.lean()
-				} else {
-					entitiesDocuments = await database.models.entities
-						.find(queryObject, projectionObject)
-						.limit(limitingValue)
-						.skip(skippingValue)
-						.lean()
+					query = query.sort(sortedData)
 				}
+				if (paginate && (limitingValue != '' || skippingValue != '')) {
+					query = query.limit(limitingValue).skip(skippingValue)
+				}
+				entitiesDocuments = await query
+
 				return resolve(entitiesDocuments)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+	/**
+	 * Implement count query for entity
+	 * @method
+	 * @name countEntityDocuments
+	 * @param {Object} [findQuery = "all"] - filter query object if not provide
+	 * @returns {Object} - returns count
+	 */
+
+	static countEntityDocuments(findQuery = 'all') {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let queryObject = {}
+
+				// Set queryObject based on provided findQuery
+				if (findQuery != 'all') {
+					queryObject = findQuery
+				}
+
+				const count = await database.models.entities.find(queryObject).count()
+
+				return resolve(count)
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
