@@ -60,6 +60,23 @@ module.exports = class userRoleExtensionHelper {
 	static update(userRoleId, bodyData) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				await Promise.all(
+					bodyData.entityTypes.map(async (entityTypeData) => {
+						// Validate that both entityType and entityTypeId exist in the entityType DB
+						let existingEntityType = await entityTypeQueries.findOne({
+							name: entityTypeData.entityType,
+							_id: ObjectId(entityTypeData.entityTypeId),
+						})
+
+						if (!existingEntityType) {
+							// If any entityType is invalid, reject the request
+							throw {
+								status: HTTP_STATUS_CODE.bad_request.status,
+								message: `EntityType '${entityTypeData.entityType}' with ID '${entityTypeData.entityTypeId}' does not exist.`,
+							}
+						}
+					})
+				)
 				// Find and update the user role extension based on the provided userRoleId and bodyData
 				let userInformation = await userRoleExtensionQueries.findOneAndUpdate(
 					{ _id: ObjectId(userRoleId) },
