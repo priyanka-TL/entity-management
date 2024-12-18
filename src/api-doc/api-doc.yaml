@@ -1767,7 +1767,7 @@ paths:
                         param: _id
                         msg: required Entity id
   /v1/entities/listByLocationIds:
-    POST:
+    post:
       summary: List the entities based on location id
       tags:
         - entities-API's
