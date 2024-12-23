@@ -88,10 +88,6 @@ module.exports = async function (req, res, next, token = '') {
 		token = token?.trim()
 	}
 
-	rspObj.errCode = CONSTANTS.apiResponses.TOKEN_INVALID_CODE
-	rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_INVALID_MESSAGE
-	rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
-
 	// <---- For Elevate user service user compactibility ---->
 	let decodedToken = null
 	try {
@@ -101,6 +97,9 @@ module.exports = async function (req, res, next, token = '') {
 				decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
 			} catch (err) {
 				// If verification fails, send an unauthorized response
+				rspObj.errCode = CONSTANTS.apiResponses.TOKEN_MISSING_CODE
+				rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_MISSING_MESSAGE
+				rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
 				return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
 			}
 		} else if (process.env.AUTH_METHOD === CONSTANTS.common.AUTH_METHOD.KEYCLOAK_PUBLIC_KEY) {
@@ -114,20 +113,25 @@ module.exports = async function (req, res, next, token = '') {
 
 			if (!tokenClaims || !tokenClaims.header) {
 				// If the token does not contain valid claims or header, send an unauthorized response
+				rspObj.errCode = CONSTANTS.apiResponses.TOKEN_MISSING_CODE
+				rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_MISSING_MESSAGE
+				rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
 				return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
 			}
 
 			// Extract the key ID (kid) from the token header
 			const kid = tokenClaims.header.kid
+
 			// Construct the path to the public key file using the key ID
 			let filePath = path.resolve(__dirname, keycloakPublicKeyPath, kid.replace(/\.\.\//g, ''))
+
 			// Read the public key file from the resolved file path
 			const accessKeyFile = await fs.promises.readFile(filePath, 'utf8')
+
 			// Ensure the public key is properly formatted with BEGIN and END markers
 			const cert = accessKeyFile.includes(PEM_FILE_BEGIN_STRING)
 				? accessKeyFile
 				: `${PEM_FILE_BEGIN_STRING}\n${accessKeyFile}\n${PEM_FILE_END_STRING}`
-
 			let verifiedClaims
 			try {
 				// Verify the JWT using the public key and specified algorithms
@@ -135,6 +139,9 @@ module.exports = async function (req, res, next, token = '') {
 			} catch (err) {
 				// If the token is expired or any other error occurs during verification
 				if (err.name === 'TokenExpiredError') {
+					rspObj.errCode = CONSTANTS.apiResponses.TOKEN_INVALID_CODE
+					rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_INVALID_MESSAGE
+					rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
 					return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
 				}
 			}
@@ -154,15 +161,21 @@ module.exports = async function (req, res, next, token = '') {
 			decodedToken['data'] = data
 		}
 	} catch (err) {
+		rspObj.errCode = CONSTANTS.apiResponses.TOKEN_MISSING_CODE
+		rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_MISSING_MESSAGE
+		rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
 		return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
 	}
 	if (!decodedToken) {
+		rspObj.errCode = CONSTANTS.apiResponses.TOKEN_MISSING_CODE
+		rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_MISSING_MESSAGE
+		rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
 		return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
 	}
 	req.userDetails = {
 		userToken: token,
 		userInformation: {
-			userId: decodedToken.data.id.toString(),
+			userId: typeof decodedToken.data.id == 'string' ? decodedToken.data.id : decodedToken.data.id.toString(),
 			userName: decodedToken.data.name,
 			// email : decodedToken.data.email, //email is removed from token
 			firstName: decodedToken.data.name,
