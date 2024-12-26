@@ -831,7 +831,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/targetedRoles/5f33c3d85f637784791cd831",
+							"raw": "{{baseUrl}}/entity/v1/entities/targetedRoles/5f33c3d85f637784791cd831?entityType=district",
 							"host": ["{{baseUrl}}"],
 							"path": ["entity", "v1", "entities", "targetedRoles", "5f33c3d85f637784791cd831"]
 						}
