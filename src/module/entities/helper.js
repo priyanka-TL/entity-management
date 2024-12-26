@@ -215,7 +215,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {params} pageNo - page no.
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 */
-	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate) {
+	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate, type = "") {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Construct the filter to retrieve entities based on provided entity IDs
@@ -227,6 +227,7 @@ module.exports = class UserProjectsHelper {
 				const projectionFields = ['childHierarchyPath', 'entityType']
 				// Retrieve entityDetails based on provided entity IDs
 				const entityDetails = await entitiesQueries.entityDocuments(filter, projectionFields)
+
 				if (
 					!entityDetails ||
 					!entityDetails[0]?.childHierarchyPath ||
@@ -241,12 +242,22 @@ module.exports = class UserProjectsHelper {
 				const { childHierarchyPath, entityType } = entityDetails[0]
 
 				// Append entityType to childHierarchyPath array
-				const updatedChildHierarchyPaths = [...childHierarchyPath, entityType]
+				const updatedChildHierarchyPaths = [entityType, ...childHierarchyPath]
+
+				// Filter for higher entity types if a specific type is requested
+				let filteredHierarchyPaths = updatedChildHierarchyPaths
+				if (type) {
+					const typeIndex = updatedChildHierarchyPaths.indexOf(type)
+					if (typeIndex > -1) {
+						// Include only higher types in the hierarchy
+						filteredHierarchyPaths = updatedChildHierarchyPaths.slice(0, typeIndex + 1)
+					}
+				}
 
 				// Construct the filter to retrieve entity type IDs based on child hierarchy paths
 				const entityTypeFilter = {
 					name: {
-						$in: updatedChildHierarchyPaths,
+						$in: filteredHierarchyPaths,
 					},
 					isDeleted: false,
 				}
