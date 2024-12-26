@@ -213,6 +213,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {Array<string>} entityId - An array of entity IDs to filter roles.
 	 * @param {params} pageSize - page pageSize.
 	 * @param {params} pageNo - page no.
+	 * @param {String} type - Entity type
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 */
 	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate, type = "") {
