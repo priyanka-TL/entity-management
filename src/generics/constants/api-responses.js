@@ -59,5 +59,5 @@ module.exports = {
 	ENTITY_TYPE_FAILED: 'The creation of this entity type was skipped due to missing required data.',
 	FIELD_MISSING: 'Fields are missing',
 	ENTITY_TYPE_CREATION_FAILED: 'ENTITY TYPE CREATION FAILED',
-
+	MAPPING_CSV_GENERATED: 'MAPPING_CSV_GENERATED',
 }

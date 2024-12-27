@@ -11,6 +11,7 @@ const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
 const entityTypeQueries = require(DB_QUERY_BASE_PATH + '/entityTypes')
 const userRoleExtensionHelper = require(MODULES_BASE_PATH + '/userRoleExtension/helper')
 const { ObjectId } = require('mongodb')
+const { Parser } = require('json2csv')
 
 const _ = require('lodash')
 
@@ -95,9 +96,96 @@ module.exports = class UserProjectsHelper {
 	}
 
 	/**
+	 * Processes entity data from CSV and generates mapping data in CSV format.
+	 * Maps parent and child entity relationships based on the provided entity data.
+	 * @method
+	 * @name createMappingCsv
+	 * @param {Array<Object>} entityCSVData - Array of objects parsed from the input CSV file.
+	 * @returns {Promise<Object>} Resolves with an object containing:
+	 */
+
+	static async createMappingCsv(entityCSVData) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				const parentEntityIds = []
+				const childEntityIds = []
+				const resultData = []
+
+				// Iterate over each row of the input CSV data
+				for (const entityData of entityCSVData) {
+					const entityIds = []
+					const rowStatus = {}
+
+					// Iterate through each key-value pair in the row
+					for (const [key, value] of Object.entries(entityData)) {
+						// Filter criteria to fetch entity documents based on entity type and external ID
+						const filter = {
+							entityType: key,
+							'metaInformation.externalId': value,
+						}
+
+						const entityDocuments = await entitiesQueries.entityDocuments(filter, ['_id'])
+
+						if (entityDocuments.length > 0) {
+							// Add entity IDs to the temporary array
+							entityDocuments.forEach((doc) => {
+								entityIds.push(doc._id)
+							})
+							// Add success status for the entity type
+							rowStatus[`${key}Status`] = CONSTANTS.apiResponses.ENTITY_FETCHED
+						} else {
+							// Add failure status if no matching entity is found
+							rowStatus[`${key}Status`] = CONSTANTS.apiResponses.ENTITY_NOT_FOUND
+						}
+					}
+
+					// Separate parent and child entity IDs
+					if (entityIds.length > 1) {
+						parentEntityIds.push(...entityIds.slice(0, -1))
+						childEntityIds.push(...entityIds.slice(1))
+					} else if (entityIds.length === 1) {
+						parentEntityIds.push(entityIds[0])
+					}
+
+					// Add the status columns to the processed row
+					resultData.push({ ...entityData, ...rowStatus })
+				}
+
+				// Create the content for the mapping CSV (parent-child relationships)
+				let mappingCSVContent = 'parentEntityId,childEntityId\n'
+				const maxLength = Math.max(parentEntityIds.length, childEntityIds.length)
+
+				// Add parent-child mappings to the CSV content
+				for (let item = 0; item < maxLength; item++) {
+					const parentId = parentEntityIds[item] || ''
+					const childId = childEntityIds[item] || ''
+					mappingCSVContent += `${parentId},${childId}\n`
+				}
+
+				// Convert the processed result data to CSV format
+				const json2csvParser = new Parser()
+				const resultCSVContent = json2csvParser.parse(resultData)
+
+				// Convert CSV content to Base64
+				const mappingCSV = Buffer.from(mappingCSVContent).toString('base64')
+				const resultCSV = Buffer.from(resultCSVContent).toString('base64')
+
+				resolve({
+					mappingCSV,
+					resultCSV,
+					parentEntityIds,
+					childEntityIds,
+				})
+			} catch (error) {
+				return reject(error)
+			}
+		})
+	}
+
+	/**
 	 * List of Entities
 	 * @method
-	 * @name list
+	 * @name listByEntityIds
 	 * @param bodyData - Body data.
 	 * @returns {Array} List of Entities.
 	 */
@@ -126,7 +214,7 @@ module.exports = class UserProjectsHelper {
 	/**
 	 * Get immediate entities for requested Array.
 	 * @method
-	 * @name subList
+	 * @name subEntityList
 	 * @param {params} entities - array of entitity ids
 	 * @param {params} entityId - single entitiy id
 	 * @param {params} type - sub list entity type.
@@ -211,6 +299,7 @@ module.exports = class UserProjectsHelper {
 	/**
 	 * Fetches targeted roles based on the provided entity IDs.
 	 * @param {Array<string>} entityId - An array of entity IDs to filter roles.
+	 * @name targetedRoles
 	 * @param {params} pageSize - page pageSize.
 	 * @param {params} pageNo - page no.
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
@@ -354,7 +443,7 @@ module.exports = class UserProjectsHelper {
 	/**
 	 * Get immediate entities.
 	 * @method
-	 * @name listByEntityType
+	 * @name immediateEntities
 	 * @param {Object} entityId
 	 * @returns {Array} - List of all immediateEntities based on entityId.
 	 */
@@ -414,7 +503,7 @@ module.exports = class UserProjectsHelper {
 	/**
 	 * Get immediate entities.
 	 * @method
-	 * @name listByEntityType
+	 * @name entityTraversal
 	 * @param {Object} entityId
 	 * @returns {Array} - List of all immediateEntities based on entityId.
 	 */
