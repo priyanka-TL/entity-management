@@ -21,7 +21,12 @@ module.exports = (req, res) => {
 		update: function () {
 			req.checkParams('_id').exists().withMessage('required _id')
 			req.checkParams('_id').exists().isMongoId().withMessage('Invalid EntityType ID')
-			req.checkBody('name').exists().withMessage('required name')
+			req.checkBody('name')
+				.exists()
+				.withMessage('The name field is required.')
+				.trim()
+				.notEmpty()
+				.withMessage('The name field cannot be empty.')
 		},
 		create: function () {
 			req.checkBody('name')

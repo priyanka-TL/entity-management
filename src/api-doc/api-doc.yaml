@@ -1767,7 +1767,7 @@ paths:
                         param: _id
                         msg: required Entity id
   /v1/entities/listByLocationIds:
-    POST:
+    post:
       summary: List the entities based on location id
       tags:
         - entities-API's
@@ -2291,6 +2291,12 @@ paths:
         - in: path
           name: entity_id
           description: Please append a valid entity Id to the Request URL.
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: entityType
+          description: Please append a valid entity type to retrieve the roles associated with its higher-level entity types.
           schema:
             type: string
           required: true
