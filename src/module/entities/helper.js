@@ -286,7 +286,7 @@ module.exports = class UserProjectsHelper {
 					status: CONSTANTS.common.ACTIVE_STATUS,
 				}
 				// Specify the fields to include in the result set
-				const userRoleExtensionProjection = ['_id', 'title', 'userRoleId']
+				const userRoleExtensionProjection = ['_id', 'title', 'code', 'userRoleId']
 
 				// Fetch the user roles based on the filter and projection
 				const fetchUserRoles = await userRoleExtensionHelper.find(
@@ -311,6 +311,7 @@ module.exports = class UserProjectsHelper {
 						_id: item._id,
 						value: item.userRoleId,
 						label: item.title,
+						code: item.code,
 					}
 				})
 				return resolve({
