@@ -168,10 +168,10 @@ module.exports = class UserProjectsHelper {
 					// fetch the entity ids to look for parent hierarchy
 					const entityIds = _.map(result.data, (item) => ObjectId(item._id))
 					// dynamically set the entityType to search inside the group
-					const key = 'groups.' + type
+					const key = ['groups', type]
 					// create filter for fetching the parent data using group
 					let entityFilter = {}
-					entityFilter[key] = {
+					entityFilter[key.join('.')] = {
 						$in: entityIds,
 					}
 
@@ -179,19 +179,35 @@ module.exports = class UserProjectsHelper {
 					const entityDocuments = await entitiesQueries.entityDocuments(entityFilter, [
 						'entityType',
 						'metaInformation.name',
-						key,
+						'childHierarchyPath',
+						key.join('.'),
 					])
-
+					// find out the state of the passed entityId
+					const stateEntity = entityDocuments.find((entity) => entity.entityType == 'state')
+					// fetch the child hierarchy path of the state
+					const stateChildHierarchy = stateEntity.childHierarchyPath
+					let upperLevelsOfType = type != 'state' ? ['state'] : [] // add state as default if type != state
+					// fetch all the upper levels of the type from state hierarchy
+					upperLevelsOfType = [
+						...upperLevelsOfType,
+						...stateChildHierarchy.slice(0, stateChildHierarchy.indexOf(type)),
+					]
 					result.data = result.data.map((data) => {
 						let cloneData = { ...data }
-						// iterate through the data fetched to fetch the parent entity names
-						entityDocuments.forEach((eachEntity) => {
-							eachEntity[key.split('.')[0]][key.split('.')[1]].forEach((eachEntityGroup) => {
-								if (ObjectId(eachEntityGroup).equals(cloneData._id)) {
-									cloneData[eachEntity?.entityType] = eachEntity?.metaInformation?.name
-								}
+						// if we have upper levels to fetch
+						if (upperLevelsOfType.length > 0) {
+							// iterate through the data fetched to fetch the parent entity names
+							entityDocuments.forEach((eachEntity) => {
+								eachEntity[key[0]][key[1]].forEach((eachEntityGroup) => {
+									if (
+										ObjectId(eachEntityGroup).equals(cloneData._id) &&
+										upperLevelsOfType.includes(eachEntity.entityType)
+									) {
+										cloneData[eachEntity?.entityType] = eachEntity?.metaInformation?.name
+									}
+								})
 							})
-						})
+						}
 						cloneData['label'] = cloneData.name
 						cloneData['value'] = cloneData._id
 						return cloneData
