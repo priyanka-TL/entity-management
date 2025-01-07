@@ -128,9 +128,9 @@ module.exports = class UserProjectsHelper {
 
 						if (entityDocuments.length > 0) {
 							// Add entity IDs to the temporary array
-							entityDocuments.forEach((doc) => {
+							for (const doc of entityDocuments) {
 								entityIds.push(doc._id)
-							})
+							}
 							// Add success status for the entity type
 							rowStatus[`${key}Status`] = CONSTANTS.apiResponses.ENTITY_FETCHED
 						} else {
@@ -1387,7 +1387,9 @@ module.exports = class UserProjectsHelper {
 						// 	entityCreation['allowedRoles'] = await allowedRoles(singleEntity.allowedRoles)
 						// 	delete singleEntity.allowedRoles
 						// }
-
+						if (singleEntity.childHierarchyPath) {
+							entityCreation['childHierarchyPath'] = JSON.parse(singleEntity['childHierarchyPath'])
+						}
 						// Populate metaInformation by omitting keys starting with '_'
 						entityCreation['metaInformation'] = _.omitBy(singleEntity, (value, key) => {
 							return _.startsWith(key, '_')

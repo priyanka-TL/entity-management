@@ -21,6 +21,7 @@ module.exports = {
 		'/userRoleExtension/find',
 		'/userRoleExtension/create',
 		'/userRoleExtension/update',
+		'/entities/createMappingCsv',
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',
