@@ -251,6 +251,7 @@ module.exports = class UserProjectsHelper {
 						})
 					)
 				}
+
 				// Modify data properties (e.g., 'label') of retrieved entities if necessary
 				if (result.data && result.data.length > 0) {
 					// fetch the entity ids to look for parent hierarchy
@@ -282,6 +283,7 @@ module.exports = class UserProjectsHelper {
 					]
 					result.data = result.data.map((data) => {
 						let cloneData = { ...data }
+						cloneData[cloneData.entityType] = cloneData.name
 						// if we have upper levels to fetch
 						if (upperLevelsOfType.length > 0) {
 							// iterate through the data fetched to fetch the parent entity names
@@ -291,7 +293,9 @@ module.exports = class UserProjectsHelper {
 										ObjectId(eachEntityGroup).equals(cloneData._id) &&
 										upperLevelsOfType.includes(eachEntity.entityType)
 									) {
-										cloneData[eachEntity?.entityType] = eachEntity?.metaInformation?.name
+										if (eachEntity?.entityType !== 'state'){
+											cloneData[eachEntity?.entityType] = eachEntity?.metaInformation?.name
+										}
 									}
 								})
 							})
