@@ -96,6 +96,11 @@ module.exports = (req) => {
 				req.checkBody('entityMap').exists().withMessage('entityMap file is required')
 			}
 		},
+		createMappingCsv: function () {
+			if (!req.files || !req.files.entityCSV) {
+				req.checkBody('entityCSV').exists().withMessage('entityCSV file is required')
+			}
+		},
 		listByLocationIds: function () {
 			req.checkBody('locationIds').exists().withMessage('Location ids is required')
 		},
