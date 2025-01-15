@@ -120,7 +120,7 @@ module.exports = class UserProjectsHelper {
 					for (const [key, value] of Object.entries(entityData)) {
 						// Filter criteria to fetch entity documents based on entity type and external ID
 						const filter = {
-							entityType: key,
+						
 							'metaInformation.externalId': value,
 						}
 
@@ -152,7 +152,7 @@ module.exports = class UserProjectsHelper {
 				}
 
 				// Create the content for the mapping CSV (parent-child relationships)
-				let mappingCSVContent = 'parentEntityId,childEntityId\n'
+				let mappingCSVContent = 'parentEntiyId,childEntityId\n'
 				const maxLength = Math.max(parentEntityIds.length, childEntityIds.length)
 
 				// Add parent-child mappings to the CSV content
@@ -1196,8 +1196,11 @@ module.exports = class UserProjectsHelper {
 
 							{ name: 1 }
 						)
-						// Extract the 'name' field from the results into a new array
-						const validatedChildHierarchy = validEntityType.map((entityType) => entityType.name)
+
+						// Create a mapping of names to their original index in childHierarchyPath
+						const validatedChildHierarchy = singleEntity.childHierarchyPath.filter((name) =>
+							validEntityType.some((entityType) => entityType.name === name)
+						)
 						// Convert the names in 'validatedChildHierarchy' to strings and assign them to 'childHierarchyPath'
 						childHierarchyPath = validatedChildHierarchy.map(String)
 					}
@@ -1399,23 +1402,6 @@ module.exports = class UserProjectsHelper {
 							updatedBy: userId,
 							createdBy: userId,
 						}
-
-						// Extract registry details from singleEntity and populate entityCreation
-						Object.keys(singleEntity).forEach(function (key) {
-							if (key.startsWith('registry-')) {
-								let newKey = key.replace('registry-', '')
-								entityCreation.registryDetails[newKey] = singleEntity[key]
-							}
-						})
-
-						if (entityCreation.registryDetails && Object.keys(entityCreation.registryDetails).length > 0) {
-							entityCreation.registryDetails['code'] =
-								entityCreation.registryDetails['code'] || entityCreation.externalId
-							entityCreation.registryDetails['locationId'] =
-								entityCreation.registryDetails['locationId'] || entityCreation.locationId
-							entityCreation.registryDetails['lastUpdatedAt'] = new Date()
-						}
-
 						// if (singleEntity.allowedRoles && singleEntity.allowedRoles.length > 0) {
 						// 	entityCreation['allowedRoles'] = await allowedRoles(singleEntity.allowedRoles)
 						// 	delete singleEntity.allowedRoles
@@ -1432,6 +1418,11 @@ module.exports = class UserProjectsHelper {
 							entityCreation.status = CONSTANTS.apiResponses.ENTITIES_FAILED
 							entityCreation.message = CONSTANTS.apiResponses.FIELD_MISSING
 							return entityCreation
+						}
+
+						if(entityCreation.metaInformation.externalId){
+							entityCreation.registryDetails['code'] = entityCreation.metaInformation.externalId
+							entityCreation.registryDetails['locationId'] = entityCreation.metaInformation.externalId
 						}
 						// if (solutionsData && singleEntity._solutionId && singleEntity._solutionId != '')
 						// 	singleEntity['createdByProgramId'] = solutionsData[singleEntity._solutionId]['programId']
