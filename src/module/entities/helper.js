@@ -120,7 +120,6 @@ module.exports = class UserProjectsHelper {
 					for (const [key, value] of Object.entries(entityData)) {
 						// Filter criteria to fetch entity documents based on entity type and external ID
 						const filter = {
-						
 							'metaInformation.externalId': value,
 						}
 
@@ -293,7 +292,7 @@ module.exports = class UserProjectsHelper {
 										ObjectId(eachEntityGroup).equals(cloneData._id) &&
 										upperLevelsOfType.includes(eachEntity.entityType)
 									) {
-										if (eachEntity?.entityType !== 'state'){
+										if (eachEntity?.entityType !== 'state') {
 											cloneData[eachEntity?.entityType] = eachEntity?.metaInformation?.name
 										}
 									}
@@ -325,7 +324,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {String} type - Entity type
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 */
-	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate, type = "") {
+	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate, type = '') {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Construct the filter to retrieve entities based on provided entity IDs
@@ -1420,9 +1419,13 @@ module.exports = class UserProjectsHelper {
 							return entityCreation
 						}
 
-						if(entityCreation.metaInformation.externalId){
-							entityCreation.registryDetails['code'] = entityCreation.metaInformation.externalId
-							entityCreation.registryDetails['locationId'] = entityCreation.metaInformation.externalId
+						if (entityCreation.metaInformation.externalId) {
+							const externalId = entityCreation.metaInformation.externalId
+
+							entityCreation.registryDetails = {
+								code: externalId,
+								locationId: externalId,
+							}
 						}
 						// if (solutionsData && singleEntity._solutionId && singleEntity._solutionId != '')
 						// 	singleEntity['createdByProgramId'] = solutionsData[singleEntity._solutionId]['programId']
