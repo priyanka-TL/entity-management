@@ -15,6 +15,8 @@ module.exports = (req) => {
 				.trim() // Removes leading and trailing spaces
 				.notEmpty()
 				.withMessage('The externalId field cannot be empty.')
+				.matches(/^\S+$/)
+				.withMessage('The externalId field should not contain spaces.')
 			req.checkBody('name')
 				.exists()
 				.withMessage('The name field is required.')
