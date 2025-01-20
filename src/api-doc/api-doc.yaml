@@ -101,7 +101,6 @@ paths:
 
   /v1/entityTypes/bulkUpdate:
     post:
-      operationId: ''
       summary: 'BulkUpdate create entityType '
       tags:
         - entityType-API's
@@ -197,7 +196,6 @@ paths:
                         msg: EntityTypes file is required
   /v1/entityTypes/create:
     post:
-      operationId: ''
       summary: This api will create's Single entity Type data
       tags:
         - entityType-API's
