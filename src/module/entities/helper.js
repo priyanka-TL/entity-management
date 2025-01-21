@@ -30,7 +30,10 @@ module.exports = class UserProjectsHelper {
 	 */
 	static async processEntityMappingUploadData(mappingData = []) {
 		try {
+			// Initialize an array to store processed child entity IDs
 			let entities = []
+
+			// Initialize an object to keep track of mappings and updates
 			if (mappingData.length < 1) {
 				throw new Error(CONSTANTS.apiResponses.INVALID_MAPPING_DATA)
 			}
@@ -45,11 +48,13 @@ module.exports = class UserProjectsHelper {
 			let batchPromises = []
 			mappingData.forEach(({ parentEntiyId, childEntityId }) => {
 				if (parentEntiyId && childEntityId) {
+					// Add a promise to the batch for processing sub-entity addition
 					batchPromises.push(
 						this.addSubEntityToParent(parentEntiyId, childEntityId).then(() => entities.push(childEntityId))
 					)
 				}
 			})
+			// Wait for all sub-entity addition promises to complete
 			await Promise.all(batchPromises)
 
 			// Batch update operation for entities
@@ -62,9 +67,11 @@ module.exports = class UserProjectsHelper {
 								$each: groupUpdates[groupToUpdate],
 							}
 						}
+						// Return a promise to update the entity in the database
 						return entitiesQueries.updateMany({ _id: ObjectId(entityIdToUpdate) }, updateQuery)
 					}
 				)
+				// Execute all update operations in parallel
 				await Promise.all(updateOperations)
 			}
 
@@ -642,6 +649,7 @@ module.exports = class UserProjectsHelper {
 				{ entityType: 1, groups: 1, childHierarchyPath: 1 }
 			)
 
+			// If the child entity does not exist, throw an error
 			if (!childEntity) {
 				throw {
 					status: HTTP_STATUS_CODE.not_found.status,
@@ -649,6 +657,7 @@ module.exports = class UserProjectsHelper {
 				}
 			}
 
+			// Proceed if the child entity has an entity type
 			if (childEntity.entityType) {
 				let parentEntityQueryObject = { _id: ObjectId(parentEntityId) }
 
@@ -728,6 +737,7 @@ module.exports = class UserProjectsHelper {
 					{ toBeMappedToParentEntities: 1 }
 				)
 
+				// Throw an error if no result is found
 				if (!checkParentEntitiesMappedValue) {
 					throw {
 						status: HTTP_STATUS_CODE.bad_request.status,
@@ -735,6 +745,7 @@ module.exports = class UserProjectsHelper {
 					}
 				}
 
+				// Determine whether to update parent hierarchy
 				updateParentHierarchy = !!checkParentEntitiesMappedValue.toBeMappedToParentEntities
 
 				// Cache the result in entityMapProcessData if available
@@ -745,6 +756,7 @@ module.exports = class UserProjectsHelper {
 				}
 			}
 
+			// If updateParentHierarchy is true, process related entities
 			if (updateParentHierarchy) {
 				const relatedEntities = await this.relatedEntities(
 					parentEntity._id,
@@ -753,29 +765,38 @@ module.exports = class UserProjectsHelper {
 					['_id']
 				)
 
+				// Prepare the child hierarchy path to update
 				let childHierarchyPathToUpdate = [parentEntity.entityType, ...(parentEntity.childHierarchyPath || [])]
 
+				// If there are related entities, update them
 				if (relatedEntities.length > 0) {
+					// Check if entityToUpdate cache is available
 					if (this.entityMapProcessData?.entityToUpdate) {
 						relatedEntities.forEach((relatedEntity) => {
 							const relatedEntityId = relatedEntity._id.toString()
 
+							// Initialize entityToUpdate for the related entity if not already present
 							if (!this.entityMapProcessData.entityToUpdate[relatedEntityId]) {
 								this.entityMapProcessData.entityToUpdate[relatedEntityId] = {}
 							}
 
+							// Prepare the group update path
 							const groupUpdatePath = `groups.${childEntity.entityType}`
+							// Initialize the group update path array if not already present
 							if (!this.entityMapProcessData.entityToUpdate[relatedEntityId][groupUpdatePath]) {
 								this.entityMapProcessData.entityToUpdate[relatedEntityId][groupUpdatePath] = []
 							}
 
+							// Add the child entity to the update path
 							this.entityMapProcessData.entityToUpdate[relatedEntityId][groupUpdatePath].push(
 								childEntity._id
 							)
+							// Update the child hierarchy path for the related entity
 							this.entityMapProcessData.entityToUpdate[relatedEntityId]['childHierarchyPath'] =
 								childHierarchyPathToUpdate
 						})
 					} else {
+						// Prepare the update query for related entities
 						const updateQuery = {
 							$addToSet: {
 								[`groups.${childEntity.entityType}`]: childEntity._id,
@@ -783,7 +804,9 @@ module.exports = class UserProjectsHelper {
 							},
 						}
 
+						// Extract all related entity IDs
 						const allEntityIds = relatedEntities.map((entity) => entity._id)
+						// Perform the update operation for all related entities
 						await entitiesQueries.updateMany({ _id: { $in: allEntityIds } }, updateQuery)
 					}
 				}
