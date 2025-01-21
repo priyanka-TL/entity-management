@@ -50,7 +50,6 @@ module.exports = class UserProjectsHelper {
 					)
 				}
 			})
-			console.log(batchPromises, 'batchPromises')
 			await Promise.all(batchPromises)
 
 			// Batch update operation for entities
@@ -632,11 +631,10 @@ module.exports = class UserProjectsHelper {
 	 * @name addSubEntityToParent
 	 * @param {String} parentEntityId - parent entity id.
 	 * @param {String} childEntityId - child entity id.
-	 * @param {Boolean} [parentEntityProgramId = false] - Program id of parent entity.
 	 * @returns {JSON} - Success and message .
 	 */
 
-	static async addSubEntityToParent(parentEntityId, childEntityId, parentEntityProgramId = false) {
+	static async addSubEntityToParent(parentEntityId, childEntityId) {
 		try {
 			// Find the child entity based on its ID
 			const childEntity = await entitiesQueries.findOne(
@@ -653,10 +651,6 @@ module.exports = class UserProjectsHelper {
 
 			if (childEntity.entityType) {
 				let parentEntityQueryObject = { _id: ObjectId(parentEntityId) }
-
-				if (parentEntityProgramId) {
-					parentEntityQueryObject['metaInformation.createdByProgramId'] = ObjectId(parentEntityProgramId)
-				}
 
 				// Build the update query to add the child entity to the parent entity's groups
 				let updateQuery = {
@@ -702,7 +696,10 @@ module.exports = class UserProjectsHelper {
 
 			return
 		} catch (error) {
-			throw error
+			throw {
+				status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+				message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+			}
 		}
 	}
 
