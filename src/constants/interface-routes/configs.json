@@ -8,10 +8,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entityTypes/bulkUpdate",
@@ -21,10 +22,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entityTypes/find",
@@ -34,10 +36,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entityTypes/list",
@@ -47,10 +50,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entityTypes/create",
@@ -60,10 +64,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entityTypes/update",
@@ -73,10 +78,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entityTypes/update/:id",
@@ -86,10 +92,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/bulkCreate",
@@ -99,10 +106,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/targetedRoles/:id",
@@ -112,10 +120,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/entityListBasedOnEntityType",
@@ -125,10 +134,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/bulkUpdate",
@@ -138,10 +148,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/add",
@@ -151,10 +162,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/update",
@@ -164,10 +176,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/update/:id",
@@ -177,10 +190,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/list",
@@ -190,10 +204,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/list/:id",
@@ -203,10 +218,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/find",
@@ -216,10 +232,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/details",
@@ -229,10 +246,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/details/:id",
@@ -242,10 +260,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/listByEntityType",
@@ -255,10 +274,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/listByEntityType/:id",
@@ -268,10 +288,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/subEntityList",
@@ -281,10 +302,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/subEntityList/:id",
@@ -294,10 +316,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/listByIds",
@@ -307,10 +330,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/subEntityListBasedOnRoleAndLocation",
@@ -320,10 +344,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/subEntityListBasedOnRoleAndLocation/:id",
@@ -333,10 +358,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/relatedEntities",
@@ -346,10 +372,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/relatedEntities/:id",
@@ -359,10 +386,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/userRoleExtension/create",
@@ -372,10 +400,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/userRoleExtension/update/:id",
@@ -385,10 +414,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/userRoleExtension/find",
@@ -398,10 +428,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/userRoleExtension/delete/:id",
@@ -411,10 +442,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/mappingUpload",
@@ -424,10 +456,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/createMappingCsv",
@@ -437,10 +470,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		},
 		{
 			"sourceRoute": "/entity-management/v1/entities/listByLocationIds",
@@ -450,10 +484,11 @@
 			"orchestrated": false,
 			"targetPackages": [
 				{
-					"basePackageName": "entity",
-					"packageName": "elevate-entity-management"
+					"basePackageName": "project",
+					"packageName": "elevate-project"
 				}
-			]
+			],
+			"service": "entity"
 		}
 	]
 }
