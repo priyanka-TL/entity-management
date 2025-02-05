@@ -73,9 +73,11 @@ const router = require('@routes')
 router(app)
 
 // Listen on the specified port
-app.listen(process.env.APPLICATION_PORT, () => {
+const server = app.listen(process.env.APPLICATION_PORT, () => {
 	console.log('Environment : ' + process.env.APPLICATION_ENV)
 	console.log('Application is running on the port : ' + process.env.APPLICATION_PORT)
 })
+
+server.timeout = 2000000
 
 module.exports = app

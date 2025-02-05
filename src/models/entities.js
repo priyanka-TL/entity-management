@@ -23,11 +23,10 @@ module.exports = {
 			type: String,
 			index: true,
 		},
-		registryDetails:{
-			locationId : {type: String, index : true},
-			code:{type: String, index : true}
+		registryDetails: {
+			locationId: { type: String, index: true },
+			code: { type: String, index: true },
 		},
-		allowedRoles: Array,
 		createdBy: {
 			type: String,
 			default: 'SYSTEM',
