@@ -1308,6 +1308,103 @@ paths:
                       - location: body
                         param: entityMap
                         msg: entityMap file is required
+
+  /v1/entities/createMappingCsv:
+    post:
+      summary: This endpoint will create mapping CSV .
+      tags:
+        - entities-API's
+      description: >-
+        You can use this API to create a mapping CSV
+
+
+        * The API Endpoint will generate a mapping CSV
+        `/v1/entities/createMappingCsv`
+
+        * It is mandatory to provide values for parameters marked with
+        `required`
+
+        * Mandatory parameter cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: internal-access-token
+          description: ''
+          schema: null
+          required: true
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The CSV file to upload
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application.json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+                  result:
+                    type: object
+                    properties:
+                      mappingCSV:
+                        type: string
+                      resultCSV:
+                        type: string
+                      parentEntityIds:
+                        type: array
+                        items:
+                          type: string
+                      childEntityIds:
+                        type: array
+                        items:
+                          type: string
+              examples:
+                SuccessResponse:
+                  value:
+                    message: MAPPING_CSV_GENERATED
+                    status: 200
+                    result:
+                      mappingCSV: >-
+                        cGFyZW50RW50aXlJZCxjaGlsZEVudGl0eUlkCjY3OGY0MTZkOWIzMTJlZmY4YTRhMjRhNiw2NzhmNjhiZGNmOWI4MWZmODBjZjMzN2YKNjc4ZjQxNmQ5YjMxMmVmZjhhNGEyNGE3LDY3OGY2OGJkY2Y5YjgxZmY4MGNmMzM4MAo=
+                      resultCSV: >-
+                        InBhcmVudEVudGl0eUlkIiwiY2hpbGRFbnRpdHlJZCIsInBhcmVudEVudGl0eUlkU3RhdHVzIiwiY2hpbGRFbnRpdHlJZFN0YXR1cyIKIktBUmNsdXN0ZXIxOSIsIm9yZ2wxOTkiLCJFTlRJVFlfRkVUQ0hFRCIsIkVOVElUWV9GRVRDSEVEIgoiS0FSY2x1c3RlcjIwIiwib3JnbDIwMCIsIkVOVElUWV9GRVRDSEVEIiwiRU5USVRZX0ZFVENIRUQi
+                      parentEntityIds:
+                        - 678f416d9b312eff8a4a24a6
+                        - 678f416d9b312eff8a4a24a7
+                      childEntityIds:
+                        - 678f68bdcf9b81ff80cf337f
+                        - 678f68bdcf9b81ff80cf3380
+        '400':
+          description: Bad Request.
+          content:
+            application.json:
+              examples:
+                FailureResponse:
+                  value:
+                    status: 400
+                    message:
+                      - location: body
+                        param: entityCSV
+                        msg: entityCSV file is required
   /v1/entities/listByEntityType/{_id}?page={page_no}&limit={page_limit}:
     get:
       summary: You can use this API to list entity based on id.

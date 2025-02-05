@@ -444,6 +444,45 @@
 					"response": []
 				},
 				{
+					"name": "createMappingCsv",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{userToken}}",
+								"type": "text"
+							},
+							{
+								"key": "content-type",
+								"value": "content-type",
+								"type": "text"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internalToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "entityCSV",
+									"type": "file",
+									"src": "/home/user3/Videos/entityCSV.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity-management/v1/entities/createMappingCsv",
+							"host": ["{{baseUrl}}"],
+							"path": ["entity", "v1", "entities", "createMappingCsv"]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "list",
 					"request": {
 						"method": "GET",
