@@ -28,71 +28,63 @@ module.exports = class UserProjectsHelper {
 	 * @param {Array} [mappingData = []] - Array of entityMap data.
 	 * @returns {JSON} - Success and message .
 	 */
-	static processEntityMappingUploadData(mappingData = []) {
-		return new Promise(async (resolve, reject) => {
-			try {
-				let entities = []
+	static async processEntityMappingUploadData(mappingData = []) {
+		try {
+			// Initialize an array to store processed child entity IDs
+			let entities = []
 
-				// Validate that mappingData is not empty
-				if (mappingData.length < 1) {
-					throw new Error(CONSTANTS.apiResponses.INVALID_MAPPING_DATA)
-				}
+			// Initialize an object to keep track of mappings and updates
+			if (mappingData.length < 1) {
+				throw new Error(CONSTANTS.apiResponses.INVALID_MAPPING_DATA)
+			}
 
-				this.entityMapProcessData = {
-					entityTypeMap: {},
-					relatedEntities: {},
-					entityToUpdate: {},
-				}
+			this.entityMapProcessData = {
+				entityTypeMap: {},
+				relatedEntities: {},
+				entityToUpdate: {},
+			}
 
-				// Iterate over each mapping data entry
-				for (let indexToEntityMapData = 0; indexToEntityMapData < mappingData.length; indexToEntityMapData++) {
-					if (
-						mappingData[indexToEntityMapData].parentEntiyId != '' &&
-						mappingData[indexToEntityMapData].childEntityId != ''
-					) {
-						await this.addSubEntityToParent(
-							mappingData[indexToEntityMapData].parentEntiyId,
-							mappingData[indexToEntityMapData].childEntityId
-						)
-						entities.push(mappingData[indexToEntityMapData].childEntityId)
-					}
-				}
-
-				// If there are entities to update
-				if (Object.keys(this.entityMapProcessData.entityToUpdate).length > 0) {
-					await Promise.all(
-						Object.keys(this.entityMapProcessData.entityToUpdate).map(async (entityIdToUpdate) => {
-							let updateQuery = { $addToSet: {} }
-
-							// Construct update query based on stored changes
-							Object.keys(this.entityMapProcessData.entityToUpdate[entityIdToUpdate]).forEach(
-								(groupToUpdate) => {
-									updateQuery['$addToSet'][groupToUpdate] = {
-										$each: this.entityMapProcessData.entityToUpdate[entityIdToUpdate][
-											groupToUpdate
-										],
-									}
-								}
-							)
-
-							await entitiesQueries.updateMany({ _id: ObjectId(entityIdToUpdate) }, updateQuery)
-						})
+			// Use batch processing to handle sub-entity addition
+			let batchPromises = []
+			mappingData.forEach(({ parentEntiyId, childEntityId }) => {
+				if (parentEntiyId && childEntityId) {
+					// Add a promise to the batch for processing sub-entity addition
+					batchPromises.push(
+						this.addSubEntityToParent(parentEntiyId, childEntityId).then(() => entities.push(childEntityId))
 					)
 				}
+			})
+			// Wait for all sub-entity addition promises to complete
+			await Promise.all(batchPromises)
 
-				// await this.pushEntitiesToElasticSearch(entities);
-
-				// Clear entityMapProcessData after processing
-				this.entityMapProcessData = {}
-
-				return resolve({
-					success: true,
-					message: CONSTANTS.apiResponses.ENTITY_INFORMATION_UPDATE,
-				})
-			} catch (error) {
-				return reject(error)
+			// Batch update operation for entities
+			if (Object.keys(this.entityMapProcessData.entityToUpdate).length > 0) {
+				const updateOperations = Object.entries(this.entityMapProcessData.entityToUpdate).map(
+					([entityIdToUpdate, groupUpdates]) => {
+						let updateQuery = { $addToSet: {} }
+						for (let groupToUpdate in groupUpdates) {
+							updateQuery['$addToSet'][groupToUpdate] = {
+								$each: groupUpdates[groupToUpdate],
+							}
+						}
+						// Return a promise to update the entity in the database
+						return entitiesQueries.updateMany({ _id: ObjectId(entityIdToUpdate) }, updateQuery)
+					}
+				)
+				// Execute all update operations in parallel
+				await Promise.all(updateOperations)
 			}
-		})
+
+			// Clear entityMapProcessData after processing
+			this.entityMapProcessData = {}
+
+			return {
+				success: true,
+				message: CONSTANTS.apiResponses.ENTITY_INFORMATION_UPDATE,
+			}
+		} catch (error) {
+			throw error
+		}
 	}
 
 	/**
@@ -646,84 +638,78 @@ module.exports = class UserProjectsHelper {
 	 * @name addSubEntityToParent
 	 * @param {String} parentEntityId - parent entity id.
 	 * @param {String} childEntityId - child entity id.
-	 * @param {Boolean} [parentEntityProgramId = false] - Program id of parent entity.
 	 * @returns {JSON} - Success and message .
 	 */
 
-	static addSubEntityToParent(parentEntityId, childEntityId, parentEntityProgramId = false) {
-		return new Promise(async (resolve, reject) => {
-			try {
-				// Find the child entity based on its ID
-				let childEntity = await entitiesQueries.findOne(
-					{
-						_id: ObjectId(childEntityId),
-					},
-					{
-						entityType: 1,
-						groups: 1,
-						childHierarchyPath: 1,
-					}
-				)
-				if (!childEntity) {
-					return reject({
-						status: HTTP_STATUS_CODE.not_found.status,
-						message: CONSTANTS.apiResponses.DOCUMENT_NOT_FOUND,
-					})
+	static async addSubEntityToParent(parentEntityId, childEntityId) {
+		try {
+			// Find the child entity based on its ID
+			const childEntity = await entitiesQueries.findOne(
+				{ _id: ObjectId(childEntityId) },
+				{ entityType: 1, groups: 1, childHierarchyPath: 1 }
+			)
+
+			// If the child entity does not exist, throw an error
+			if (!childEntity) {
+				throw {
+					status: HTTP_STATUS_CODE.not_found.status,
+					message: CONSTANTS.apiResponses.DOCUMENT_NOT_FOUND,
 				}
-				if (childEntity.entityType) {
-					let parentEntityQueryObject = {
-						_id: ObjectId(parentEntityId),
-					}
-					if (parentEntityProgramId) {
-						parentEntityQueryObject['metaInformation.createdByProgramId'] = ObjectId(parentEntityProgramId)
-					}
-
-					// Prepare update query to add childEntity to parent entity's groups
-					let updateQuery = {}
-					updateQuery['$addToSet'] = {}
-					updateQuery['$addToSet'][`groups.${childEntity.entityType}`] = childEntity._id
-					if (!_.isEmpty(childEntity.groups)) {
-						Object.keys(childEntity.groups).forEach((eachChildEntity) => {
-							if (childEntity.groups[eachChildEntity].length > 0) {
-								updateQuery['$addToSet'][`groups.${eachChildEntity}`] = {}
-								updateQuery['$addToSet'][`groups.${eachChildEntity}`]['$each'] =
-									childEntity.groups[eachChildEntity]
-							}
-						})
-					}
-
-					// Update childHierarchyPath in parent entity to include childEntity's entityType
-					let childHierarchyPathToUpdate = [childEntity.entityType]
-					if (childEntity.childHierarchyPath && childEntity.childHierarchyPath.length > 0) {
-						childHierarchyPathToUpdate = childHierarchyPathToUpdate.concat(childEntity.childHierarchyPath)
-					}
-					updateQuery['$addToSet'][`childHierarchyPath`] = {
-						$each: childHierarchyPathToUpdate,
-					}
-
-					let projectedData = {
-						_id: 1,
-						entityType: 1,
-						entityTypeId: 1,
-						childHierarchyPath: 1,
-					}
-
-					let updatedParentEntity = await entitiesQueries.findOneAndUpdate(
-						parentEntityQueryObject,
-						updateQuery,
-						{
-							projection: projectedData,
-							new: true,
-						}
-					)
-					await this.mappedParentEntities(updatedParentEntity, childEntity)
-				}
-
-				return resolve()
-			} catch (error) {
-				return reject(error)
 			}
-		})
+
+			// Proceed if the child entity has an entity type
+			if (childEntity.entityType) {
+				let parentEntityQueryObject = { _id: ObjectId(parentEntityId) }
+
+				// Build the update query to add the child entity to the parent entity's groups
+				let updateQuery = {
+					$addToSet: {
+						[`groups.${childEntity.entityType}`]: childEntity._id,
+					},
+				}
+
+				// Add any existing child entity groups to the update query
+				if (childEntity.groups) {
+					for (const eachChildEntity in childEntity.groups) {
+						if (childEntity.groups[eachChildEntity]?.length > 0) {
+							updateQuery['$addToSet'][`groups.${eachChildEntity}`] = {
+								$each: childEntity.groups[eachChildEntity],
+							}
+						}
+					}
+				}
+
+				// Update childHierarchyPath in parent entity
+				const childHierarchyPathToUpdate = [childEntity.entityType, ...(childEntity.childHierarchyPath || [])]
+
+				updateQuery['$addToSet']['childHierarchyPath'] = { $each: childHierarchyPathToUpdate }
+
+				// Optimize by fetching only required fields
+				const projectedData = {
+					_id: 1,
+					entityType: 1,
+					entityTypeId: 1,
+					childHierarchyPath: 1,
+				}
+
+				// Perform update and fetch updated parent entity
+				const updatedParentEntity = await entitiesQueries.findOneAndUpdate(
+					parentEntityQueryObject,
+					updateQuery,
+					{ projection: projectedData, new: true }
+				)
+
+				// Process mapped parent entities in parallel
+				await this.mappedParentEntities(updatedParentEntity, childEntity)
+			}
+
+			return
+		} catch (error) {
+			throw {
+				status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+				message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+			}
+		}
 	}
 
 	/**
@@ -737,126 +723,102 @@ module.exports = class UserProjectsHelper {
 	 * @param {String} childEntity.entityType - entity type of the child.
 	 * @param {String} childEntity._id - childEntity id.
 	 */
+	static async mappedParentEntities(parentEntity, childEntity) {
+		try {
+			let updateParentHierarchy = false
+			// Check if entityMapProcessData and entityTypeMap are defined
+			if (this.entityMapProcessData?.entityTypeMap?.[parentEntity.entityType]) {
+				updateParentHierarchy =
+					this.entityMapProcessData.entityTypeMap[parentEntity.entityType].updateParentHierarchy
+			} else {
+				// Fetch update status from database if not in cache
+				const checkParentEntitiesMappedValue = await entityTypeQueries.findOne(
+					{ name: parentEntity.entityType },
+					{ toBeMappedToParentEntities: 1 }
+				)
 
-	static mappedParentEntities(parentEntity, childEntity) {
-		return new Promise(async (resolve, reject) => {
-			try {
-				let updateParentHierarchy = false
-
-				// Check if entityMapProcessData is defined and entityTypeMap exists for the parent entity's entityType
-				if (this.entityMapProcessData) {
-					if (
-						this.entityMapProcessData.entityTypeMap &&
-						this.entityMapProcessData.entityTypeMap[parentEntity.entityType]
-					) {
-						if (this.entityMapProcessData.entityTypeMap[parentEntity.entityType].updateParentHierarchy) {
-							updateParentHierarchy = true
-						}
-					} else {
-						// If entityTypeMap is not defined or does not exist for the parent entity's entityType, check the database
-						let checkParentEntitiesMappedValue = await entityTypeQueries.findOne(
-							{
-								name: parentEntity.entityType,
-							},
-							{
-								toBeMappedToParentEntities: 1,
-							}
-						)
-						if (!checkParentEntitiesMappedValue) {
-							return reject({
-								status: HTTP_STATUS_CODE.bad_request.status,
-								message: CONSTANTS.apiResponses.DOCUMENT_NOT_FOUND,
-							})
-						}
-						// Update entityTypeMap with the updateParentHierarchy status
-						if (checkParentEntitiesMappedValue.toBeMappedToParentEntities) {
-							updateParentHierarchy = true
-						}
-						if (this.entityMapProcessData.entityTypeMap) {
-							this.entityMapProcessData.entityTypeMap[parentEntity.entityType] = {
-								updateParentHierarchy: checkParentEntitiesMappedValue.toBeMappedToParentEntities
-									? true
-									: false,
-							}
-						}
-					}
-				} else {
-					let checkParentEntitiesMappedValue = await entityTypeQueries
-						.findOne(
-							{
-								name: parentEntity.entityType,
-							},
-							{
-								toBeMappedToParentEntities: 1,
-							}
-						)
-						.lean()
-
-					if (checkParentEntitiesMappedValue.toBeMappedToParentEntities) {
-						updateParentHierarchy = true
-					}
-				}
-				if (updateParentHierarchy) {
-					let relatedEntities = await this.relatedEntities(
-						parentEntity._id,
-						parentEntity.entityTypeId,
-						parentEntity.entityType,
-						['_id']
-					)
-					let childHierarchyPathToUpdate = [parentEntity.entityType]
-					if (parentEntity.childHierarchyPath && parentEntity.childHierarchyPath.length > 0) {
-						childHierarchyPathToUpdate = childHierarchyPathToUpdate.concat(parentEntity.childHierarchyPath)
-					}
-					// Update related entities with childEntity's association
-					if (relatedEntities.length > 0) {
-						if (this.entityMapProcessData && this.entityMapProcessData.entityToUpdate) {
-							relatedEntities.forEach((eachRelatedEntities) => {
-								if (!this.entityMapProcessData.entityToUpdate[eachRelatedEntities._id.toString()]) {
-									this.entityMapProcessData.entityToUpdate[eachRelatedEntities._id.toString()] = {}
-								}
-								if (
-									!this.entityMapProcessData.entityToUpdate[eachRelatedEntities._id.toString()][
-										`groups.${childEntity.entityType}`
-									]
-								) {
-									this.entityMapProcessData.entityToUpdate[eachRelatedEntities._id.toString()][
-										`groups.${childEntity.entityType}`
-									] = new Array()
-								}
-								this.entityMapProcessData.entityToUpdate[eachRelatedEntities._id.toString()][
-									`groups.${childEntity.entityType}`
-								].push(childEntity._id)
-								this.entityMapProcessData.entityToUpdate[eachRelatedEntities._id.toString()][
-									`childHierarchyPath`
-								] = childHierarchyPathToUpdate
-							})
-						} else {
-							let updateQuery = {}
-							updateQuery['$addToSet'] = {}
-							updateQuery['$addToSet'][`groups.${childEntity.entityType}`] = childEntity._id
-
-							let allEntities = []
-
-							relatedEntities.forEach((eachRelatedEntities) => {
-								allEntities.push(eachRelatedEntities._id)
-							})
-
-							updateQuery['$addToSet'][`childHierarchyPath`] = {
-								$each: childHierarchyPathToUpdate,
-							}
-							await entitiesQueries.updateMany({ _id: { $in: allEntities } }, updateQuery)
-						}
+				// Throw an error if no result is found
+				if (!checkParentEntitiesMappedValue) {
+					throw {
+						status: HTTP_STATUS_CODE.bad_request.status,
+						message: CONSTANTS.apiResponses.DOCUMENT_NOT_FOUND,
 					}
 				}
 
-				return resolve()
-			} catch (error) {
-				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-				})
+				// Determine whether to update parent hierarchy
+				updateParentHierarchy = !!checkParentEntitiesMappedValue.toBeMappedToParentEntities
+
+				// Cache the result in entityMapProcessData if available
+				if (this.entityMapProcessData?.entityTypeMap) {
+					this.entityMapProcessData.entityTypeMap[parentEntity.entityType] = {
+						updateParentHierarchy,
+					}
+				}
 			}
-		})
+
+			// If updateParentHierarchy is true, process related entities
+			if (updateParentHierarchy) {
+				const relatedEntities = await this.relatedEntities(
+					parentEntity._id,
+					parentEntity.entityTypeId,
+					parentEntity.entityType,
+					['_id']
+				)
+
+				// Prepare the child hierarchy path to update
+				let childHierarchyPathToUpdate = [parentEntity.entityType, ...(parentEntity.childHierarchyPath || [])]
+
+				// If there are related entities, update them
+				if (relatedEntities.length > 0) {
+					// Check if entityToUpdate cache is available
+					if (this.entityMapProcessData?.entityToUpdate) {
+						relatedEntities.forEach((relatedEntity) => {
+							const relatedEntityId = relatedEntity._id.toString()
+
+							// Initialize entityToUpdate for the related entity if not already present
+							if (!this.entityMapProcessData.entityToUpdate[relatedEntityId]) {
+								this.entityMapProcessData.entityToUpdate[relatedEntityId] = {}
+							}
+
+							// Prepare the group update path
+							const groupUpdatePath = `groups.${childEntity.entityType}`
+							// Initialize the group update path array if not already present
+							if (!this.entityMapProcessData.entityToUpdate[relatedEntityId][groupUpdatePath]) {
+								this.entityMapProcessData.entityToUpdate[relatedEntityId][groupUpdatePath] = []
+							}
+
+							// Add the child entity to the update path
+							this.entityMapProcessData.entityToUpdate[relatedEntityId][groupUpdatePath].push(
+								childEntity._id
+							)
+							// Update the child hierarchy path for the related entity
+							this.entityMapProcessData.entityToUpdate[relatedEntityId]['childHierarchyPath'] =
+								childHierarchyPathToUpdate
+						})
+					} else {
+						// Prepare the update query for related entities
+						const updateQuery = {
+							$addToSet: {
+								[`groups.${childEntity.entityType}`]: childEntity._id,
+								childHierarchyPath: { $each: childHierarchyPathToUpdate },
+							},
+						}
+
+						// Extract all related entity IDs
+						const allEntityIds = relatedEntities.map((entity) => entity._id)
+						// Perform the update operation for all related entities
+						await entitiesQueries.updateMany({ _id: { $in: allEntityIds } }, updateQuery)
+					}
+				}
+			}
+
+			return
+		} catch (error) {
+			throw {
+				status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+				message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+			}
+		}
 	}
 
 	/**

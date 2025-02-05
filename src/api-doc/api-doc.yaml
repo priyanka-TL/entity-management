@@ -16,7 +16,6 @@ servers:
 paths:
   /v1/entityTypes/bulkCreate:
     post:
-      operationId: ''
       summary: 'BulkCreate create entity type '
       tags:
         - entityType-API's
@@ -887,10 +886,6 @@ paths:
                           type: array
                           items:
                             type: string
-                        allowedRoles:
-                          type: array
-                          items:
-                            type: string
                         createdBy:
                           type: string
                         updatedBy:
@@ -933,7 +928,6 @@ paths:
                           - cluster
                           - school
                           - block
-                        allowedRoles: []
                         createdBy: SYSTEM
                         updatedBy: SYSTEM
                         _id: 6634b0767411a605fdbaca71
@@ -983,10 +977,6 @@ paths:
                   type: array
                   items:
                     type: string
-                allowedRoles:
-                  type: array
-                  items:
-                    type: string
             examples:
               sampleBodyData:
                 value:
@@ -998,9 +988,6 @@ paths:
                     - cluster
                     - school
                     - block
-                  allowedRoles:
-                    - role1
-                    - role2
   /v1/entities/details/{_id}:
     get:
       summary: Provide details of an entity based on the entity id. This API returns the details of a single entity at a time.
@@ -1049,10 +1036,6 @@ paths:
                           type: array
                           items:
                             type: string
-                        allowedRoles:
-                          type: array
-                          items:
-                            type: string
                         createdBy:
                           type: string
                         updatedBy:
@@ -1082,9 +1065,6 @@ paths:
                     result:
                       - _id: 662f856a4b41910591c2fde9
                         childHierarchyPath: []
-                        allowedRoles:
-                          - role1
-                          - role2
                         createdBy: user123
                         updatedBy: user123
                         deleted: false
@@ -1166,10 +1146,6 @@ paths:
                         type: array
                         items:
                           type: string
-                      allowedRoles:
-                        type: array
-                        items:
-                          type: string
                       createdBy:
                         type: string
                       updatedBy:
@@ -1201,7 +1177,6 @@ paths:
                         locationId: rajAPSTATEDummy4
                         code: rajAPSTATEDummy4
                       childHierarchyPath: []
-                      allowedRoles: []
                       createdBy: user123
                       updatedBy: user123
                       deleted: false
