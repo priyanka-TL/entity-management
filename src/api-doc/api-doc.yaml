@@ -1319,7 +1319,7 @@ paths:
 
 
         * The API Endpoint will generate a mapping CSV
-        `/v1/entities/mappingUpload`
+        `/v1/entities/createMappingCsv`
 
         * It is mandatory to provide values for parameters marked with
         `required`
