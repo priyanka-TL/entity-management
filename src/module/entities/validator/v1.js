@@ -9,7 +9,14 @@ module.exports = (req) => {
 	let entitiesValidator = {
 		add: function () {
 			req.checkQuery('type').exists().withMessage('required type')
-			req.checkBody('externalId').exists().withMessage('required externalId ')
+			req.checkBody('externalId')
+				.exists()
+				.withMessage('The externalId field is required.')
+				.trim() // Removes leading and trailing spaces
+				.notEmpty()
+				.withMessage('The externalId field cannot be empty.')
+				.matches(/^\S+$/)
+				.withMessage('The externalId field should not contain spaces.')
 			req.checkBody('name')
 				.exists()
 				.withMessage('The name field is required.')
@@ -19,18 +26,32 @@ module.exports = (req) => {
 		},
 		update: function () {
 			req.checkParams('_id').exists().withMessage('required _id')
-			if (req.body.metaInformation) {
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid Entity ID')
+			if (req.body['metaInformation.name']) {
+				req.checkBody('metaInformation.name')
+					.exists()
+					.withMessage('The name field is required.')
+					.trim()
+					.notEmpty()
+					.withMessage('The name field cannot be empty.')
+			}
+			if (req.body['metaInformation.externalId']) {
 				req.checkBody('metaInformation.externalId')
 					.exists()
-					.withMessage('Metainformation must contain externalId.')
+					.withMessage('The name field is required.')
+					.trim()
+					.notEmpty()
+					.withMessage('The name field cannot be empty.')
 			}
 		},
 		subEntityList: function () {
 			req.checkQuery('type').exists().withMessage('required type')
 			req.checkParams('_id').exists().withMessage('required _id')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid Entity ID')
 		},
 		targetedRoles: function () {
 			req.checkParams('_id').exists().withMessage('The entity ID (_id) is required.')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid Entity ID')
 		},
 		entityListBasedOnEntityType: function () {
 			req.checkQuery('entityType').exists().withMessage('required entityType')
@@ -44,19 +65,23 @@ module.exports = (req) => {
 		},
 		listByEntityType: function () {
 			req.checkParams('_id').exists().withMessage('required Entity type')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid Entity ID')
 		},
 		subEntityListBasedOnRoleAndLocation: function () {
 			req.checkParams('_id').exists().withMessage('required state location id')
 		},
 		details: function () {
-			req.checkParams('_id').exists().withMessage('required state location id')
+			req.checkParams('_id').exists().withMessage('required id')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid Entity ID')
 		},
 		list: function () {
 			req.checkQuery('type').exists().withMessage('required type')
 			req.checkParams('_id').exists().withMessage('required entity id')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid Entity ID')
 		},
 		relatedEntities: function () {
 			req.checkParams('_id').exists().withMessage('required Entity id')
+			req.checkParams('_id').exists().isMongoId().withMessage('Invalid Entity ID')
 		},
 		bulkCreate: function () {
 			if (!req.files || !req.files.entities) {
@@ -71,6 +96,11 @@ module.exports = (req) => {
 		mappingUpload: function () {
 			if (!req.files || !req.files.entityMap) {
 				req.checkBody('entityMap').exists().withMessage('entityMap file is required')
+			}
+		},
+		createMappingCsv: function () {
+			if (!req.files || !req.files.entityCSV) {
+				req.checkBody('entityCSV').exists().withMessage('entityCSV file is required')
 			}
 		},
 		listByLocationIds: function () {

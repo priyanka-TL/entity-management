@@ -21,6 +21,7 @@ module.exports = {
 		'/userRoleExtension/find',
 		'/userRoleExtension/create',
 		'/userRoleExtension/update',
+		'/entities/createMappingCsv',
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',
@@ -30,4 +31,8 @@ module.exports = {
 	GET_METHOD: 'GET',
 	ENTITYTYPE: 'entityType',
 	GROUPS: 'groups',
+	AUTH_METHOD: {
+		NATIVE: 'native',
+		KEYCLOAK_PUBLIC_KEY: 'keycloak_public_key',
+	},
 }

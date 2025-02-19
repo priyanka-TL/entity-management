@@ -32,6 +32,21 @@ let enviromentVariables = {
 		message: 'Required api doc url',
 		optional: false,
 	},
+	IS_AUTH_TOKEN_BEARER: {
+		message: 'Required specification: If auth token is bearer or not',
+		optional: true,
+		default: false,
+	},
+	AUTH_METHOD: {
+		message: 'Required authentication method',
+		optional: true,
+		default: CONSTANTS.common.AUTH_METHOD.NATIVE,
+	},
+	KEYCLOAK_PUBLIC_KEY_PATH: {
+		message: 'Required Keycloak Public Key Path',
+		optional: true,
+		default: '../keycloakPublicKeys',
+	},
 }
 
 let success = true
@@ -101,13 +116,13 @@ module.exports = function () {
 		}
 
 		if (
-			(!process.env[eachEnvironmentVariable] || process.env[eachEnvironmentVariable] == '') &&
-			enviromentVariables[eachEnvironmentVariable].default &&
-			enviromentVariables[eachEnvironmentVariable].default != ''
+			(!process.env[eachEnvironmentVariable] || process.env[eachEnvironmentVariable].trim() === '') &&
+			enviromentVariables[eachEnvironmentVariable]?.optional === true &&
+			enviromentVariables[eachEnvironmentVariable]?.default !== undefined
 		) {
 			process.env[eachEnvironmentVariable] = enviromentVariables[eachEnvironmentVariable].default
-			success = true
 			keyCheckPass = true
+			success = true
 		}
 
 		if (!keyCheckPass) {

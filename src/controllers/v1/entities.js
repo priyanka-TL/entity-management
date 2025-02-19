@@ -9,6 +9,7 @@
 const entitiesHelper = require(MODULES_BASE_PATH + '/entities/helper')
 const csv = require('csvtojson')
 const FileStream = require(PROJECT_ROOT_DIRECTORY + '/generics/file-stream')
+const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
 
 /**
  * entities
@@ -116,11 +117,33 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let result = {}
+				let projection = [
+					'metaInformation.externalId',
+					'metaInformation.name',
+					'metaInformation.addressLine1',
+					'metaInformation.addressLine2',
+					'metaInformation.administration',
+					'metaInformation.city',
+					'metaInformation.country',
+					'entityTypeId',
+					'entityType',
+				]
+				let entityDocument = await entitiesQueries.entityDocuments({ _id: req.params._id }, projection)
 
-				// Retrieve related entities using 'entitiesHelper.relatedEntities'
-				let relatedEntities = await entitiesHelper.relatedEntities(req.params._id)
+				if (entityDocument.length < 1) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
 
-				// Store the retrieved relatedEntities in the 'result' object
+				let relatedEntities = await entitiesHelper.relatedEntities(
+					entityDocument[0]._id,
+					entityDocument[0].entityTypeId,
+					entityDocument[0].entityType,
+					projection
+				)
+				_.merge(result, entityDocument[0])
 				result['relatedEntities'] = relatedEntities.length > 0 ? relatedEntities : []
 
 				return resolve({
@@ -167,11 +190,89 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call helper function to fetch entity data based on entity type
-				let entityData = await entitiesHelper.entityListBasedOnEntityType(req.query.entityType)
+				let entityData = await entitiesHelper.entityListBasedOnEntityType(
+					req.query.entityType,
+					req.pageNo,
+					req.pageSize,
+					req?.query?.paginate?.toLowerCase() == 'true' ? true : false
+				)
 				return resolve(entityData)
 			} catch (error) {
 				return reject({
 					// Handle any errors that occur during the fetch operation
+					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
+
+	/**
+	  * @api {post} v1/entities/createMappingCsv
+	  * @apiVersion 1.0.0
+	  * @apiName createMappingCsv
+	  * @apiGroup Entities
+	  * @apiParam {File} entityCSV Mandatory entity mapping file of type CSV.
+	  * @apiUse successBody
+	  * @apiUse errorBody
+	  * @param {Object} req - The request object containing the uploaded CSV file in `req.files.entityCSV`.
+	  * @returns {Promise<Object>} Resolves with a success message and the mapped entities or rejects with an error object.
+	  * @returns {JSON} - Message of successfully created.
+	  * 
+	  * {
+		"message": "MAPPING_CSV_GENERATED",
+		"status": 200,
+		"result": {
+        "mappingCSV": "cGFyZW50RW50aXR5SWQsY2hpbGRFbnRpdHlJZAo2NzY1NWEwMmM0YzNhYjIxOThmNzUyYjEsNjc2NTU5ZjRjNGMzYWIyMTk4Zjc1MjY4CjY3NjU1OWY0YzRjM2FiMjE5OGY3NTI2OCw2NzY1NTllMmM0YzNhYjIxOThmNzUwYzkKNjc2NTU5ZTJjNGMzYWIyMTk4Zjc1MGM5LDY3NjU1OWNiYzRjM2FiMjE5OGY3MzMyNgo2NzY1NTljYmM0YzNhYjIxOThmNzMzMjYsNjc2NTQ5YTljNGMzYWIyMTk4ZjRjNTZkCjY3NjU1YTAyYzRjM2FiMjE5OGY3NTJiMSw2NzY1NTlmNGM0YzNhYjIxOThmNzUyNjgKNjc2NTU5ZjRjNGMzYWIyMTk4Zjc1MjY4LDY3NjU1OWUyYzRjM2FiMjE5OGY3NTBjOQo2NzY1NTllMmM0YzNhYjIxOThmNzUwYzksNjc2NTU5Y2JjNGMzYWIyMTk4ZjczMzI2CjY3NjU1OWNiYzRjM2FiMjE5OGY3MzMyNiw2NzY1NDlhOWM0YzNhYjIxOThmNGM1NmUKNjc2NTVhMDJjNGMzYWIyMTk4Zjc1MmIxLDY3NjU1OWY0YzRjM2FiMjE5OGY3NTI2OAo2NzY1NTlmNGM0YzNhYjIxOThmNzUyNjgsNjc2NTU5ZTJjNGMzYWIyMTk4Zjc1MGM5CjY3NjU1OWUyYzRjM2FiMjE5OGY3NTBjOSw2NzY1NTljYmM0YzNhYjIxOThmNzMzMjcKNjc2NTU5Y2JjNGMzYWIyMTk4ZjczMzI3LDY3NjU0OWE5YzRjM2FiMjE5OGY0YzU2Zgo=",
+        "resultCSV": "InN0YXRlIiwiZGlzdHJpY3QiLCJibG9jayIsImNsdXN0ZXIiLCJzY2hvb2wiLCJzdGF0ZVN0YXR1cyIsImRpc3RyaWN0U3RhdHVzIiwiYmxvY2tTdGF0dXMiLCJjbHVzdGVyU3RhdHVzIiwic2Nob29sU3RhdHVzIgoiS0FSIiwiS0FSRGlzdDEiLCJLQVJibG9jazEiLCJLQVJjbHVzdGVyMSIsIktBUnNjaG9vbDEiLCJFTlRJVFlfRkVUQ0hFRCIsIkVOVElUWV9GRVRDSEVEIiwiRU5USVRZX0ZFVENIRUQiLCJFTlRJVFlfRkVUQ0hFRCIsIkVOVElUWV9GRVRDSEVEIgoiS0FSIiwiS0FSRGlzdDEiLCJLQVJibG9jazEiLCJLQVJjbHVzdGVyMSIsIktBUnNjaG9vbDIiLCJFTlRJVFlfRkVUQ0hFRCIsIkVOVElUWV9GRVRDSEVEIiwiRU5USVRZX0ZFVENIRUQiLCJFTlRJVFlfRkVUQ0hFRCIsIkVOVElUWV9GRVRDSEVEIgoiS0FSIiwiS0FSRGlzdDEiLCJLQVJibG9jazEiLCJLQVJjbHVzdGVyMiIsIktBUnNjaG9vbDMiLCJFTlRJVFlfRkVUQ0hFRCIsIkVOVElUWV9GRVRDSEVEIiwiRU5USVRZX0ZFVENIRUQiLCJFTlRJVFlfRkVUQ0hFRCIsIkVOVElUWV9GRVRDSEVEIg==",
+        "parentEntityIds": [
+            "67655a02c4c3ab2198f752b1",
+            "676559f4c4c3ab2198f75268",
+            "676559e2c4c3ab2198f750c9",
+            "676559cbc4c3ab2198f73326",
+            "67655a02c4c3ab2198f752b1",
+            "676559f4c4c3ab2198f75268",
+            "676559e2c4c3ab2198f750c9",
+            "676559cbc4c3ab2198f73326",
+            "67655a02c4c3ab2198f752b1",
+            "676559f4c4c3ab2198f75268",
+            "676559e2c4c3ab2198f750c9",
+            "676559cbc4c3ab2198f73327"
+        ],
+        "childEntityIds": [
+            "676559f4c4c3ab2198f75268",
+            "676559e2c4c3ab2198f750c9",
+            "676559cbc4c3ab2198f73326",
+            "676549a9c4c3ab2198f4c56d",
+            "676559f4c4c3ab2198f75268",
+            "676559e2c4c3ab2198f750c9",
+            "676559cbc4c3ab2198f73326",
+            "676549a9c4c3ab2198f4c56e",
+            "676559f4c4c3ab2198f75268",
+            "676559e2c4c3ab2198f750c9",
+            "676559cbc4c3ab2198f73327",
+            "676549a9c4c3ab2198f4c56f"
+        ]
+    	}
+	}
+	*/
+
+	createMappingCsv(req) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Parse CSV data from the uploaded file in the request body
+				let entityCSVData = await csv().fromString(req.files.entityCSV.data.toString())
+
+				// Process the entity mapping upload data using 'entitiesHelper.createMappingCsv'
+				let mappedEntities = await entitiesHelper.createMappingCsv(entityCSVData)
+
+				return resolve({
+					message: CONSTANTS.apiResponses.MAPPING_CSV_GENERATED,
+					result: mappedEntities,
+				})
+			} catch (error) {
+				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
 					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
 					errorObject: error,
@@ -279,7 +380,13 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Calls the 'targetedRoles' function from 'entitiesHelper' to retrieve entity data
-				let userRoleDetails = await entitiesHelper.targetedRoles(req.params._id)
+				let userRoleDetails = await entitiesHelper.targetedRoles(
+					req.params._id,
+					req.pageNo,
+					req.pageSize,
+					req?.query?.paginate?.toLowerCase() == 'true' ? true : false,
+					req.query.entityType ? req.query.entityType : ''
+				)
 				// Resolves the promise with the retrieved entity data
 				return resolve(userRoleDetails)
 			} catch (error) {
