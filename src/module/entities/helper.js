@@ -602,7 +602,7 @@ module.exports = class UserProjectsHelper {
 					]
 				}
 
-				let FinalentityDocuments = []
+				let finalEntityDocuments = []
 				// Perform aggregation query to retrieve entity documents based on search criteria
 
 				if (!language) {
@@ -633,7 +633,7 @@ module.exports = class UserProjectsHelper {
 						},
 					])
 
-					FinalentityDocuments.push(...entityDocuments)
+					finalEntityDocuments.push(...entityDocuments)
 				} else {
 					let entityDocuments = await entitiesQueries.getAggregate([
 						queryObject,
@@ -663,10 +663,10 @@ module.exports = class UserProjectsHelper {
 						},
 					])
 
-					FinalentityDocuments.push(...entityDocuments)
+					finalEntityDocuments.push(...entityDocuments)
 				}
 
-				return resolve(FinalentityDocuments)
+				return resolve(finalEntityDocuments)
 			} catch (error) {
 				return reject(error)
 			}
@@ -1126,31 +1126,31 @@ module.exports = class UserProjectsHelper {
 					}
 				}
 
-				let Finalresult = []
+				let result = []
 
 				if (!language) {
-					const result = fetchList.map((entity) => ({
+					const listResult = fetchList.map((entity) => ({
 						_id: entity._id,
 						name: entity.metaInformation.name,
 						externalId: entity.metaInformation.externalId,
 					}))
 
-					Finalresult.push(...result)
+					result.push(...listResult)
 				} else {
-					const result = fetchList.map((entity) => ({
+					const listResult = fetchList.map((entity) => ({
 						_id: entity._id,
 						name: entity.translations[`${language}`].name,
 						externalId: entity.metaInformation.externalId,
 					}))
 
-					Finalresult.push(...result)
+					result.push(...listResult)
 				}
 				// Transform the fetched list to match the required result format
 
 				return resolve({
 					success: true,
 					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
-					result: Finalresult,
+					result: result,
 					count,
 				})
 			} catch (error) {
