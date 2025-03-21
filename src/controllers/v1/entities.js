@@ -194,7 +194,8 @@ module.exports = class Entities extends Abstract {
 					req.query.entityType,
 					req.pageNo,
 					req.pageSize,
-					req?.query?.paginate?.toLowerCase() == 'true' ? true : false
+					req?.query?.paginate?.toLowerCase() == 'true' ? true : false,
+					req.query.language
 				)
 				return resolve(entityData)
 			} catch (error) {
@@ -856,7 +857,8 @@ module.exports = class Entities extends Abstract {
 					req.query.type ? req.query.type : '',
 					req.searchText,
 					req.pageSize,
-					req.pageNo
+					req.pageNo,
+					req.query.language
 				)
 				return resolve(entityDocuments)
 			} catch (error) {
@@ -937,13 +939,19 @@ module.exports = class Entities extends Abstract {
 				// Parse CSV data from uploaded file
 				let entityCSVData = await csv().fromString(req.files.entities.data.toString())
 
-				// Call 'entitiesHelper.bulkCreate' to create entities from parsed CSV data
+				let translationFile = null
+
+				// Parse translation file if provided
+				if (req.files.translationFile) {
+					translationFile = JSON.parse(req.files.translationFile.data.toString())
+				}
 				let newEntityData = await entitiesHelper.bulkCreate(
 					req.query.type,
 					null,
 					null,
 					req.userDetails,
-					entityCSVData
+					entityCSVData,
+					translationFile
 				)
 
 				// Check if new entities were created successfully
@@ -1010,9 +1018,14 @@ module.exports = class Entities extends Abstract {
 				if (!entityCSVData || entityCSVData.length < 1) {
 					throw CONSTANTS.apiResponses.ENTITY_TYPE_NOT_UPDATED
 				}
+				let translationFile = null
 
+				// Parse translation file if provided
+				if (req.files.translationFile) {
+					translationFile = JSON.parse(req.files.translationFile.data.toString())
+				}
 				// Call 'entitiesHelper.bulkUpdate' to update entities based on CSV data and user details
-				let newEntityData = await entitiesHelper.bulkUpdate(entityCSVData, req.userDetails)
+				let newEntityData = await entitiesHelper.bulkUpdate(entityCSVData, translationFile)
 
 				// Check if entities were updated successfully
 				if (newEntityData.length > 0) {
