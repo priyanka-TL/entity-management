@@ -212,6 +212,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {params} search - search entity data.
 	 * @param {params} limit - page limit.
 	 * @param {params} pageNo - page no.
+	 * @param {params} language - language Code
 	 * @returns {Array} - List of all sub list entities.
 	 */
 
@@ -531,6 +532,10 @@ module.exports = class UserProjectsHelper {
 	 * @method
 	 * @name entityTraversal
 	 * @param {Object} entityId
+	 * @param {String} language - language Code.
+	 * @param {Number} pageSize - total page size.
+	 * @param {Number} pageNo - Page no.
+	 * @param {String} searchText - Search Text.
 	 * @returns {Array} - List of all immediateEntities based on entityId.
 	 */
 
@@ -576,6 +581,7 @@ module.exports = class UserProjectsHelper {
 	 * @method
 	 * @name search
 	 * @param {String} searchText - Text to be search.
+	 * @param {String} language - language Code.
 	 * @param {Number} pageSize - total page size.
 	 * @param {Number} pageNo - Page no.
 	 * @param {Array} [entityIds = false] - Array of entity ids.
@@ -1083,6 +1089,7 @@ module.exports = class UserProjectsHelper {
 	 * @name entityListBasedOnEntityType
 	 * @param {string} type - Type of entity to fetch documents for.
 	 * @param {string} pageNo - pageNo for pagination
+	 * @param {string} language - language Code
 	 * @param {string} pageSize - pageSize for pagination
 	 * @returns {Promise<Object>} Promise that resolves with fetched documents or rejects with an error.
 	 */
@@ -1129,6 +1136,7 @@ module.exports = class UserProjectsHelper {
 				let result = []
 
 				if (!language) {
+					// No language specified – return metaInformation.name
 					const listResult = fetchList.map((entity) => ({
 						_id: entity._id,
 						name: entity.metaInformation.name,
@@ -1137,11 +1145,14 @@ module.exports = class UserProjectsHelper {
 
 					result.push(...listResult)
 				} else {
-					const listResult = fetchList.map((entity) => ({
-						_id: entity._id,
-						name: entity.translations[`${language}`].name,
-						externalId: entity.metaInformation.externalId,
-					}))
+					// Language specified – check and return translated name if available
+					const listResult = fetchList
+						.filter((entity) => entity.translations?.[language]?.name)
+						.map((entity) => ({
+							_id: entity._id,
+							name: entity.translations[language].name,
+							externalId: entity.metaInformation.externalId,
+						}))
 
 					result.push(...listResult)
 				}
@@ -1271,10 +1282,13 @@ module.exports = class UserProjectsHelper {
 	 * details of the entities.
 	 * @method
 	 * @name details
+	 * @param {ObjectId} entityId - entity Id.
+	 * @param {Object} requestData - requested data.
+	 * @param {String} language - language code.
 	 * @returns {JSON} - provide the details.
 	 */
 
-	static details(entityId, requestData = {}) {
+	static details(entityId, requestData = {}, language) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// // let entityIdNum = parseInt(entityId)
@@ -1321,6 +1335,24 @@ module.exports = class UserProjectsHelper {
 
 				// Fetch entity documents based on constructed query
 				let entityDocument = await entitiesQueries.entityDocuments(query, 'all', 10)
+				if (language) {
+					// Map through entityDocument to update metaInformation name based on language
+					entityDocument = entityDocument.map((document) => {
+						if (document.translations && document.translations[language]) {
+							document.metaInformation.name = document.translations[language].name
+						}
+
+						delete document.translations
+
+						return document
+					})
+				} else {
+					// Map through entityDocument to delete Translations
+					entityDocument = entityDocument.map((document) => {
+						delete document.translations
+						return document
+					})
+				}
 
 				if (entityDocument && entityDocument.length == 0) {
 					return resolve({
@@ -1349,6 +1381,7 @@ module.exports = class UserProjectsHelper {
 	 * @param {Object} userDetails - logged in user details.
 	 * @param {String} userDetails.id - logged in user id.
 	 * @param {Array}  entityCSVData - Array of entity data.
+	 * @param {Array}  translationFile - Array of translation data.
 	 * @returns {JSON} - uploaded entity information.
 	 */
 	static bulkCreate(entityType, programId, solutionId, userDetails, entityCSVData, translationFile) {
@@ -1510,6 +1543,7 @@ module.exports = class UserProjectsHelper {
 	 * @name bulkUpdate
 	 * @param {Object} userDetails - logged in user details.
 	 * @param {Array} entityCSVData - Array of entity csv data to be updated.
+	 * @param {Array}  translationFile - Array of translation data.
 	 * @returns {Array} - Array of updated entity data.
 	 */
 
@@ -1618,6 +1652,21 @@ module.exports = class UserProjectsHelper {
 	static update(entityId, bodyData) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				if (bodyData.translations) {
+					// Fetch existing entity document
+					let entityDocuments = await entitiesQueries.entityDocuments({ _id: ObjectId(entityId) }, 'all')
+
+					if (entityDocuments && entityDocuments.length > 0) {
+						const existingTranslations = entityDocuments[0].translations || {}
+
+						// Merge translations: Update only provided languages, keep the rest
+						bodyData.translations = {
+							...existingTranslations,
+							...bodyData.translations,
+						}
+					}
+				}
+
 				// Update the entity using findOneAndUpdate
 				let entityInformation = await entitiesQueries.findOneAndUpdate({ _id: ObjectId(entityId) }, bodyData, {
 					new: true,
