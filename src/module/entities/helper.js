@@ -611,7 +611,7 @@ module.exports = class UserProjectsHelper {
 				let finalEntityDocuments = []
 				// Perform aggregation query to retrieve entity documents based on search criteria
 
-				if (!language) {
+				if (!language || language == 'en') {
 					let entityDocuments = await entitiesQueries.getAggregate([
 						queryObject,
 						{
@@ -1135,7 +1135,7 @@ module.exports = class UserProjectsHelper {
 
 				let result = []
 
-				if (!language) {
+				if (!language || language == 'en') {
 					// No language specified – return metaInformation.name
 					const listResult = fetchList.map((entity) => ({
 						_id: entity._id,
