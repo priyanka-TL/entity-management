@@ -194,7 +194,8 @@ module.exports = class Entities extends Abstract {
 					req.query.entityType,
 					req.pageNo,
 					req.pageSize,
-					req?.query?.paginate?.toLowerCase() == 'true' ? true : false
+					req?.query?.paginate?.toLowerCase() == 'true' ? true : false,
+					req.query.language ? req.query.language : ''
 				)
 				return resolve(entityData)
 			} catch (error) {
@@ -406,62 +407,42 @@ module.exports = class Entities extends Abstract {
 	 * @apiName details
 	 * @apiGroup Entities
 	 * @apiHeader {String} X-authenticated-user-token Authenticity token
-	 * @apiSampleRequest v1/entities/details/663339bc0cb19f01c459853b
+	 * @apiSampleRequest v1/entities/details/67dcf90f97174bab15241faa?&language=hi
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @returns {JSON} - provide the details.
 	 * 
-	 "result": [
-		{
-			"_id": "5f33c3d85f637784791cd830",
-			"childHierarchyPath": [
-				"district",
-				"beat",
-				"cluster",
-				"school"
-			],
-			"allowedRoles": [
-				"rahul",
-				"prajwal"
-			],
-			"deleted": false,
-			"entityTypeId": "5f32d8228e0dc8312404056e",
-			"entityType": "state",
-			"metaInformation": {
-				"externalId": "MH",
-				"name": "Maharashtra",
-				"region": "West",
-				"capital": "Mumbai"
-			},
-			"updatedBy": "124fdade-aaa2-4587-9dcd-3c7cf15c7147",
-			"createdBy": "2b655fd1-201d-4d2a-a1b7-9048a25c0afa",
-			"updatedAt": "2021-01-18T06:51:31.086Z",
-			"createdAt": "2020-08-12T10:26:32.038Z",
-			"__v": 0,
-			"groups": {
-				"district": [
-					"5f33c56fb451f58478b36996"
-				],
-				"beat": [
-					"5f33cb24c1352f84a29f547c",
-					"5f33cb24c1352f84a29f547d"
-				],
-				"cluster": [
-					"5f33cb07ce438a849b4a17f6",
-					"5f33cb07ce438a849b4a17f7"
-				],
-				"school": [
-					"5f33caebb451f58478b36998",
-					"5f33caebb451f58478b36999",
-					"5f833e5c87ae180cb64aeff0"
-				]
-			},
-			"registryDetails": {
-				"locationId": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df",
-				"code": "db331a8c-b9e2-45f8-b3c0-7ec1e826b6df"
-			}
-		}
-	 ]
+	  "result": [
+        {
+            "_id": "67dcf90f97174bab15241faa",
+            "childHierarchyPath": [
+                "block",
+                "cluster",
+                "school"
+            ],
+            "createdBy": "SYSTEM",
+            "updatedBy": "SYSTEM",
+            "deleted": false,
+            "entityTypeId": "66387374b87e1acce3fcd6a8",
+            "entityType": "state",
+            "registryDetails": {
+                "code": "2902",
+                "locationId": "2902"
+            },
+            "metaInformation": {
+                "externalId": "2902",
+                "name": "बागलकोट"
+            },
+            "groups": {
+                "state": [
+                    "67dcf90f97174bab15241fab"
+                ]
+            },
+            "updatedAt": "2025-03-21T05:28:47.579Z",
+            "createdAt": "2025-03-21T05:28:47.579Z",
+            "__v": 0
+        }
+    ]
 	*/
 
 	details(req) {
@@ -470,7 +451,8 @@ module.exports = class Entities extends Abstract {
 				// Prepare parameters for 'entitiesHelper.details' based on request data
 				let result = await entitiesHelper.details(
 					req.params._id ? req.params._id : '',
-					req.body ? req.body : {}
+					req.body ? req.body : {},
+					req.query.language ? req.query.language : ''
 				)
 
 				return resolve(result)
@@ -835,6 +817,8 @@ module.exports = class Entities extends Abstract {
       * @name subEntityList
       * @param  {Request} req request body.
       * @param {String} req.params._id - entityId
+	  * @param {String} req.query.type - Entity Type
+	  * @param {String} req.query.language - language Code
       * @returns {JSON} Returns list of immediate entities
      */
 
@@ -856,7 +840,8 @@ module.exports = class Entities extends Abstract {
 					req.query.type ? req.query.type : '',
 					req.searchText,
 					req.pageSize,
-					req.pageNo
+					req.pageNo,
+					req.query.language ? req.query.language : ''
 				)
 				return resolve(entityDocuments)
 			} catch (error) {
@@ -926,6 +911,7 @@ module.exports = class Entities extends Abstract {
 	 * @param {String} req.query.type - requested entity type.
 	 * @param {Object} req.userDetails - logged in user details.
 	 * @param {Object} req.files.entities - entities data.
+	 * @param {Object} req.files.translationFile - translation data.
 	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
 	 * public/reports/currentDate
 	 *
@@ -937,13 +923,19 @@ module.exports = class Entities extends Abstract {
 				// Parse CSV data from uploaded file
 				let entityCSVData = await csv().fromString(req.files.entities.data.toString())
 
-				// Call 'entitiesHelper.bulkCreate' to create entities from parsed CSV data
+				let translationFile = null
+
+				// Parse translation file if provided
+				if (req.files.translationFile) {
+					translationFile = JSON.parse(req.files.translationFile.data.toString())
+				}
 				let newEntityData = await entitiesHelper.bulkCreate(
 					req.query.type,
 					null,
 					null,
 					req.userDetails,
-					entityCSVData
+					entityCSVData,
+					translationFile
 				)
 
 				// Check if new entities were created successfully
@@ -993,8 +985,8 @@ module.exports = class Entities extends Abstract {
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:
 	 * @param {Object} req - requested data.
-	 * @param {Object} req.userDetails - logged in user details.
 	 * @param {Object} req.files.entities - entities data.
+	 * @param {Object} req.files.translationFile - entities data.
 	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
 	 * public/reports/currentDate
 	 *
@@ -1010,9 +1002,14 @@ module.exports = class Entities extends Abstract {
 				if (!entityCSVData || entityCSVData.length < 1) {
 					throw CONSTANTS.apiResponses.ENTITY_TYPE_NOT_UPDATED
 				}
+				let translationFile = null
 
+				// Parse translation file if provided
+				if (req.files.translationFile) {
+					translationFile = JSON.parse(req.files.translationFile.data.toString())
+				}
 				// Call 'entitiesHelper.bulkUpdate' to update entities based on CSV data and user details
-				let newEntityData = await entitiesHelper.bulkUpdate(entityCSVData, req.userDetails)
+				let newEntityData = await entitiesHelper.bulkUpdate(entityCSVData, translationFile)
 
 				// Check if entities were updated successfully
 				if (newEntityData.length > 0) {

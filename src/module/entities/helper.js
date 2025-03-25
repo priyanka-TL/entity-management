@@ -212,10 +212,11 @@ module.exports = class UserProjectsHelper {
 	 * @param {params} search - search entity data.
 	 * @param {params} limit - page limit.
 	 * @param {params} pageNo - page no.
+	 * @param {params} language - language Code
 	 * @returns {Array} - List of all sub list entities.
 	 */
 
-	static subEntityList(entities, entityId, type, search, limit, pageNo) {
+	static subEntityList(entities, entityId, type, search, limit, pageNo, language) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let result = []
@@ -228,13 +229,13 @@ module.exports = class UserProjectsHelper {
 				}
 				// Retrieve sub-entities using 'this.subEntities' for a single entity
 				if (entityId !== '') {
-					result = await this.subEntities(obj)
+					result = await this.subEntities(obj, language)
 				} else {
 					// Retrieve sub-entities using 'this.subEntities' for multiple entities
 					await Promise.all(
 						entities.map(async (entity) => {
 							obj['entityId'] = entity
-							let entitiesDocument = await this.subEntities(obj)
+							let entitiesDocument = await this.subEntities(obj, language)
 
 							if (Array.isArray(entitiesDocument.data) && entitiesDocument.data.length > 0) {
 								result = entitiesDocument
@@ -433,7 +434,7 @@ module.exports = class UserProjectsHelper {
 	 * @returns {Array} - List of all immediate entities or traversal data.
 	 */
 
-	static subEntities(entitiesData) {
+	static subEntities(entitiesData, language) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let entitiesDocument
@@ -445,7 +446,8 @@ module.exports = class UserProjectsHelper {
 						entitiesData.type,
 						entitiesData.search,
 						entitiesData.limit,
-						entitiesData.pageNo
+						entitiesData.pageNo,
+						language
 					)
 				} else {
 					// Retrieve immediate entities
@@ -453,7 +455,8 @@ module.exports = class UserProjectsHelper {
 						entitiesData.entityId,
 						entitiesData.search,
 						entitiesData.limit,
-						entitiesData.pageNo
+						entitiesData.pageNo,
+						language
 					)
 				}
 
@@ -529,10 +532,14 @@ module.exports = class UserProjectsHelper {
 	 * @method
 	 * @name entityTraversal
 	 * @param {Object} entityId
+	 * @param {String} language - language Code.
+	 * @param {Number} pageSize - total page size.
+	 * @param {Number} pageNo - Page no.
+	 * @param {String} searchText - Search Text.
 	 * @returns {Array} - List of all immediateEntities based on entityId.
 	 */
 
-	static entityTraversal(entityId, entityTraversalType = '', searchText = '', pageSize, pageNo) {
+	static entityTraversal(entityId, entityTraversalType = '', searchText = '', pageSize, pageNo, language) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let entityTraversal = `groups.${entityTraversalType}`
@@ -556,7 +563,8 @@ module.exports = class UserProjectsHelper {
 						searchText,
 						pageSize,
 						pageNo,
-						entitiesDocument[0].groups[entityTraversalType]
+						entitiesDocument[0].groups[entityTraversalType],
+						language
 					)
 
 					result = entityTraversalData[0]
@@ -573,12 +581,13 @@ module.exports = class UserProjectsHelper {
 	 * @method
 	 * @name search
 	 * @param {String} searchText - Text to be search.
+	 * @param {String} language - language Code.
 	 * @param {Number} pageSize - total page size.
 	 * @param {Number} pageNo - Page no.
 	 * @param {Array} [entityIds = false] - Array of entity ids.
 	 */
 
-	static search(searchText, pageSize, pageNo, entityIds = false) {
+	static search(searchText, pageSize, pageNo, entityIds = false, language) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let queryObject = {}
@@ -598,34 +607,72 @@ module.exports = class UserProjectsHelper {
 						{ 'metaInformation.addressLine2': new RegExp(searchText, 'i') },
 					]
 				}
+
+				let finalEntityDocuments = []
 				// Perform aggregation query to retrieve entity documents based on search criteria
-				let entityDocuments = await entitiesQueries.getAggregate([
-					queryObject,
-					{
-						$project: {
-							name: '$metaInformation.name',
-							externalId: '$metaInformation.externalId',
-							addressLine1: '$metaInformation.addressLine1',
-							addressLine2: '$metaInformation.addressLine2',
-							entityType: 1,
-						},
-					},
-					{
-						$facet: {
-							totalCount: [{ $count: 'count' }],
-							data: [{ $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }],
-						},
-					},
-					{
-						$project: {
-							data: 1,
-							count: {
-								$arrayElemAt: ['$totalCount.count', 0],
+
+				if (!language) {
+					let entityDocuments = await entitiesQueries.getAggregate([
+						queryObject,
+						{
+							$project: {
+								name: '$metaInformation.name',
+								externalId: '$metaInformation.externalId',
+								addressLine1: '$metaInformation.addressLine1',
+								addressLine2: '$metaInformation.addressLine2',
+								entityType: 1,
 							},
 						},
-					},
-				])
-				return resolve(entityDocuments)
+						{
+							$facet: {
+								totalCount: [{ $count: 'count' }],
+								data: [{ $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }],
+							},
+						},
+						{
+							$project: {
+								data: 1,
+								count: {
+									$arrayElemAt: ['$totalCount.count', 0],
+								},
+							},
+						},
+					])
+
+					finalEntityDocuments.push(...entityDocuments)
+				} else {
+					let entityDocuments = await entitiesQueries.getAggregate([
+						queryObject,
+						{
+							$project: {
+								// name: '$translations.hi.name',
+								name: `$translations.${language}.name`,
+								externalId: '$metaInformation.externalId',
+								addressLine1: '$metaInformation.addressLine1',
+								addressLine2: '$metaInformation.addressLine2',
+								entityType: 1,
+							},
+						},
+						{
+							$facet: {
+								totalCount: [{ $count: 'count' }],
+								data: [{ $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }],
+							},
+						},
+						{
+							$project: {
+								data: 1,
+								count: {
+									$arrayElemAt: ['$totalCount.count', 0],
+								},
+							},
+						},
+					])
+
+					finalEntityDocuments.push(...entityDocuments)
+				}
+
+				return resolve(finalEntityDocuments)
 			} catch (error) {
 				return reject(error)
 			}
@@ -1042,11 +1089,12 @@ module.exports = class UserProjectsHelper {
 	 * @name entityListBasedOnEntityType
 	 * @param {string} type - Type of entity to fetch documents for.
 	 * @param {string} pageNo - pageNo for pagination
+	 * @param {string} language - language Code
 	 * @param {string} pageSize - pageSize for pagination
 	 * @returns {Promise<Object>} Promise that resolves with fetched documents or rejects with an error.
 	 */
 
-	static entityListBasedOnEntityType(type, pageNo, pageSize, paginate) {
+	static entityListBasedOnEntityType(type, pageNo, pageSize, paginate, language) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Fetch the list of entity types available
@@ -1063,7 +1111,7 @@ module.exports = class UserProjectsHelper {
 						message: CONSTANTS.apiResponses.ENTITYTYPE_NOT_FOUND,
 					}
 				}
-				const projection = ['_id', 'metaInformation.name', 'metaInformation.externalId']
+				const projection = ['_id', 'metaInformation.name', 'metaInformation.externalId', 'translations']
 				// Fetch documents for the matching entity type
 				let fetchList = await entitiesQueries.entityDocuments(
 					{
@@ -1085,12 +1133,30 @@ module.exports = class UserProjectsHelper {
 					}
 				}
 
+				let result = []
+
+				if (!language) {
+					// No language specified – return metaInformation.name
+					const listResult = fetchList.map((entity) => ({
+						_id: entity._id,
+						name: entity.metaInformation.name,
+						externalId: entity.metaInformation.externalId,
+					}))
+
+					result.push(...listResult)
+				} else {
+					// Language specified – check and return translated name if available
+					const listResult = fetchList
+						.filter((entity) => entity.translations?.[language]?.name)
+						.map((entity) => ({
+							_id: entity._id,
+							name: entity.translations[language].name,
+							externalId: entity.metaInformation.externalId,
+						}))
+
+					result.push(...listResult)
+				}
 				// Transform the fetched list to match the required result format
-				const result = fetchList.map((entity) => ({
-					_id: entity._id,
-					name: entity.metaInformation.name,
-					externalId: entity.metaInformation.externalId,
-				}))
 
 				return resolve({
 					success: true,
@@ -1216,10 +1282,13 @@ module.exports = class UserProjectsHelper {
 	 * details of the entities.
 	 * @method
 	 * @name details
+	 * @param {ObjectId} entityId - entity Id.
+	 * @param {Object} requestData - requested data.
+	 * @param {String} language - language code.
 	 * @returns {JSON} - provide the details.
 	 */
 
-	static details(entityId, requestData = {}) {
+	static details(entityId, requestData = {}, language) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// // let entityIdNum = parseInt(entityId)
@@ -1266,6 +1335,24 @@ module.exports = class UserProjectsHelper {
 
 				// Fetch entity documents based on constructed query
 				let entityDocument = await entitiesQueries.entityDocuments(query, 'all', 10)
+				if (language) {
+					// Map through entityDocument to update metaInformation name based on language
+					entityDocument = entityDocument.map((document) => {
+						if (document.translations && document.translations[language]) {
+							document.metaInformation.name = document.translations[language].name
+						}
+
+						delete document.translations
+
+						return document
+					})
+				} else {
+					// Map through entityDocument to delete Translations
+					entityDocument = entityDocument.map((document) => {
+						delete document.translations
+						return document
+					})
+				}
 
 				if (entityDocument && entityDocument.length == 0) {
 					return resolve({
@@ -1294,9 +1381,10 @@ module.exports = class UserProjectsHelper {
 	 * @param {Object} userDetails - logged in user details.
 	 * @param {String} userDetails.id - logged in user id.
 	 * @param {Array}  entityCSVData - Array of entity data.
+	 * @param {Array}  translationFile - Array of translation data.
 	 * @returns {JSON} - uploaded entity information.
 	 */
-	static bulkCreate(entityType, programId, solutionId, userDetails, entityCSVData) {
+	static bulkCreate(entityType, programId, solutionId, userDetails, entityCSVData, translationFile) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// let solutionsDocument = new Array()
@@ -1389,6 +1477,11 @@ module.exports = class UserProjectsHelper {
 								locationId: externalId,
 							}
 						}
+
+						if (translationFile) {
+							entityCreation['translations'] = translationFile[entityCreation.metaInformation.name]
+						}
+
 						// if (solutionsData && singleEntity._solutionId && singleEntity._solutionId != '')
 						// 	singleEntity['createdByProgramId'] = solutionsData[singleEntity._solutionId]['programId']
 						let newEntity = await entitiesQueries.create(entityCreation)
@@ -1450,10 +1543,11 @@ module.exports = class UserProjectsHelper {
 	 * @name bulkUpdate
 	 * @param {Object} userDetails - logged in user details.
 	 * @param {Array} entityCSVData - Array of entity csv data to be updated.
+	 * @param {Array}  translationFile - Array of translation data.
 	 * @returns {Array} - Array of updated entity data.
 	 */
 
-	static bulkUpdate(entityCSVData) {
+	static bulkUpdate(entityCSVData, translationFile) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				const entityUploadedData = await Promise.all(
@@ -1507,6 +1601,11 @@ module.exports = class UserProjectsHelper {
 							singleEntity.message = CONSTANTS.apiResponses.FIELD_MISSING
 							return singleEntity
 						}
+						// let data =
+
+						if (translationFile) {
+							updateData['translations'] = translationFile[updateData['metaInformation.name']]
+						}
 
 						if (Object.keys(updateData).length > 0) {
 							let updateEntity = await entitiesQueries.findOneAndUpdate(
@@ -1553,6 +1652,21 @@ module.exports = class UserProjectsHelper {
 	static update(entityId, bodyData) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				if (bodyData.translations) {
+					// Fetch existing entity document
+					let entityDocuments = await entitiesQueries.entityDocuments({ _id: ObjectId(entityId) }, 'all')
+
+					if (entityDocuments && entityDocuments.length > 0) {
+						const existingTranslations = entityDocuments[0].translations || {}
+
+						// Merge translations: Update only provided languages, keep the rest
+						bodyData.translations = {
+							...existingTranslations,
+							...bodyData.translations,
+						}
+					}
+				}
+
 				// Update the entity using findOneAndUpdate
 				let entityInformation = await entitiesQueries.findOneAndUpdate({ _id: ObjectId(entityId) }, bodyData, {
 					new: true,
