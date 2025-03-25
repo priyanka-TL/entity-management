@@ -692,10 +692,14 @@ paths:
             schema:
               type: object
               properties:
-                file:
+                entities:
                   type: string
                   format: binary
                   description: The CSV file to upload
+                translationFile:
+                  type: string
+                  format: binary
+                  description: The JSON file to upload
       responses:
         '200':
           description: Accepted
@@ -822,10 +826,14 @@ paths:
             schema:
               type: object
               properties:
-                file:
+                entities:
                   type: string
                   format: binary
                   description: The CSV file to upload
+                translationFile:
+                  type: string
+                  format: binary
+                  description: The JSON file to upload
         description: ''
   /v1/entities/add?type={entity_type}:
     post:
@@ -988,7 +996,7 @@ paths:
                     - cluster
                     - school
                     - block
-  /v1/entities/details/{_id}:
+  /v1/entities/details/{_id}?&language={code}:
     get:
       summary: Provide details of an entity based on the entity id. This API returns the details of a single entity at a time.
       tags:
@@ -2061,7 +2069,7 @@ paths:
                       - location: params
                         param: _id
                         msg: required state location id
-  /v1/entities/subEntityList/{_id}?type={entity_type}&search=&page={page_no}&limit={page_limit}:
+  /v1/entities/subEntityList/{_id}?type={entity_type}&search=&page={page_no}&limit={page_limit}&language={code}:
     get:
       summary: Will provide the sub entity based on types
       tags:
@@ -2272,7 +2280,7 @@ paths:
                     - 66738b75c05aa58f89ba1300
                   fields:
                     - entityType
-  /v1/entities/entityListBasedOnEntityType?entityType={entity_Type}:
+  /v1/entities/entityListBasedOnEntityType?entityType={entity_Type}&language={code}:
     get:
       summary: List all the entities based on entity type.
       tags: *ref_5

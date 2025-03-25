@@ -344,6 +344,11 @@
 									"src": "/home/user3/Downloads/Input sheet - Punjab Entities_Production_Main - State.csv"
 								},
 								{
+									"key": "translationFile",
+									"type": "file",
+									"src": "/home/user3/Music/EntitytranslationFile.json"
+								},
+								{
 									"key": "entityType",
 									"type": "file",
 									"src": [],
@@ -393,6 +398,11 @@
 									"key": "entities",
 									"type": "file",
 									"src": "/home/user3/Music/Entity-Upload_2024_04_08_14_59.csv"
+								},
+								{
+									"key": "translationFile",
+									"type": "file",
+									"src": "/home/user3/Music/EntitytranslationFile.json"
 								}
 							]
 						},
@@ -621,7 +631,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity-management/v1/entities/details/663339bc0cb19f01c459853b",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/details/663339bc0cb19f01c459853b?&language=en",
 							"host": ["{{baseUrl}}"],
 							"path": ["entity", "v1", "entities", "details", "663339bc0cb19f01c459853b"]
 						}
@@ -754,7 +764,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity-management/v1/entities/subEntityList/663354e56109810671aec49f?type=school&search=&page=1&limit=100",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/subEntityList/663354e56109810671aec49f?type=school&search=&page=1&limit=100&language=en",
 							"host": ["{{baseUrl}}"],
 							"path": ["entity", "v1", "entities", "subEntityList", "663354e56109810671aec49f"],
 							"query": [
@@ -842,7 +852,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity-management/v1/entities/entityListBasedOnEntityType?entityType=state",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/entityListBasedOnEntityType?entityType=state&language=en",
 							"host": ["{{baseUrl}}"],
 							"path": ["entity", "v1", "entities", "entityListBasedOnEntityType"],
 							"query": [
