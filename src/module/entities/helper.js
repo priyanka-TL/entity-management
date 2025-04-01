@@ -314,10 +314,11 @@ module.exports = class UserProjectsHelper {
 	 * @name targetedRoles
 	 * @param {params} pageSize - page pageSize.
 	 * @param {params} pageNo - page no.
+	 * @param {params} language - language code.
 	 * @param {String} type - Entity type
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 */
-	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate, type = '') {
+	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate, type = '', language) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Construct the filter to retrieve entities based on provided entity IDs
@@ -386,8 +387,14 @@ module.exports = class UserProjectsHelper {
 					},
 					status: CONSTANTS.common.ACTIVE_STATUS,
 				}
+
+				let userRoleExtensionProjection
+				if (!language || language == 'en') {
+					userRoleExtensionProjection = ['_id', 'title', 'code', 'userRoleId']
+				} else {
+					userRoleExtensionProjection = ['_id', 'title', 'code', 'userRoleId', `translations.${language}`]
+				}
 				// Specify the fields to include in the result set
-				const userRoleExtensionProjection = ['_id', 'title', 'code', 'userRoleId']
 
 				// Fetch the user roles based on the filter and projection
 				const fetchUserRoles = await userRoleExtensionHelper.find(
@@ -397,6 +404,19 @@ module.exports = class UserProjectsHelper {
 					pageSize * (pageNo - 1),
 					paginate
 				)
+
+				fetchUserRoles.result = fetchUserRoles.result.map((role) => {
+					if (
+						language &&
+						role.translations &&
+						role.translations[language] &&
+						role.translations[language].title
+					) {
+						role.title = role.translations[language].title
+					}
+					delete role.translations // Remove the translations key if it exists
+					return role
+				})
 
 				// Check if the fetchUserRoles operation was successful and returned data
 				if (!fetchUserRoles.success || !fetchUserRoles.result || fetchUserRoles.result.length < 0) {

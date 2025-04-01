@@ -870,7 +870,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/targetedRoles/5f33c3d85f637784791cd831?entityType=district",
+							"raw": "{{baseUrl}}/entity/v1/entities/targetedRoles/5f33c3d85f637784791cd831?entityType=district&language=hi",
 							"host": ["{{baseUrl}}"],
 							"path": ["entity", "v1", "entities", "targetedRoles", "5f33c3d85f637784791cd831"]
 						}
@@ -902,7 +902,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userRoleId\": \"13\",\n    \"title\": \"State Level Campaign Coordinator\",\n    \"userType\": 1,\n    \"entityTypes\": [\n        {\n            \"entityType\": \"district\",\n            \"entityTypeId\": \"5f32d8228e0dc83104056e\"\n        }\n    ],\n    \"code\":\"state_level_campaign_coordinator\"\n}",
+							"raw": "{\n    \"userRoleId\": \"13\",\n    \"title\": \"State Level Campaign Coordinator\",\n    \"userType\": 1,\n    \"entityTypes\": [\n        {\n            \"entityType\": \"district\",\n            \"entityTypeId\": \"5f32d8228e0dc83104056e\"\n        }\n    ],\n    \"code\": \"state_level_campaign_coordinator\",\n    \"translations\": {\n        \"hi\": {\n            \"title\": \"हेड मास्टर\"\n        },\n        \"kn\": {\n            \"title\": \"ಹೆಡ್ ಮಾಸ್ಟರ್\"\n        },\n        \"te\": {\n            \"title\": \"హెడ్ ​​మాస్టర్\"\n        },\n        \"bn\": {\n            \"title\": \"হেড মাস্টার\"\n        },\n        \"gu\": {\n            \"title\": \"હેડ માસ્તર\"\n        },\n        \"ta\": {\n            \"title\": \"தலைமை ஆசிரியர்\"\n        },\n        \"pa\": {\n            \"title\": \"ਹੈੱਡ ਮਾਸਟਰ\"\n        },\n        \"ml\": {\n            \"title\": \"ഹെഡ് മാസ്റ്റർ\"\n        },\n        \"mr\": {\n            \"title\": \"मुख्याध्यापक\"\n        },\n        \"ur\": {\n            \"title\": \"ہیڈ ماسٹر\"\n        },\n        \"or\": {\n            \"title\": \"ହେଡ୍ ମାଷ୍ଟର |\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"

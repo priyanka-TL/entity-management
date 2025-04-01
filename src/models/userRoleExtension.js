@@ -26,6 +26,7 @@ module.exports = {
 				entityTypeId: { type: String, index: true },
 			},
 		],
+		translations: Object,
 		createdBy: {
 			type: String,
 			default: 'SYSTEM',
