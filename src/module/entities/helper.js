@@ -389,7 +389,7 @@ module.exports = class UserProjectsHelper {
 				}
 
 				let userRoleExtensionProjection
-				if (!language || language == 'en') {
+				if (!language || language == CONSTANTS.common.ENGLISH_LANGUGE_CODE) {
 					userRoleExtensionProjection = ['_id', 'title', 'code', 'userRoleId']
 				} else {
 					userRoleExtensionProjection = ['_id', 'title', 'code', 'userRoleId', `translations.${language}`]
@@ -631,7 +631,7 @@ module.exports = class UserProjectsHelper {
 				let finalEntityDocuments = []
 				// Perform aggregation query to retrieve entity documents based on search criteria
 
-				if (!language || language == 'en') {
+				if (!language || language == CONSTANTS.common.ENGLISH_LANGUGE_CODE) {
 					let entityDocuments = await entitiesQueries.getAggregate([
 						queryObject,
 						{
@@ -1155,7 +1155,7 @@ module.exports = class UserProjectsHelper {
 
 				let result = []
 
-				if (!language || language == 'en') {
+				if (!language || language == CONSTANTS.common.ENGLISH_LANGUGE_CODE) {
 					// No language specified – return metaInformation.name
 					const listResult = fetchList.map((entity) => ({
 						_id: entity._id,
