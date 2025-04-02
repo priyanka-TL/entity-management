@@ -2485,15 +2485,16 @@ paths:
         content:
           application/json:
             schema:
-              $schema: http://json-schema.org/draft-04/schema#
               type: object
               properties:
-                userRoleId:
-                  type: string
                 title:
                   type: string
-                userType:
-                  type: number
+                value:
+                  type: string
+                userRoleId:
+                  type: string
+                code:
+                  type: string
                 entityTypes:
                   type: array
                   items:
@@ -2503,18 +2504,97 @@ paths:
                         type: string
                       entityTypeId:
                         type: string
-                code:
-                  type: string
+                translations:
+                  type: object
+                  properties:
+                    hi:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                    kn:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                    te:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                    bn:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                    gu:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                    ta:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                    pa:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                    ml:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                    mr:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                    ur:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                    or:
+                      type: object
+                      properties:
+                        title:
+                          type: string
             examples:
               sampleBodyData:
                 value:
-                  userRoleId: '13'
-                  title: State Level Campaign Coordinator
-                  userType: 1
+                  title: ' Head Master'
+                  value: '19'
+                  userRoleId: '777'
+                  code: HH
                   entityTypes:
-                    - entityType: district
-                      entityTypeId: 5f32d8228e0dc83104056e
-                  code: state_level_campaign_coordinator
+                    - entityType: 'state '
+                      entityTypeId: 6764e632073da91041b79aa7
+                  translations:
+                    hi:
+                      title: हेड मास्टर
+                    kn:
+                      title: ಹೆಡ್ ಮಾಸ್ಟರ್
+                    te:
+                      title: హెడ్ ​​మాస్టర్
+                    bn:
+                      title: হেড মাস্টার
+                    gu:
+                      title: હેડ માસ્તર
+                    ta:
+                      title: தலைமை ஆசிரியர்
+                    pa:
+                      title: ਹੈੱਡ ਮਾਸਟਰ
+                    ml:
+                      title: ഹെഡ് മാസ്റ്റർ
+                    mr:
+                      title: मुख्याध्यापक
+                    ur:
+                      title: ہیڈ ماسٹر
+                    or:
+                      title: ହେଡ୍ ମାଷ୍ଟର |
       responses:
         '200':
           description: Accepted
@@ -2522,7 +2602,6 @@ paths:
           content:
             application/json:
               schema:
-                $schema: http://json-schema.org/draft-04/schema#
                 type: object
                 properties:
                   message:
@@ -2542,12 +2621,12 @@ paths:
                         type: string
                       deleted:
                         type: boolean
-                      userRoleId:
-                        type: number
                       title:
                         type: string
-                      userType:
-                        type: number
+                      userRoleId:
+                        type: string
+                      code:
+                        type: string
                       entityTypes:
                         type: array
                         items:
@@ -2559,6 +2638,64 @@ paths:
                               type: string
                             entityTypeId:
                               type: string
+                      translations:
+                        type: object
+                        properties:
+                          hi:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                          kn:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                          te:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                          bn:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                          gu:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                          ta:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                          pa:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                          ml:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                          mr:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                          ur:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                          or:
+                            type: object
+                            properties:
+                              title:
+                                type: string
                       updatedAt:
                         type: string
                       createdAt:
@@ -2574,17 +2711,40 @@ paths:
                       status: ACTIVE
                       createdBy: SYSTEM
                       updatedBy: SYSTEM
-                      _id: 66a9da8ab0f18a5b3f1c824f
+                      _id: 67eb799b3d39f73ad12ce35c
                       deleted: false
-                      userRoleId: 13
-                      title: DC
-                      userType: 1
+                      title: Head Master
+                      userRoleId: '777'
+                      code: HH
                       entityTypes:
-                        - _id: 66a9da8ab0f18a5b3f1c8250
-                          entityType: district
-                          entityTypeId: 5f32d8228e0dc8310056e
-                      updatedAt: '2024-07-31T06:32:42.097Z'
-                      createdAt: '2024-07-31T06:32:42.097Z'
+                        - _id: 67eb799b3d39f73ad12ce35d
+                          entityType: 'state '
+                          entityTypeId: 6764e632073da91041b79aa7
+                      translations:
+                        hi:
+                          title: हेड मास्टर
+                        kn:
+                          title: ಹೆಡ್ ಮಾಸ್ಟರ್
+                        te:
+                          title: హెడ్ ​​మాస్టర్
+                        bn:
+                          title: হেড মাস্টার
+                        gu:
+                          title: હેડ માસ્તર
+                        ta:
+                          title: தலைமை ஆசிரியர்
+                        pa:
+                          title: ਹੈੱਡ ਮਾਸਟਰ
+                        ml:
+                          title: ഹെഡ് മാസ്റ്റർ
+                        mr:
+                          title: मुख्याध्यापक
+                        ur:
+                          title: ہیڈ ماسٹر
+                        or:
+                          title: ହେଡ୍ ମାଷ୍ଟର |
+                      updatedAt: '2025-04-01T05:28:59.386Z'
+                      createdAt: '2025-04-01T05:28:59.386Z'
                       __v: 0
         '400':
           description: Bad Request.
@@ -2633,8 +2793,8 @@ paths:
     post:
       summary: To update a single user role extension data
       description: >-
-        You can use this API to update user role extension data by passing id in the path param.
-        `/v1/userRoleExtension/update/{_id}`
+        You can use this API to update user role extension data by passing id in
+        the path param. `/v1/userRoleExtension/update/{_id}`
 
 
         * It is mandatory to provide values for parameters marked with
@@ -2663,7 +2823,7 @@ paths:
             examples:
               sampleBodyData:
                 value:
-                  title: DM
+                  title: Head Master
       responses:
         '200':
           description: Accepted
@@ -2724,16 +2884,39 @@ paths:
                       createdBy: SYSTEM
                       updatedBy: SYSTEM
                       deleted: false
-                      _id: 66a9da8ab0f18a5b3f1c824f
-                      userRoleId: 13
-                      title: DM
-                      userType: 1
+                      _id: 67eb799b3d39f73ad12ce35c
+                      title: ' Head Master'
+                      userRoleId: '777'
+                      code: HH
                       entityTypes:
-                        - _id: 66a9da8ab0f18a5b3f1c8250
-                          entityType: district
-                          entityTypeId: 5f32d8228e0dc8310056e
-                      updatedAt: '2024-07-31T06:40:45.726Z'
-                      createdAt: '2024-07-31T06:32:42.097Z'
+                        - _id: 67ebb6ec7fd62862ae9fb520
+                          entityType: 'state '
+                          entityTypeId: 6764e632073da91041b79aa7
+                      translations:
+                        hi:
+                          title: मास्टर
+                        kn:
+                          title: ಹೆಡ್ ಮಾಸ್ಟರ್
+                        te:
+                          title: హెడ్ ​​మాస్టర్
+                        bn:
+                          title: হেড মাস্টার
+                        gu:
+                          title: હેડ માસ્તર
+                        ta:
+                          title: தலைமை ஆசிரியர்
+                        pa:
+                          title: ਹੈੱਡ ਮਾਸਟਰ
+                        ml:
+                          title: ഹെഡ് മാസ്റ്റർ
+                        mr:
+                          title: मुख्याध्यापक
+                        ur:
+                          title: ہیڈ ماسٹر
+                        or:
+                          title: ହେଡ୍ ମାଷ୍ଟର |
+                      updatedAt: '2025-04-01T09:50:36.693Z'
+                      createdAt: '2025-04-01T05:28:59.386Z'
                       __v: 0
         '400':
           description: Bad Request.

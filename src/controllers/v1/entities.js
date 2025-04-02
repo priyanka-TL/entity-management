@@ -342,6 +342,7 @@ module.exports = class Entities extends Abstract {
 	 * @param {Object} req - The request object containing parameters and user details.
 	 * @param {Object} req.params - The request parameters.
 	 * @param {string} req.params._id - The entity ID to filter roles.
+	 * @query {string} language - language code.
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 * * @returns {JSON} - Message of successfully response.
      * 
@@ -386,7 +387,8 @@ module.exports = class Entities extends Abstract {
 					req.pageNo,
 					req.pageSize,
 					req?.query?.paginate?.toLowerCase() == 'true' ? true : false,
-					req.query.entityType ? req.query.entityType : ''
+					req.query.entityType ? req.query.entityType : '',
+					req.query.language ? req.query.language : ''
 				)
 				// Resolves the promise with the retrieved entity data
 				return resolve(userRoleDetails)

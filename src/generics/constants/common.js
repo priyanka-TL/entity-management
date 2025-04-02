@@ -35,4 +35,5 @@ module.exports = {
 		NATIVE: 'native',
 		KEYCLOAK_PUBLIC_KEY: 'keycloak_public_key',
 	},
+	ENGLISH_LANGUGE_CODE: 'en',
 }
