@@ -2341,7 +2341,7 @@ paths:
                       - location: query
                         param: entityType
                         msg: required entityType
-  /v1/entities/targetedRoles?{entity_id}:
+  /v1/entities/targetedRoles?{entity_id}&language={code}:
     get:
       summary: Fetch Targeted Roles
       tags: *ref_5

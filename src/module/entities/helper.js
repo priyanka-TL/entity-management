@@ -405,18 +405,17 @@ module.exports = class UserProjectsHelper {
 					paginate
 				)
 
-				fetchUserRoles.result = fetchUserRoles.result.map((role) => {
-					if (
-						language &&
-						role.translations &&
-						role.translations[language] &&
-						role.translations[language].title
-					) {
-						role.title = role.translations[language].title
-					}
-					delete role.translations // Remove the translations key if it exists
-					return role
-				})
+				if (language && language !== CONSTANTS.common.ENGLISH_LANGUGE_CODE) {
+					fetchUserRoles.result = fetchUserRoles.result
+						.filter((role) => role.translations && Object.keys(role.translations).length > 0) // keep only roles with non-empty translations
+						.map((role) => {
+							if (language && role.translations[language] && role.translations[language].title) {
+								role.title = role.translations[language].title
+							}
+							delete role.translations
+							return role
+						})
+				}
 
 				// Check if the fetchUserRoles operation was successful and returned data
 				if (!fetchUserRoles.success || !fetchUserRoles.result || fetchUserRoles.result.length < 0) {
