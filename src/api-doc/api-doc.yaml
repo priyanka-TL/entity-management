@@ -2341,7 +2341,7 @@ paths:
                       - location: query
                         param: entityType
                         msg: required entityType
-  /v1/entities/targetedRoles?{entity_id}&language={code}:
+  /v1/entities/targetedRoles?{entity_id}:
     get:
       summary: Fetch Targeted Roles
       tags: *ref_5
@@ -2512,64 +2512,6 @@ paths:
                         type: string
                       entityTypeId:
                         type: string
-                translations:
-                  type: object
-                  properties:
-                    hi:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                    kn:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                    te:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                    bn:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                    gu:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                    ta:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                    pa:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                    ml:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                    mr:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                    ur:
-                      type: object
-                      properties:
-                        title:
-                          type: string
-                    or:
-                      type: object
-                      properties:
-                        title:
-                          type: string
             examples:
               sampleBodyData:
                 value:
@@ -2580,29 +2522,6 @@ paths:
                   entityTypes:
                     - entityType: 'state '
                       entityTypeId: 6764e632073da91041b79aa7
-                  translations:
-                    hi:
-                      title: हेड मास्टर
-                    kn:
-                      title: ಹೆಡ್ ಮಾಸ್ಟರ್
-                    te:
-                      title: హెడ్ ​​మాస్టర్
-                    bn:
-                      title: হেড মাস্টার
-                    gu:
-                      title: હેડ માસ્તર
-                    ta:
-                      title: தலைமை ஆசிரியர்
-                    pa:
-                      title: ਹੈੱਡ ਮਾਸਟਰ
-                    ml:
-                      title: ഹെഡ് മാസ്റ്റർ
-                    mr:
-                      title: मुख्याध्यापक
-                    ur:
-                      title: ہیڈ ماسٹر
-                    or:
-                      title: ହେଡ୍ ମାଷ୍ଟର |
       responses:
         '200':
           description: Accepted
@@ -2646,64 +2565,6 @@ paths:
                               type: string
                             entityTypeId:
                               type: string
-                      translations:
-                        type: object
-                        properties:
-                          hi:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                          kn:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                          te:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                          bn:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                          gu:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                          ta:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                          pa:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                          ml:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                          mr:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                          ur:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                          or:
-                            type: object
-                            properties:
-                              title:
-                                type: string
                       updatedAt:
                         type: string
                       createdAt:
@@ -2728,29 +2589,6 @@ paths:
                         - _id: 67eb799b3d39f73ad12ce35d
                           entityType: 'state '
                           entityTypeId: 6764e632073da91041b79aa7
-                      translations:
-                        hi:
-                          title: हेड मास्टर
-                        kn:
-                          title: ಹೆಡ್ ಮಾಸ್ಟರ್
-                        te:
-                          title: హెడ్ ​​మాస్టర్
-                        bn:
-                          title: হেড মাস্টার
-                        gu:
-                          title: હેડ માસ્તર
-                        ta:
-                          title: தலைமை ஆசிரியர்
-                        pa:
-                          title: ਹੈੱਡ ਮਾਸਟਰ
-                        ml:
-                          title: ഹെഡ് മാസ്റ്റർ
-                        mr:
-                          title: मुख्याध्यापक
-                        ur:
-                          title: ہیڈ ماسٹر
-                        or:
-                          title: ହେଡ୍ ମାଷ୍ଟର |
                       updatedAt: '2025-04-01T05:28:59.386Z'
                       createdAt: '2025-04-01T05:28:59.386Z'
                       __v: 0
@@ -2900,29 +2738,6 @@ paths:
                         - _id: 67ebb6ec7fd62862ae9fb520
                           entityType: 'state '
                           entityTypeId: 6764e632073da91041b79aa7
-                      translations:
-                        hi:
-                          title: मास्टर
-                        kn:
-                          title: ಹೆಡ್ ಮಾಸ್ಟರ್
-                        te:
-                          title: హెడ్ ​​మాస్టర్
-                        bn:
-                          title: হেড মাস্টার
-                        gu:
-                          title: હેડ માસ્તર
-                        ta:
-                          title: தலைமை ஆசிரியர்
-                        pa:
-                          title: ਹੈੱਡ ਮਾਸਟਰ
-                        ml:
-                          title: ഹെഡ് മാസ്റ്റർ
-                        mr:
-                          title: मुख्याध्यापक
-                        ur:
-                          title: ہیڈ ماسٹر
-                        or:
-                          title: ହେଡ୍ ମାଷ୍ଟର |
                       updatedAt: '2025-04-01T09:50:36.693Z'
                       createdAt: '2025-04-01T05:28:59.386Z'
                       __v: 0
