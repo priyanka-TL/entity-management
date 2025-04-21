@@ -79,24 +79,6 @@ module.exports = class userRoleExtensionHelper {
 						})
 					)
 				}
-				if (bodyData.translations) {
-					let userDocuments = await userRoleExtensionQueries.userDocuments(
-						{ _id: ObjectId(userRoleId) },
-						'all'
-					)
-
-					if (userDocuments && userDocuments.userRoleExtension.length > 0) {
-						// console.log(userDocuments.userRoleExtension.translations,"line no nnn");
-
-						const existingTranslations = userDocuments.userRoleExtension[0].translations || {}
-
-						// Merge translations: Update only provided languages, keep the rest
-						bodyData.translations = {
-							...existingTranslations,
-							...bodyData.translations,
-						}
-					}
-				}
 
 				// Find and update the user role extension based on the provided userRoleId and bodyData
 				let userInformation = await userRoleExtensionQueries.findOneAndUpdate(

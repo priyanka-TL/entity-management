@@ -314,11 +314,10 @@ module.exports = class UserProjectsHelper {
 	 * @name targetedRoles
 	 * @param {params} pageSize - page pageSize.
 	 * @param {params} pageNo - page no.
-	 * @param {params} language - language code.
 	 * @param {String} type - Entity type
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 */
-	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate, type = '', language) {
+	static targetedRoles(entityId, pageNo = '', pageSize = '', paginate, type = '') {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Construct the filter to retrieve entities based on provided entity IDs
@@ -388,13 +387,8 @@ module.exports = class UserProjectsHelper {
 					status: CONSTANTS.common.ACTIVE_STATUS,
 				}
 
-				let userRoleExtensionProjection
-				if (!language || language == CONSTANTS.common.ENGLISH_LANGUGE_CODE) {
-					userRoleExtensionProjection = ['_id', 'title', 'code', 'userRoleId']
-				} else {
-					userRoleExtensionProjection = ['_id', 'title', 'code', 'userRoleId', `translations.${language}`]
-				}
 				// Specify the fields to include in the result set
+				const userRoleExtensionProjection = ['_id', 'title', 'code', 'userRoleId']
 
 				// Fetch the user roles based on the filter and projection
 				const fetchUserRoles = await userRoleExtensionHelper.find(
@@ -404,18 +398,6 @@ module.exports = class UserProjectsHelper {
 					pageSize * (pageNo - 1),
 					paginate
 				)
-
-				if (language && language !== CONSTANTS.common.ENGLISH_LANGUGE_CODE) {
-					fetchUserRoles.result = fetchUserRoles.result
-						.filter((role) => role.translations && Object.keys(role.translations).length > 0) // keep only roles with non-empty translations
-						.map((role) => {
-							if (language && role.translations[language] && role.translations[language].title) {
-								role.title = role.translations[language].title
-							}
-							delete role.translations
-							return role
-						})
-				}
 
 				// Check if the fetchUserRoles operation was successful and returned data
 				if (!fetchUserRoles.success || !fetchUserRoles.result || fetchUserRoles.result.length < 0) {
