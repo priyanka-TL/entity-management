@@ -22,6 +22,7 @@ module.exports = {
 		},
 		entityTypes: [
 			{
+				_id: false,
 				entityType: { type: String },
 				entityTypeId: { type: String, index: true },
 			},
@@ -37,6 +38,12 @@ module.exports = {
 		code: {
 			type: String,
 			index: true,
+		},
+		tenantId: {
+			type: String,
+		},
+		orgId: {
+			type: Array,
 		},
 	},
 }

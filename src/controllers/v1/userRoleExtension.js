@@ -76,7 +76,7 @@ module.exports = class userRoleExtension extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call the helper function to create a new user role extension document
-				let result = await userRoleExtensionHelper.create(req.body, req.userDetails)
+				let result = await userRoleExtensionHelper.create(req.body)
 
 				// Resolve the promise with the result of the creation operation
 				return resolve(result)

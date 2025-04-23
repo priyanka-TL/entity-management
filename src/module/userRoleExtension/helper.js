@@ -5,7 +5,7 @@
  * Description : user role helper functionality.
  */
 
-const { result } = require('lodash')
+const { result, includes } = require('lodash')
 
 // Dependencies
 const userRoleExtensionQueries = require(DB_QUERY_BASE_PATH + '/userRoleExtension')

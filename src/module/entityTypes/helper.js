@@ -32,6 +32,29 @@ module.exports = class UserProjectsHelper {
 					entityTypesCSVData.map(async (entityType) => {
 						try {
 							entityType = UTILS.valueParser(entityType)
+							if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
+								if (!entityType.tenantId || !(entityType.tenantId.length > 0)) {
+									entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
+								}
+								if (
+									!entityType.orgId ||
+									entityType.orgId.length == 0 ||
+									entityType.orgId.includes('')
+								) {
+									entityType['orgId'] = userDetails.tenantAndOrgInfo.orgId
+								}
+							} else {
+								if (!entityType.tenantId || !(entityType.tenantId.length > 0)) {
+									entityType['tenantId'] = userDetails.userInformation.tenantId
+								}
+								if (
+									!entityType.orgId ||
+									entityType.orgId.length == 0 ||
+									entityType.orgId.includes('')
+								) {
+									entityType['orgId'] = [userDetails.userInformation.organizationId]
+								}
+							}
 							entityType.registryDetails = {}
 							let removedKeys = []
 
@@ -83,8 +106,8 @@ module.exports = class UserProjectsHelper {
 
 							// Set userId based on userDetails
 							const userId =
-								userDetails && userDetails.userInformation.id
-									? userDetails && userDetails.userInformation.id
+								userDetails && userDetails.userInformation.userId
+									? userDetails && userDetails.userInformation.userId
 									: CONSTANTS.common.SYSTEM
 
 							if (!entityType.name) {
@@ -131,7 +154,7 @@ module.exports = class UserProjectsHelper {
 	 * create single entity.
 	 * @method
 	 * @name create
-	 * @param {Object} data - requested entity data.
+	 * @param {Object} body - requested entity data.
 	 * @param {Object} userDetails - Logged in user information.
 	 * @returns {JSON} - create single entity.
 	 */
@@ -139,6 +162,13 @@ module.exports = class UserProjectsHelper {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let entityType = body
+				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
+					entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
+					entityType['orgId'] = userDetails.tenantAndOrgInfo.orgId
+				} else {
+					entityType['tenantId'] = userDetails.userInformation.tenantId
+					entityType['orgId'] = [userDetails.userInformation.organizationId]
+				}
 
 				if (entityType.profileFields) {
 					entityType.profileFields = entityType.profileFields.split(',') || []
@@ -170,9 +200,10 @@ module.exports = class UserProjectsHelper {
 
 				// Determine userId based on userDetails or default to SYSTEM
 				const userId =
-					userDetails && userDetails.userInformation.id
-						? userDetails.userInformation.id
+					userDetails && userDetails.userInformation.userId
+						? userDetails.userInformation.userId
 						: CONSTANTS.common.SYSTEM
+
 				let newEntityType = await entityTypeQueries.create(
 					_.merge(
 						{
@@ -187,6 +218,7 @@ module.exports = class UserProjectsHelper {
 
 				if (newEntityType._id) {
 					entityType.status = CONSTANTS.common.SUCCESS
+					entityType._id = newEntityType._id
 				} else {
 					entityType.status = CONSTANTS.common.FAILURE
 				}
@@ -209,12 +241,23 @@ module.exports = class UserProjectsHelper {
 	 *
 	 */
 
-	static update(entityTypeId, bodyData) {
+	static update(entityTypeId, bodyData, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// avoid adding manupulative data
+				delete bodyData.tenantId
+				delete bodyData.orgId
+
+				let tenantId
+				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
+					tenantId = userDetails.tenantAndOrgInfo.tenantId
+				} else {
+					tenantId = userDetails.userInformation.tenantId
+				}
+
 				// Find and update the entity type by ID with the provided bodyData
 				let entityInformation = await entityTypeQueries.findOneAndUpdate(
-					{ _id: ObjectId(entityTypeId) },
+					{ _id: ObjectId(entityTypeId), tenantId: tenantId },
 					bodyData,
 					{ new: true }
 				)
@@ -353,22 +396,16 @@ module.exports = class UserProjectsHelper {
 	 * List enitity Type.
 	 * @method
 	 * @name list
-	 * @param {String} entityType - entity type.
-	 * @param {String} entityId - requested entity id.
-	 * @param {String} [queryParameter = ""] - queryParameter value if required.
+	 * @param {Object} [query = {}] - query value if required.
+	 * @param {Object} [projection = {}] - mongodb query project object
 	 * @returns {JSON} - Details of entity.
 	 */
 
-	static list(queryParameter = 'all', projection = {}) {
+	static list(query = {}, projection = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				// Convert 'all' to an empty object for querying all entity types
-				if (queryParameter === 'all') {
-					queryParameter = {}
-				}
-
-				// Retrieve entity type data based on the provided queryParameter and projection
-				let entityTypeData = await entityTypeQueries.entityTypesDocument(queryParameter, projection)
+				// Retrieve entity type data based on the provided query and projection
+				let entityTypeData = await entityTypeQueries.entityTypesDocument(query, projection)
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_TYPES_FETCHED,
 					result: entityTypeData,

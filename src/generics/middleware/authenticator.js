@@ -46,6 +46,11 @@ module.exports = async function (req, res, next, token = '') {
 
 	let internalAccessApiPaths = CONSTANTS.common.INTERNAL_ACCESS_URLS
 	let performInternalAccessTokenCheck = false
+	let adminHeader = false
+	if (process.env.ADMIN_ACCESS_TOKEN) {
+		adminHeader = req.headers[process.env.ADMIN_TOKEN_HEADER_NAME]
+	}
+
 	await Promise.all(
 		internalAccessApiPaths.map(async function (path) {
 			if (req.path.includes(path)) {
@@ -160,6 +165,28 @@ module.exports = async function (req, res, next, token = '') {
 			decodedToken = decodedToken || {}
 			decodedToken['data'] = data
 		}
+		if (adminHeader) {
+			if (adminHeader != process.env.ADMIN_ACCESS_TOKEN) {
+				return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
+			}
+			if (
+				!req.headers['tenantid'] ||
+				!req.headers['orgid'] ||
+				!req.headers['tenantid'].length ||
+				!req.headers['orgid'].length
+			) {
+				rspObj.errCode = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_CODE
+				rspObj.errMsg = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_MESSAGE
+				rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
+				return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
+			}
+			decodedToken.data['tenantAndOrgInfo'] = {}
+
+			decodedToken.data.tenantAndOrgInfo['tenantId'] = req.get('tenantid').toString()
+
+			decodedToken.data.tenantAndOrgInfo['orgId'] = req.get('orgid').split(',')
+			decodedToken.data.roles.push({ title: CONSTANTS.common.ADMIN_ROLE })
+		}
 	} catch (err) {
 		rspObj.errCode = CONSTANTS.apiResponses.TOKEN_MISSING_CODE
 		rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_MISSING_MESSAGE
@@ -180,7 +207,12 @@ module.exports = async function (req, res, next, token = '') {
 			// email : decodedToken.data.email, //email is removed from token
 			firstName: decodedToken.data.name,
 			roles: decodedToken.data.roles.map((role) => role.title),
+			organizationId: decodedToken.data.organization_id ? decodedToken.data.organization_id.toString() : null,
+			tenantId: decodedToken.data.tenant_id.toString(),
 		},
+	}
+	if (decodedToken.data.tenantAndOrgInfo) {
+		req.userDetails.tenantAndOrgInfo = decodedToken.data.tenantAndOrgInfo
 	}
 	next()
 }

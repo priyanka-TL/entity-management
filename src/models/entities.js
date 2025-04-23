@@ -37,5 +37,17 @@ module.exports = {
 			type: String,
 			default: 'SYSTEM',
 		},
+		tenantId: {
+			type: String,
+		},
+		orgId: {
+			type: Array,
+		},
 	},
+	compoundIndex: [
+		{
+			name: { 'metaInformation.name': 1, 'metaInformation.externalId': 1, tenantId: 1, entityTypeId: 1 },
+			indexType: { unique: true },
+		},
+	],
 }

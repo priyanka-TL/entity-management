@@ -57,12 +57,31 @@ module.exports = class EntityTypes extends Abstract {
 	}
 	]
 */
-	async list() {
+	async list(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				// Call 'entityTypesHelper.list' to retrieve a list of entity types
-				// 'all' parameter retrieves all entity types, and { name: 1 } specifies projection to include only 'name' field
-				let result = await entityTypesHelper.list('all', { name: 1 })
+				let tenantId
+				let organizationId
+				let query = {}
+				let userRoles = req.userDetails.userInformation.roles ? req.userDetails.userInformation.roles : []
+
+				// create query to fetch assets as a SUPER_ADMIN
+				if (userRoles.includes(CONSTANTS.common.ADMIN_ROLE)) {
+					tenantId = req.userDetails.tenantAndOrgInfo.tenantId
+					query['orgId'] = { $in: req.userDetails.tenantAndOrgInfo.orgId }
+				}
+				// create query to fetch assets as a normal user
+				else {
+					tenantId = req.userDetails.userInformation.tenantId
+				}
+				query['tenantId'] = tenantId
+
+				// handle currentOrgOnly filter
+				if (req.query['currentOrgOnly'] && req.query['currentOrgOnly'] == 'true') {
+					organizationId = req.userDetails.userInformation.organizationId
+					query['orgId'] = { $in: [organizationId] }
+				}
+				let result = await entityTypesHelper.list(query, { name: 1 })
 
 				return resolve(result)
 			} catch (error) {
@@ -199,7 +218,7 @@ module.exports = class EntityTypes extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call 'entityTypesHelper.update' to update an existing entity type
-				let result = await entityTypesHelper.update(req.params._id, req.body, req.userDetails.userInformation)
+				let result = await entityTypesHelper.update(req.params._id, req.body, req.userDetails)
 
 				return resolve(result)
 			} catch (error) {

@@ -195,7 +195,8 @@ module.exports = class Entities extends Abstract {
 					req.pageNo,
 					req.pageSize,
 					req?.query?.paginate?.toLowerCase() == 'true' ? true : false,
-					req.query.language ? req.query.language : ''
+					req.query.language ? req.query.language : '',
+					req.userDetails
 				)
 				return resolve(entityData)
 			} catch (error) {
@@ -386,7 +387,9 @@ module.exports = class Entities extends Abstract {
 					req.pageNo,
 					req.pageSize,
 					req?.query?.paginate?.toLowerCase() == 'true' ? true : false,
-					req.query.entityType ? req.query.entityType : ''
+					req.query.entityType ? req.query.entityType : '',
+					req.query.language ? req.query.language : '',
+					req.userDetails.userInformation.tenantId
 				)
 				// Resolves the promise with the retrieved entity data
 				return resolve(userRoleDetails)
@@ -452,7 +455,8 @@ module.exports = class Entities extends Abstract {
 				let result = await entitiesHelper.details(
 					req.params._id ? req.params._id : '',
 					req.body ? req.body : {},
-					req.query.language ? req.query.language : ''
+					req.query.language ? req.query.language : '',
+					req.userDetails
 				)
 
 				return resolve(result)
@@ -509,7 +513,7 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call 'entitiesHelper.update' to perform the entity update operation
-				let result = await entitiesHelper.update(req.params._id, req.body)
+				let result = await entitiesHelper.update(req.params._id, req.body, req.userDetails)
 
 				return resolve(result)
 			} catch (error) {
@@ -620,7 +624,7 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call 'entitiesHelper.listByLocationIds' to retrieve entities based on location IDs
-				let entitiesData = await entitiesHelper.listByLocationIds(req.body.locationIds)
+				let entitiesData = await entitiesHelper.listByLocationIds(req.body.locationIds, req.userDetails)
 
 				entitiesData.result = entitiesData.data
 
@@ -676,7 +680,10 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call 'entitiesHelper.subEntityListBasedOnRoleAndLocation' to retrieve sub-entity list
-				const entityTypeMappingData = await entitiesHelper.subEntityListBasedOnRoleAndLocation(req.params._id)
+				const entityTypeMappingData = await entitiesHelper.subEntityListBasedOnRoleAndLocation(
+					req.params._id,
+					req.userDetails
+				)
 				return resolve(entityTypeMappingData)
 			} catch (error) {
 				return reject({
@@ -885,7 +892,11 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call 'entitiesHelper.listByEntityIds' to retrieve entities based on provided entity IDs and fields
-				const entities = await entitiesHelper.listByEntityIds(req.body.entities, req.body.fields)
+				const entities = await entitiesHelper.listByEntityIds(
+					req.body.entities,
+					req.body.fields,
+					req.userDetails
+				)
 				return resolve(entities)
 			} catch (error) {
 				return reject({

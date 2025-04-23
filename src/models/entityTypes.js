@@ -10,8 +10,6 @@ module.exports = {
 	schema: {
 		name: {
 			type: String,
-			index: true,
-			unique: true,
 		},
 		profileForm: Array,
 		profileFields: Array,
@@ -34,5 +32,17 @@ module.exports = {
 			type: String,
 			default: 'SYSTEM',
 		},
+		tenantId: {
+			type: String,
+		},
+		orgId: {
+			type: Array,
+		},
 	},
+	compoundIndex: [
+		{
+			name: { name: 1, tenantId: 1 },
+			indexType: { unique: true },
+		},
+	],
 }

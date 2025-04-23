@@ -36,4 +36,5 @@ module.exports = {
 		KEYCLOAK_PUBLIC_KEY: 'keycloak_public_key',
 	},
 	ENGLISH_LANGUGE_CODE: 'en',
+	ADMIN_ROLE: 'admin',
 }
