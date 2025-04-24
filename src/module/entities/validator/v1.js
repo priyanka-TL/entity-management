@@ -72,7 +72,7 @@ module.exports = (req) => {
 		},
 		details: function () {
 			req.checkParams('_id').exists().withMessage('required id')
-			req.checkParams('_id').exists().isMongoId().withMessage('Invalid Entity ID')
+			req.checkParams('_id').exists().withMessage('Invalid Entity ID')
 		},
 		list: function () {
 			req.checkQuery('type').exists().withMessage('required type')
