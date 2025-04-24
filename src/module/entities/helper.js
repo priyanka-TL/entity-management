@@ -1312,11 +1312,6 @@ module.exports = class UserProjectsHelper {
 				if (requestData && requestData.entityIds) {
 					entityIds.push(...requestData.entityIds)
 				}
-				// if (entityIds.length == 0 && !requestData.locationIds && !requestData.codes) {
-				// 	throw {
-				// 		message: CONSTANTS.apiResponses.ENTITY_ID_OR_LOCATION_ID_NOT_FOUND,
-				// 	}
-				// }
 
 				// If entityIds are provided, search for matching _id fields
 				if (entityIds.length > 0) {
@@ -1360,7 +1355,7 @@ module.exports = class UserProjectsHelper {
 				}
 
 				// Fetch entity documents based on constructed query
-				let entityDocument = await entitiesQueries.entityDocuments(query, 'all', 10)
+				let entityDocument = await entitiesQueries.entityDocuments(query, 'all')
 
 				// Initialize variables for parent entity details
 				let entityDocumentForParent
