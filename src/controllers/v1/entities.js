@@ -412,37 +412,77 @@ module.exports = class Entities extends Abstract {
 	 * @apiUse errorBody
 	 * @returns {JSON} - provide the details.
 	 * 
-	  "result": [
+	 {
+    "message": "ENTITY_INFORMATION_FETCHED",
+    "status": 200,
+    "result": [
         {
-            "_id": "67dcf90f97174bab15241faa",
+            "_id": "667bf60c3d7cec1dab341ee9",
             "childHierarchyPath": [
-                "block",
+                "district",
+                "beat",
                 "cluster",
-                "school"
+                "school",
+                "block",
+                "state"
             ],
+            "allowedRoles": [],
             "createdBy": "SYSTEM",
             "updatedBy": "SYSTEM",
             "deleted": false,
-            "entityTypeId": "66387374b87e1acce3fcd6a8",
-            "entityType": "state",
+            "entityTypeId": "6638c5bfb87e1acce3fcd6af",
+            "entityType": "school",
             "registryDetails": {
-                "code": "2902",
-                "locationId": "2902"
+                "locationId": "entitytj41d42f3",
+                "code": "entitytj41d42f3"
             },
             "metaInformation": {
-                "externalId": "2902",
-                "name": "बागलकोट"
+                "externalId": "entitytj41d42f3",
+                "name": "school"
             },
+            "updatedAt": "2024-06-26T11:05:48.397Z",
+            "createdAt": "2024-06-26T11:05:48.397Z",
+            "__v": 0,
             "groups": {
-                "state": [
-                    "67dcf90f97174bab15241fab"
+                "cluster": [
+                    "6682424ba845ef3e891daee1",
+                    "6682426ba845ef3e891daee4",
+                    "668242835fb8bc3e93ceae44",
+                    "6682429fa845ef3e891daee7"
+                ],
+                "block": [
+                    "668276d45fb8bc3e93ceaeaf",
+                    "6682771aa845ef3e891db070",
+                    "668273665fb8bc3e93ceae65",
+                    "668273bda845ef3e891daf15"
+                ],
+                "district": [
+                    "668240135fb8bc3e93ceae39",
+                    "66827345a845ef3e891daf0c",
+                    "66d57216a4699c239cec6b00"
                 ]
             },
-            "updatedAt": "2025-03-21T05:28:47.579Z",
-            "createdAt": "2025-03-21T05:28:47.579Z",
-            "__v": 0
+            "orgId": "1",
+            "tenantId": "1",
+            "parentInformation": {
+                "state": [
+                    {
+                        "_id": "665d8df5c6892808846230e7",
+                        "externalId": "hsjj",
+                        "name": "Karnataka"
+                    }
+                ],
+                "block": [
+                    {
+                        "_id": "66790a8cba9a0b5bd7d6aba0",
+                        "externalId": "jpl",
+                        "name": "state"
+                    }
+                ]
+            }
         }
     ]
+	}
 	*/
 
 	details(req) {
