@@ -1295,22 +1295,30 @@ module.exports = class UserProjectsHelper {
 				// // let entityIdNum = parseInt(entityId)
 				// let entityIdNum = entityId.replace(/"/, '');
 				let entityIds = []
+				let externalIds = []
+
 				let query = {}
 				query['$or'] = []
 
+				let queryToParent = {}
+				queryToParent['$or'] = []
+
 				// Prepare entityIds based on entityId and requestData
-				if (entityId) {
+				if (ObjectId.isValid(entityId)) {
 					entityIds.push(entityId)
+				} else {
+					externalIds.push(entityId)
 				}
 				if (requestData && requestData.entityIds) {
 					entityIds.push(...requestData.entityIds)
 				}
-				if (entityIds.length == 0 && !requestData.locationIds && !requestData.codes) {
-					throw {
-						message: CONSTANTS.apiResponses.ENTITY_ID_OR_LOCATION_ID_NOT_FOUND,
-					}
-				}
+				// if (entityIds.length == 0 && !requestData.locationIds && !requestData.codes) {
+				// 	throw {
+				// 		message: CONSTANTS.apiResponses.ENTITY_ID_OR_LOCATION_ID_NOT_FOUND,
+				// 	}
+				// }
 
+				// If entityIds are provided, search for matching _id fields
 				if (entityIds.length > 0) {
 					query['$or'].push({
 						_id: {
@@ -1318,6 +1326,22 @@ module.exports = class UserProjectsHelper {
 						},
 					})
 				}
+				// If no entityIds but externalIds are provided, search for matching externalId fields
+				else if (externalIds.length > 0) {
+					query['$or'].push({
+						'metaInformation.externalId': {
+							$in: externalIds,
+						},
+					})
+				}
+				// If neither entityIds nor externalIds are provided, throw an error
+				else {
+					throw {
+						message: CONSTANTS.apiResponses.NOT_VALID_ID_AND_EXTERNALID,
+					}
+				}
+
+				// If locationIds are provided in the request, add condition to match registryDetails.locationId
 				if (requestData && requestData.locationIds) {
 					query['$or'].push({
 						'registryDetails.locationId': {
@@ -1326,6 +1350,7 @@ module.exports = class UserProjectsHelper {
 					})
 				}
 
+				// If codes are provided in the request, add condition to match registryDetails.code
 				if (requestData && requestData.codes) {
 					query['$or'].push({
 						'registryDetails.code': {
@@ -1336,6 +1361,54 @@ module.exports = class UserProjectsHelper {
 
 				// Fetch entity documents based on constructed query
 				let entityDocument = await entitiesQueries.entityDocuments(query, 'all', 10)
+
+				// Initialize variables for parent entity details
+				let entityDocumentForParent
+				let parentInformation = {}
+				// Check if the first entity has _id and entityType to use for parent query
+				if (entityDocument[0]._id && entityDocument[0].entityType) {
+					const key = `groups.${entityDocument[0].entityType}`
+					const queryToParent = {
+						$or: [{ [key]: { $in: [entityDocument[0]._id] } }],
+					}
+
+					const projectionToParent = [
+						'_id',
+						'entityType',
+						'metaInformation.name',
+						'metaInformation.externalId',
+						'translations',
+					]
+
+					entityDocumentForParent = await entitiesQueries.entityDocuments(
+						queryToParent,
+						projectionToParent,
+						10
+					)
+
+					// Loop through each parent entity and structure their details into a categorized object
+					entityDocumentForParent.map((entity) => {
+						// Ensure required fields exist before processing
+						if (entity.entityType && entity.metaInformation?.externalId && entity.metaInformation?.name) {
+							if (!parentInformation[entity.entityType]) {
+								parentInformation[entity.entityType] = []
+							}
+							// Decide the name based on language translations, fallback to default name
+							let name
+							if (entity.translations && entity.translations[language]) {
+								name = entity.translations[language].name
+							} else {
+								name = entity.metaInformation.name
+							}
+							parentInformation[entity.entityType].push({
+								_id: entity._id,
+								externalId: entity.metaInformation.externalId,
+								name: name,
+							})
+						}
+					})
+				}
+
 				if (language) {
 					// Map through entityDocument to update metaInformation name based on language
 					entityDocument = entityDocument.map((document) => {
@@ -1355,6 +1428,13 @@ module.exports = class UserProjectsHelper {
 					})
 				}
 
+				// Push formatted parent entity info into the result object
+				entityDocument = entityDocument.map((document) => {
+					return {
+						...document,
+						parentInformation: parentInformation,
+					}
+				})
 				if (entityDocument && entityDocument.length == 0) {
 					return resolve({
 						status: HTTP_STATUS_CODE.bad_request.status,

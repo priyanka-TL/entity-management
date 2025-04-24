@@ -22,6 +22,7 @@ module.exports = {
 		'/userRoleExtension/create',
 		'/userRoleExtension/update',
 		'/entities/createMappingCsv',
+		'/admin/createIndex',
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',

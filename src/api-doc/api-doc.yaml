@@ -1002,7 +1002,7 @@ paths:
       tags:
         - entities-API's
       description: >-
-        You can use this API to get details based on entity id.
+        You can use this API to get details based on entity id or externalId.
 
         * The API to get details of an entities based on entity id:
         `/v1/entities/details`
@@ -1015,7 +1015,7 @@ paths:
         - in: path
           name: _id
           required: true
-          description: Please append a valid entity id to the Request URL.
+          description: Please append a valid entity id or externalId to the Request URL.
           schema:
             type: string
           example: 1
@@ -2797,7 +2797,7 @@ paths:
         - in: header
           name: internal-access-token
           description: ''
-          schema:
+          schema: &ref_15
             type: string
           required: true
       requestBody:
@@ -2943,6 +2943,117 @@ paths:
                       - location: params
                         param: _id
                         msg: required id
+  /v1/admin/createIndex/{collection_name}:
+    post:
+      summary: Find the user role extension data.
+      description: >-
+        This endpoint allows an admin to create an index for a
+        specificollection. The request body should include the keys to be
+        indexed.
+
+        * The endpoint allows a user to create an index for a specified
+
+        collection. The request body should include the keys to be indexed is
+        `/v1/admin/createIndex`.
+
+        * It is mandatory to provide values for parameters which are marked as
+
+        `required`
+
+        * This is a mandatory parameter and cannot be empty or null.
+      operationId: ''
+      tags:
+        - Admin-API's
+      parameters:
+        - in: header
+          name: X-auth-token
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          schema: *ref_11
+          required: true
+        - in: header
+          name: internal-access-token
+          description: You require an internal-access-token to use this API.
+          schema: *ref_15
+          required: true
+        - in: header
+          name: collection_name
+          description: >-
+            We need to pass valid collectionName to create an index for a
+            specified collection.
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keys:
+                  type: array
+                  items:
+                    type: string
+            examples:
+              sampleBodyData:
+                value:
+                  keys:
+                    - groups
+      responses:
+        '200':
+          description: Accepted
+          headers: *ref_12
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+              examples:
+                SuccessResponse:
+                  value:
+                    message: KEYS_INDEXED_SUCCESSFULL
+                    status: 200
+        '400':
+          description: Bad Request.
+          headers: *ref_13
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        location:
+                          type: string
+                        param:
+                          type: string
+                        msg:
+                          type: string
+                      required:
+                        - location
+                        - param
+                        - msg
+              examples:
+                FailureResponse:
+                  value:
+                    status: 400
+                    message:
+                      - location: params
+                        param: _id
+                        msg: required collection name
+                      - location: body
+                        param: keys
+                        msg: keys required
 tags:
   - name: userRoleExtension-API's
     description: ''
@@ -2955,6 +3066,11 @@ tags:
       description: ''
       url: ''
   - name: entities-API's
+    description: ''
+    externalDocs:
+      description: ''
+      url: ''
+  - name: Admin-API's
     description: ''
     externalDocs:
       description: ''
