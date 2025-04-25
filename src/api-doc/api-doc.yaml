@@ -692,10 +692,14 @@ paths:
             schema:
               type: object
               properties:
-                file:
+                entities:
                   type: string
                   format: binary
                   description: The CSV file to upload
+                translationFile:
+                  type: string
+                  format: binary
+                  description: The JSON file to upload
       responses:
         '200':
           description: Accepted
@@ -822,10 +826,14 @@ paths:
             schema:
               type: object
               properties:
-                file:
+                entities:
                   type: string
                   format: binary
                   description: The CSV file to upload
+                translationFile:
+                  type: string
+                  format: binary
+                  description: The JSON file to upload
         description: ''
   /v1/entities/add?type={entity_type}:
     post:
@@ -988,13 +996,13 @@ paths:
                     - cluster
                     - school
                     - block
-  /v1/entities/details/{_id}:
+  /v1/entities/details/{_id}?&language={code}:
     get:
       summary: Provide details of an entity based on the entity id. This API returns the details of a single entity at a time.
       tags:
         - entities-API's
       description: >-
-        You can use this API to get details based on entity id.
+        You can use this API to get details based on entity id or externalId.
 
         * The API to get details of an entities based on entity id:
         `/v1/entities/details`
@@ -1007,7 +1015,7 @@ paths:
         - in: path
           name: _id
           required: true
-          description: Please append a valid entity id to the Request URL.
+          description: Please append a valid entity id or externalId to the Request URL.
           schema:
             type: string
           example: 1
@@ -2061,7 +2069,7 @@ paths:
                       - location: params
                         param: _id
                         msg: required state location id
-  /v1/entities/subEntityList/{_id}?type={entity_type}&search=&page={page_no}&limit={page_limit}:
+  /v1/entities/subEntityList/{_id}?type={entity_type}&search=&page={page_no}&limit={page_limit}&language={code}:
     get:
       summary: Will provide the sub entity based on types
       tags:
@@ -2272,7 +2280,7 @@ paths:
                     - 66738b75c05aa58f89ba1300
                   fields:
                     - entityType
-  /v1/entities/entityListBasedOnEntityType?entityType={entity_Type}:
+  /v1/entities/entityListBasedOnEntityType?entityType={entity_Type}&language={code}:
     get:
       summary: List all the entities based on entity type.
       tags: *ref_5
@@ -2485,15 +2493,16 @@ paths:
         content:
           application/json:
             schema:
-              $schema: http://json-schema.org/draft-04/schema#
               type: object
               properties:
-                userRoleId:
-                  type: string
                 title:
                   type: string
-                userType:
-                  type: number
+                value:
+                  type: string
+                userRoleId:
+                  type: string
+                code:
+                  type: string
                 entityTypes:
                   type: array
                   items:
@@ -2503,18 +2512,16 @@ paths:
                         type: string
                       entityTypeId:
                         type: string
-                code:
-                  type: string
             examples:
               sampleBodyData:
                 value:
-                  userRoleId: '13'
-                  title: State Level Campaign Coordinator
-                  userType: 1
+                  title: ' Head Master'
+                  value: '19'
+                  userRoleId: '777'
+                  code: HH
                   entityTypes:
-                    - entityType: district
-                      entityTypeId: 5f32d8228e0dc83104056e
-                  code: state_level_campaign_coordinator
+                    - entityType: 'state '
+                      entityTypeId: 6764e632073da91041b79aa7
       responses:
         '200':
           description: Accepted
@@ -2522,7 +2529,6 @@ paths:
           content:
             application/json:
               schema:
-                $schema: http://json-schema.org/draft-04/schema#
                 type: object
                 properties:
                   message:
@@ -2542,12 +2548,12 @@ paths:
                         type: string
                       deleted:
                         type: boolean
-                      userRoleId:
-                        type: number
                       title:
                         type: string
-                      userType:
-                        type: number
+                      userRoleId:
+                        type: string
+                      code:
+                        type: string
                       entityTypes:
                         type: array
                         items:
@@ -2574,17 +2580,17 @@ paths:
                       status: ACTIVE
                       createdBy: SYSTEM
                       updatedBy: SYSTEM
-                      _id: 66a9da8ab0f18a5b3f1c824f
+                      _id: 67eb799b3d39f73ad12ce35c
                       deleted: false
-                      userRoleId: 13
-                      title: DC
-                      userType: 1
+                      title: Head Master
+                      userRoleId: '777'
+                      code: HH
                       entityTypes:
-                        - _id: 66a9da8ab0f18a5b3f1c8250
-                          entityType: district
-                          entityTypeId: 5f32d8228e0dc8310056e
-                      updatedAt: '2024-07-31T06:32:42.097Z'
-                      createdAt: '2024-07-31T06:32:42.097Z'
+                        - _id: 67eb799b3d39f73ad12ce35d
+                          entityType: 'state '
+                          entityTypeId: 6764e632073da91041b79aa7
+                      updatedAt: '2025-04-01T05:28:59.386Z'
+                      createdAt: '2025-04-01T05:28:59.386Z'
                       __v: 0
         '400':
           description: Bad Request.
@@ -2633,8 +2639,8 @@ paths:
     post:
       summary: To update a single user role extension data
       description: >-
-        You can use this API to update user role extension data by passing id in the path param.
-        `/v1/userRoleExtension/update/{_id}`
+        You can use this API to update user role extension data by passing id in
+        the path param. `/v1/userRoleExtension/update/{_id}`
 
 
         * It is mandatory to provide values for parameters marked with
@@ -2663,7 +2669,7 @@ paths:
             examples:
               sampleBodyData:
                 value:
-                  title: DM
+                  title: Head Master
       responses:
         '200':
           description: Accepted
@@ -2724,16 +2730,16 @@ paths:
                       createdBy: SYSTEM
                       updatedBy: SYSTEM
                       deleted: false
-                      _id: 66a9da8ab0f18a5b3f1c824f
-                      userRoleId: 13
-                      title: DM
-                      userType: 1
+                      _id: 67eb799b3d39f73ad12ce35c
+                      title: ' Head Master'
+                      userRoleId: '777'
+                      code: HH
                       entityTypes:
-                        - _id: 66a9da8ab0f18a5b3f1c8250
-                          entityType: district
-                          entityTypeId: 5f32d8228e0dc8310056e
-                      updatedAt: '2024-07-31T06:40:45.726Z'
-                      createdAt: '2024-07-31T06:32:42.097Z'
+                        - _id: 67ebb6ec7fd62862ae9fb520
+                          entityType: 'state '
+                          entityTypeId: 6764e632073da91041b79aa7
+                      updatedAt: '2025-04-01T09:50:36.693Z'
+                      createdAt: '2025-04-01T05:28:59.386Z'
                       __v: 0
         '400':
           description: Bad Request.
@@ -2791,7 +2797,7 @@ paths:
         - in: header
           name: internal-access-token
           description: ''
-          schema:
+          schema: &ref_15
             type: string
           required: true
       requestBody:
@@ -2937,6 +2943,117 @@ paths:
                       - location: params
                         param: _id
                         msg: required id
+  /v1/admin/createIndex/{collection_name}:
+    post:
+      summary: Find the user role extension data.
+      description: >-
+        This endpoint allows an admin to create an index for a
+        specificollection. The request body should include the keys to be
+        indexed.
+
+        * The endpoint allows a user to create an index for a specified
+
+        collection. The request body should include the keys to be indexed is
+        `/v1/admin/createIndex`.
+
+        * It is mandatory to provide values for parameters which are marked as
+
+        `required`
+
+        * This is a mandatory parameter and cannot be empty or null.
+      operationId: ''
+      tags:
+        - Admin-API's
+      parameters:
+        - in: header
+          name: X-auth-token
+          description: >-
+            You require an X-auth-token to use this API. This token is available
+            in the login API Response.
+          schema: *ref_11
+          required: true
+        - in: header
+          name: internal-access-token
+          description: You require an internal-access-token to use this API.
+          schema: *ref_15
+          required: true
+        - in: header
+          name: collection_name
+          description: >-
+            We need to pass valid collectionName to create an index for a
+            specified collection.
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keys:
+                  type: array
+                  items:
+                    type: string
+            examples:
+              sampleBodyData:
+                value:
+                  keys:
+                    - groups
+      responses:
+        '200':
+          description: Accepted
+          headers: *ref_12
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: number
+              examples:
+                SuccessResponse:
+                  value:
+                    message: KEYS_INDEXED_SUCCESSFULL
+                    status: 200
+        '400':
+          description: Bad Request.
+          headers: *ref_13
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        location:
+                          type: string
+                        param:
+                          type: string
+                        msg:
+                          type: string
+                      required:
+                        - location
+                        - param
+                        - msg
+              examples:
+                FailureResponse:
+                  value:
+                    status: 400
+                    message:
+                      - location: params
+                        param: _id
+                        msg: required collection name
+                      - location: body
+                        param: keys
+                        msg: keys required
 tags:
   - name: userRoleExtension-API's
     description: ''
@@ -2949,6 +3066,11 @@ tags:
       description: ''
       url: ''
   - name: entities-API's
+    description: ''
+    externalDocs:
+      description: ''
+      url: ''
+  - name: Admin-API's
     description: ''
     externalDocs:
       description: ''

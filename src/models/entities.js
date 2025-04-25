@@ -27,6 +27,7 @@ module.exports = {
 			locationId: { type: String, index: true },
 			code: { type: String, index: true },
 		},
+		translations: Object,
 		createdBy: {
 			type: String,
 			default: 'SYSTEM',
