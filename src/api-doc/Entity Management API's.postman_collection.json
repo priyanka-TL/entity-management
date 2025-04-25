@@ -344,6 +344,11 @@
 									"src": "/home/user3/Downloads/Input sheet - Punjab Entities_Production_Main - State.csv"
 								},
 								{
+									"key": "translationFile",
+									"type": "file",
+									"src": "/home/user3/Music/EntitytranslationFile.json"
+								},
+								{
 									"key": "entityType",
 									"type": "file",
 									"src": [],
@@ -393,6 +398,11 @@
 									"key": "entities",
 									"type": "file",
 									"src": "/home/user3/Music/Entity-Upload_2024_04_08_14_59.csv"
+								},
+								{
+									"key": "translationFile",
+									"type": "file",
+									"src": "/home/user3/Music/EntitytranslationFile.json"
 								}
 							]
 						},
@@ -621,7 +631,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity-management/v1/entities/details/663339bc0cb19f01c459853b",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/details/663339bc0cb19f01c459853b?&language=en",
 							"host": ["{{baseUrl}}"],
 							"path": ["entity", "v1", "entities", "details", "663339bc0cb19f01c459853b"]
 						}
@@ -754,7 +764,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity-management/v1/entities/subEntityList/663354e56109810671aec49f?type=school&search=&page=1&limit=100",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/subEntityList/663354e56109810671aec49f?type=school&search=&page=1&limit=100&language=en",
 							"host": ["{{baseUrl}}"],
 							"path": ["entity", "v1", "entities", "subEntityList", "663354e56109810671aec49f"],
 							"query": [
@@ -842,7 +852,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity-management/v1/entities/entityListBasedOnEntityType?entityType=state",
+							"raw": "{{baseUrl}}/entity-management/v1/entities/entityListBasedOnEntityType?entityType=state&language=en",
 							"host": ["{{baseUrl}}"],
 							"path": ["entity", "v1", "entities", "entityListBasedOnEntityType"],
 							"query": [
@@ -870,7 +880,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/entity/v1/entities/targetedRoles/5f33c3d85f637784791cd831?entityType=district",
+							"raw": "{{baseUrl}}/entity/v1/entities/targetedRoles/5f33c3d85f637784791cd831?entityType=district&language=hi",
 							"host": ["{{baseUrl}}"],
 							"path": ["entity", "v1", "entities", "targetedRoles", "5f33c3d85f637784791cd831"]
 						}
@@ -902,7 +912,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userRoleId\": \"13\",\n    \"title\": \"State Level Campaign Coordinator\",\n    \"userType\": 1,\n    \"entityTypes\": [\n        {\n            \"entityType\": \"district\",\n            \"entityTypeId\": \"5f32d8228e0dc83104056e\"\n        }\n    ],\n    \"code\":\"state_level_campaign_coordinator\"\n}",
+							"raw": "{\n    \"userRoleId\": \"13\",\n    \"title\": \"State Level Campaign Coordinator\",\n    \"userType\": 1,\n    \"entityTypes\": [\n        {\n            \"entityType\": \"district\",\n            \"entityTypeId\": \"5f32d8228e0dc83104056e\"\n        }\n    ],\n    \"code\": \"state_level_campaign_coordinator\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -992,6 +1002,47 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["entity", "v1", "userRoleExtension", "delete", "66a94fc1fdf2d5dda4b689dc"]
 						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "createIndex",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-auth-token",
+								"value": "{{devToken}}"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internal_access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"keys\": [\n        \"groups\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity/v1/admin/createIndex/entities",
+							"host": ["{{baseUrl}}"],
+							"path": ["entity", "v1", "admin", "createIndex", "entities"]
+						},
+						"description": "Generated from cURL: curl --location 'https://dev.sunbirdsaas.com/project/project/v1/admin/createIndex/solutions' \\\n--header 'X-auth-token: {{devToken}}' \\\n--header 'internal-access-token: {internal-access-token}' \\\n--header 'Content-Type: application/json' \\\n--data '{\n    \"keys\": [\n        \"scope.state\",\"scope.district\",\"scope.block\",\"scope.cluster\",\"scope.school\",\"scope.roles\"\n    ]\n}'"
 					},
 					"response": []
 				}

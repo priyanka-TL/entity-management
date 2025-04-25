@@ -22,6 +22,7 @@ module.exports = {
 		'/userRoleExtension/create',
 		'/userRoleExtension/update',
 		'/entities/createMappingCsv',
+		'/admin/createIndex',
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',
@@ -35,4 +36,5 @@ module.exports = {
 		NATIVE: 'native',
 		KEYCLOAK_PUBLIC_KEY: 'keycloak_public_key',
 	},
+	ENGLISH_LANGUGE_CODE: 'en',
 }
