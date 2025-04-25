@@ -32,29 +32,8 @@ module.exports = class UserProjectsHelper {
 					entityTypesCSVData.map(async (entityType) => {
 						try {
 							entityType = UTILS.valueParser(entityType)
-							if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-								if (!entityType.tenantId || !(entityType.tenantId.length > 0)) {
-									entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
-								}
-								if (
-									!entityType.orgId ||
-									entityType.orgId.length == 0 ||
-									entityType.orgId.includes('')
-								) {
-									entityType['orgId'] = userDetails.tenantAndOrgInfo.orgId
-								}
-							} else {
-								if (!entityType.tenantId || !(entityType.tenantId.length > 0)) {
-									entityType['tenantId'] = userDetails.userInformation.tenantId
-								}
-								if (
-									!entityType.orgId ||
-									entityType.orgId.length == 0 ||
-									entityType.orgId.includes('')
-								) {
-									entityType['orgId'] = [userDetails.userInformation.organizationId]
-								}
-							}
+							entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
+							entityType['orgId'] = userDetails.tenantAndOrgInfo.orgId
 							entityType.registryDetails = {}
 							let removedKeys = []
 
@@ -162,13 +141,8 @@ module.exports = class UserProjectsHelper {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let entityType = body
-				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
-					entityType['orgId'] = userDetails.tenantAndOrgInfo.orgId
-				} else {
-					entityType['tenantId'] = userDetails.userInformation.tenantId
-					entityType['orgId'] = [userDetails.userInformation.organizationId]
-				}
+				entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
+				entityType['orgId'] = userDetails.tenantAndOrgInfo.orgId
 
 				if (entityType.profileFields) {
 					entityType.profileFields = entityType.profileFields.split(',') || []
@@ -248,12 +222,7 @@ module.exports = class UserProjectsHelper {
 				delete bodyData.tenantId
 				delete bodyData.orgId
 
-				let tenantId
-				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					tenantId = userDetails.tenantAndOrgInfo.tenantId
-				} else {
-					tenantId = userDetails.userInformation.tenantId
-				}
+				let tenantId = userDetails.tenantAndOrgInfo.tenantId
 
 				// Find and update the entity type by ID with the provided bodyData
 				let entityInformation = await entityTypeQueries.findOneAndUpdate(

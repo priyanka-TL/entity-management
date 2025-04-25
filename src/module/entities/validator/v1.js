@@ -23,28 +23,6 @@ module.exports = (req) => {
 				.trim() // Removes leading and trailing spaces
 				.notEmpty()
 				.withMessage('The name field cannot be empty.')
-			req.checkBody('tenantId')
-				.exists()
-				.withMessage('TenantId is required')
-				.trim()
-				.notEmpty()
-				.withMessage('The value cannot be a empty string')
-			req.checkBody('orgId')
-				.exists()
-				.withMessage('orgId is required.')
-				.custom((value) => {
-					if (!Array.isArray(value)) {
-						throw new Error('orgId must be an array.')
-					}
-
-					const invalidItems = value.filter((item) => typeof item !== 'string' || item.trim() === '')
-
-					if (invalidItems.length > 0) {
-						throw new Error('orgId array cannot contain empty or non-string values.')
-					}
-
-					return true
-				})
 		},
 		update: function () {
 			req.checkParams('_id').exists().withMessage('required _id')

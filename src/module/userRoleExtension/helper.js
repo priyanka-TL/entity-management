@@ -17,7 +17,7 @@ module.exports = class userRoleExtensionHelper {
 	 * @param {Object} body - The data to create the new user role extension.
 	 * @returns {Promise<Object>} - A promise that resolves with the new user role extension data or rejects with an error.
 	 */
-	static create(body) {
+	static create(body, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Using map to handle validation
@@ -38,6 +38,8 @@ module.exports = class userRoleExtensionHelper {
 						}
 					})
 				)
+				body['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
+				body['orgId'] = userDetails.tenantAndOrgInfo.orgId
 				// Call the queries function to create a new user role extension with the provided body data
 				let newUserRole = await userRoleExtensionQueries.create(body)
 
@@ -57,9 +59,11 @@ module.exports = class userRoleExtensionHelper {
 	 * @param {Object} bodyData - The data to update the user role extension.
 	 * @returns {Promise<Object>} - A promise that resolves with the updated user role extension data or rejects with an error.
 	 */
-	static update(userRoleId, bodyData) {
+	static update(userRoleId, bodyData, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				let tenantId = userDetails.tenantAndOrgInfo.tenantId
+				let orgId = userDetails.tenantAndOrgInfo.orgId
 				if (bodyData.entityTypes) {
 					await Promise.all(
 						bodyData.entityTypes.map(async (entityTypeData) => {
@@ -67,6 +71,7 @@ module.exports = class userRoleExtensionHelper {
 							let existingEntityType = await entityTypeQueries.findOne({
 								name: entityTypeData.entityType,
 								_id: ObjectId(entityTypeData.entityTypeId),
+								tenantId: tenantId,
 							})
 
 							if (!existingEntityType) {
@@ -79,6 +84,9 @@ module.exports = class userRoleExtensionHelper {
 						})
 					)
 				}
+
+				delete bodyData.tenantId
+				delete bodyData.orgId
 
 				// Find and update the user role extension based on the provided userRoleId and bodyData
 				let userInformation = await userRoleExtensionQueries.findOneAndUpdate(
@@ -148,11 +156,15 @@ module.exports = class userRoleExtensionHelper {
 	 * @param {String} userRoleId - The ID of the user role extension to delete.
 	 * @returns {Promise<Object>} - A promise that resolves with a success message or rejects with an error.
 	 */
-	static delete(userRoleId) {
+	static delete(userRoleId, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				let tenantId = userDetails.tenantAndOrgInfo.tenantId
 				// Find and delete the user role extension based on the provided user role ID
-				let userInformation = await userRoleExtensionQueries.findOneAndDelete({ _id: ObjectId(userRoleId) })
+				let userInformation = await userRoleExtensionQueries.findOneAndDelete({
+					_id: ObjectId(userRoleId),
+					tenantId: tenantId,
+				})
 
 				// If no user role extension is found, reject the promise with a 404 status and an error message
 				if (!userInformation) {

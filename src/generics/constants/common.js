@@ -22,6 +22,9 @@ module.exports = {
 		'/userRoleExtension/create',
 		'/userRoleExtension/update',
 		'/entities/createMappingCsv',
+		'/userRoleExtension/create',
+		'/userRoleExtension/update',
+		'/userRoleExtension/delete',
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',
@@ -37,4 +40,7 @@ module.exports = {
 	},
 	ENGLISH_LANGUGE_CODE: 'en',
 	ADMIN_ROLE: 'admin',
+	ORG_ADMIN: 'org_admin',
+	TENANT_ADMIN: 'tenant_admin',
+	SERVER_TIME_OUT: 5000,
 }

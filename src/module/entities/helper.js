@@ -185,12 +185,10 @@ module.exports = class UserProjectsHelper {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call 'entitiesQueries.entityDocuments' to retrieve entities based on provided entity IDs and fields
-				let tenantId
-				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					tenantId = userDetails.tenantAndOrgInfo.tenantId
-				} else {
-					tenantId = userDetails.userInformation.tenantId
-				}
+				let tenantId = userDetails.tenantAndOrgInfo
+					? userDetails.tenantAndOrgInfo.tenantId
+					: userDetails.userInformation.tenantId
+
 				const entities = await entitiesQueries.entityDocuments(
 					{
 						_id: { $in: entityIds },
@@ -952,12 +950,10 @@ module.exports = class UserProjectsHelper {
 				//         message: CONSTANTS.apiResponses.USER_ROLES_NOT_FOUND
 				//     }
 				// }
-				let tenantId
-				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					tenantId = userDetails.tenantAndOrgInfo.tenantId
-				} else {
-					tenantId = userDetails.userInformation.tenantId
-				}
+				let tenantId = userDetails.tenantAndOrgInfo
+					? userDetails.tenantAndOrgInfo.tenantId
+					: userDetails.userInformation.tenantId
+
 				let filterQuery = {
 					'registryDetails.code': stateLocationId,
 					tenantId: tenantId,
@@ -1029,12 +1025,10 @@ module.exports = class UserProjectsHelper {
 	static listByLocationIds(locationIds, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let tenantId
-				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					tenantId = userDetails.tenantAndOrgInfo.tenantId
-				} else {
-					tenantId = userDetails.userInformation.tenantId
-				}
+				let tenantId = userDetails.tenantAndOrgInfo
+					? userDetails.tenantAndOrgInfo.tenantId
+					: userDetails.userInformation.tenantId
+
 				// Constructing the filter query to find entities based on locationIds
 				let filterQuery = {
 					$or: [
@@ -1122,21 +1116,10 @@ module.exports = class UserProjectsHelper {
 	static entityListBasedOnEntityType(type, pageNo, pageSize, paginate, language, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let tenantId
-				let organizationId
 				let query = {}
-				let userRoles = userDetails.userInformation.roles ? userDetails.userInformation.roles : []
-
-				// create query to fetch assets as a SUPER_ADMIN
-				if (userRoles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					tenantId = userDetails.tenantAndOrgInfo.tenantId
-				}
-				// create query to fetch assets as a normal user
-				else {
-					tenantId = userDetails.userInformation.tenantId
-				}
-
-				query['tenantId'] = tenantId
+				query['tenantId'] = userDetails.tenantAndOrgInfo
+					? userDetails.tenantAndOrgInfo.tenantId
+					: userDetails.userInformation.tenantId
 				query['name'] = type
 				// Fetch the list of entity types available
 				const entityList = await entityTypeQueries.entityTypesDocument(query, ['name'])
@@ -1221,12 +1204,8 @@ module.exports = class UserProjectsHelper {
 			try {
 				// Find the entities document based on the entityType in queryParams
 
-				let tenantId
-				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					tenantId = userDetails.tenantAndOrgInfo.tenantId
-				} else {
-					tenantId = userDetails.userInformation.tenantId
-				}
+				let tenantId = userDetails.tenantAndOrgInfo.tenantId
+				let orgId = userDetails.tenantAndOrgInfo.orgId
 				let entityTypeDocument = await entityTypeQueries.findOne(
 					{ name: queryParams.type, tenantId: tenantId },
 					{ _id: 1 }
@@ -1292,7 +1271,7 @@ module.exports = class UserProjectsHelper {
 						createdBy: userDetails.userInformation.userId,
 						userId: userDetails.userInformation.userId,
 						tenantId: tenantId,
-						orgId: singleEntity.orgId,
+						orgId: orgId,
 					}
 
 					entityDocuments.push(entityDoc)
@@ -1384,11 +1363,9 @@ module.exports = class UserProjectsHelper {
 					})
 				}
 				// add tenantId to the query
-				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					query['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
-				} else {
-					query['tenantId'] = userDetails.userInformation.tenantId
-				}
+				query['tenantId'] = userDetails.tenantAndOrgInfo
+					? userDetails.tenantAndOrgInfo.tenantId
+					: userDetails.userInformation.tenantId
 
 				// Fetch entity documents based on constructed query
 				let entityDocument = await entitiesQueries.entityDocuments(query, 'all', 10)
@@ -1484,13 +1461,8 @@ module.exports = class UserProjectsHelper {
 				// }
 
 				// Find the entity type document based on the provided entityType
-				let tenantId
-				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					tenantId = userDetails.tenantAndOrgInfo.tenantId
-				} else {
-					tenantId = userDetails.userInformation.tenantId
-				}
-
+				let tenantId = userDetails.tenantAndOrgInfo.tenantId
+				let orgId = userDetails.tenantAndOrgInfo.orgId
 				let entityTypeDocument = await entityTypeQueries.findOne(
 					{
 						name: entityType,
@@ -1520,8 +1492,8 @@ module.exports = class UserProjectsHelper {
 							groups: {},
 							updatedBy: userId,
 							createdBy: userId,
-							tenantId: userDetails.userInformation.tenantId,
-							orgId: singleEntity.orgId,
+							tenantId: tenantId,
+							orgId: orgId,
 						}
 						// if (singleEntity.allowedRoles && singleEntity.allowedRoles.length > 0) {
 						// 	entityCreation['allowedRoles'] = await allowedRoles(singleEntity.allowedRoles)
@@ -1724,12 +1696,7 @@ module.exports = class UserProjectsHelper {
 	static update(entityId, bodyData, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let tenantId
-				if (userDetails.userInformation.roles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					tenantId = userDetails.tenantAndOrgInfo.tenantId
-				} else {
-					tenantId = userDetails.userInformation.tenantId
-				}
+				let tenantId = userDetails.tenantAndOrgInfo.tenantId
 
 				if (bodyData.translations) {
 					// Fetch existing entity document

@@ -76,7 +76,7 @@ module.exports = class userRoleExtension extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call the helper function to create a new user role extension document
-				let result = await userRoleExtensionHelper.create(req.body)
+				let result = await userRoleExtensionHelper.create(req.body, req.userDetails)
 
 				// Resolve the promise with the result of the creation operation
 				return resolve(result)
@@ -135,7 +135,7 @@ module.exports = class userRoleExtension extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call the helper function to update the user role extension document
-				let result = await userRoleExtensionHelper.update(req.params._id, req.body)
+				let result = await userRoleExtensionHelper.update(req.params._id, req.body, req.userDetails)
 
 				// Resolve the promise with the result of the update operation
 				return resolve(result)
@@ -241,7 +241,7 @@ module.exports = class userRoleExtension extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call the helper function to delete the user role extension by ID
-				let userData = await userRoleExtensionHelper.delete(req.params._id)
+				let userData = await userRoleExtensionHelper.delete(req.params._id, req.userDetails)
 				// Resolve the promise with the result of the deletion
 				return resolve(userData)
 			} catch (error) {

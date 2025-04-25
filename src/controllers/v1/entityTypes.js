@@ -65,16 +65,13 @@ module.exports = class EntityTypes extends Abstract {
 				let query = {}
 				let userRoles = req.userDetails.userInformation.roles ? req.userDetails.userInformation.roles : []
 
-				// create query to fetch assets as a SUPER_ADMIN
-				if (userRoles.includes(CONSTANTS.common.ADMIN_ROLE)) {
-					tenantId = req.userDetails.tenantAndOrgInfo.tenantId
-					query['orgId'] = { $in: req.userDetails.tenantAndOrgInfo.orgId }
-				}
-				// create query to fetch assets as a normal user
-				else {
-					tenantId = req.userDetails.userInformation.tenantId
-				}
-				query['tenantId'] = tenantId
+				// create query to fetch assets
+				query['tenantId'] = req.userDetails.tenantAndOrgInfo
+					? req.userDetails.tenantAndOrgInfo.tenantId
+					: req.userDetails.userInformation.tenantId
+				query['orgId'] = req.userDetails.tenantAndOrgInfo
+					? { $in: req.userDetails.tenantAndOrgInfo.orgId }
+					: { $in: [req.userDetails.userInformation.organizationId] }
 
 				// handle currentOrgOnly filter
 				if (req.query['currentOrgOnly'] && req.query['currentOrgOnly'] == 'true') {

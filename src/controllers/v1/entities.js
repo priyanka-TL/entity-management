@@ -389,7 +389,9 @@ module.exports = class Entities extends Abstract {
 					req?.query?.paginate?.toLowerCase() == 'true' ? true : false,
 					req.query.entityType ? req.query.entityType : '',
 					req.query.language ? req.query.language : '',
-					req.userDetails.userInformation.tenantId
+					req.userDetails.tenantAndOrgInfo
+						? req.userDetails.tenantAndOrgInfo.tenantId
+						: req.userDetails.userInformation.tenantId
 				)
 				// Resolves the promise with the retrieved entity data
 				return resolve(userRoleDetails)
