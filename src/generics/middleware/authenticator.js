@@ -44,6 +44,24 @@ module.exports = async function (req, res, next, token = '') {
 
 	token = req.headers['x-auth-token']
 
+	// Allow endpoints for non-logged in users.
+	let guestAccess = false
+	let guestAccessPaths = CONSTANTS.common.GUEST_URLS
+	// Check if the request path matches any of the guest access paths
+	// If it does, set guestAccess to true
+	await Promise.all(
+		guestAccessPaths.map(async function (path) {
+			if (req.path.includes(path)) {
+				guestAccess = true
+			}
+		})
+	)
+
+	if (guestAccess == true && !token) {
+		next()
+		return
+	}
+
 	let internalAccessApiPaths = CONSTANTS.common.INTERNAL_ACCESS_URLS
 	let performInternalAccessTokenCheck = false
 	await Promise.all(
