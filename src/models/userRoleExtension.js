@@ -10,7 +10,6 @@ module.exports = {
 	schema: {
 		userRoleId: {
 			type: String,
-			unique: true,
 		},
 		title: {
 			type: String,
@@ -41,9 +40,18 @@ module.exports = {
 		},
 		tenantId: {
 			type: String,
+			require: true,
 		},
-		orgId: {
+		orgIds: {
 			type: Array,
+			require: true,
+			index: true,
 		},
 	},
+	compoundIndex: [
+		{
+			name: { userRoleId: 1, tenantId: 1 },
+			indexType: { unique: true },
+		},
+	],
 }

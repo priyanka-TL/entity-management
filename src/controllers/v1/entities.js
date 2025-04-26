@@ -128,7 +128,11 @@ module.exports = class Entities extends Abstract {
 					'entityTypeId',
 					'entityType',
 				]
-				let entityDocument = await entitiesQueries.entityDocuments({ _id: req.params._id }, projection)
+				let tenantId = req.userDetails.userInformation.tenantId
+				let entityDocument = await entitiesQueries.entityDocuments(
+					{ _id: req.params._id, tenantId: tenantId },
+					projection
+				)
 
 				if (entityDocument.length < 1) {
 					throw {
@@ -141,7 +145,8 @@ module.exports = class Entities extends Abstract {
 					entityDocument[0]._id,
 					entityDocument[0].entityTypeId,
 					entityDocument[0].entityType,
-					projection
+					projection,
+					tenantId
 				)
 				_.merge(result, entityDocument[0])
 				result['relatedEntities'] = relatedEntities.length > 0 ? relatedEntities : []
@@ -389,9 +394,7 @@ module.exports = class Entities extends Abstract {
 					req?.query?.paginate?.toLowerCase() == 'true' ? true : false,
 					req.query.entityType ? req.query.entityType : '',
 					req.query.language ? req.query.language : '',
-					req.userDetails.tenantAndOrgInfo
-						? req.userDetails.tenantAndOrgInfo.tenantId
-						: req.userDetails.userInformation.tenantId
+					req.userDetails.userInformation.tenantId
 				)
 				// Resolves the promise with the retrieved entity data
 				return resolve(userRoleDetails)
@@ -568,8 +571,6 @@ module.exports = class Entities extends Abstract {
 				// Prepare query parameters for adding the entity
 				let queryParams = {
 					type: req.query.type,
-					// programId: req.query.programId,
-					//   solutionId: req.query.solutionId,
 					parentEntityId: req.query.parentEntityId,
 				}
 				// Call 'entitiesHelper.add' to perform the entity addition operation
@@ -780,7 +781,8 @@ module.exports = class Entities extends Abstract {
 					req.pageSize,
 					req.pageSize * (req.pageNo - 1),
 					req.schoolTypes,
-					req.administrationTypes
+					req.administrationTypes,
+					req.userDetails
 				)
 
 				return resolve(result)
@@ -850,7 +852,8 @@ module.exports = class Entities extends Abstract {
 					req.searchText,
 					req.pageSize,
 					req.pageNo,
-					req.query.language ? req.query.language : ''
+					req.query.language ? req.query.language : '',
+					req.userDetails
 				)
 				return resolve(entityDocuments)
 			} catch (error) {
@@ -1022,7 +1025,7 @@ module.exports = class Entities extends Abstract {
 					translationFile = JSON.parse(req.files.translationFile.data.toString())
 				}
 				// Call 'entitiesHelper.bulkUpdate' to update entities based on CSV data and user details
-				let newEntityData = await entitiesHelper.bulkUpdate(entityCSVData, translationFile)
+				let newEntityData = await entitiesHelper.bulkUpdate(entityCSVData, translationFile, userDetails)
 
 				// Check if entities were updated successfully
 				if (newEntityData.length > 0) {

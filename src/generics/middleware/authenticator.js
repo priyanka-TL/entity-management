@@ -166,90 +166,122 @@ module.exports = async function (req, res, next, token = '') {
 			decodedToken['data'] = data
 		}
 
-		let userRoles = decodedToken.data.roles.map((role) => role.title)
-		// check if tenantId and orgId is present in the header for SUPER_ADMIN & TENANT_ADMIN roles
-		if (userRoles.includes(CONSTANTS.common.ADMIN) || userRoles.includes(CONSTANTS.common.TENANT_ADMIN)) {
-			if (
-				!req.headers['tenantid'] ||
-				!req.headers['orgid'] ||
-				!req.headers['tenantid'].length ||
-				!req.headers['orgid'].length
-			) {
-				rspObj.errCode = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_CODE
-				rspObj.errMsg = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_MESSAGE
-				rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
-				return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
-			}
-		}
-		decodedToken.data['tenantAndOrgInfo'] = {}
-
-		let relatedOrgDetails = false
-		let validOrgIds = []
-		if (!userRoles.includes(CONSTANTS.common.ORG_ADMIN) && req.headers['tenantid'] !== '') {
-			// fetch the related org details using organization/read api
-			relatedOrgDetails = await userService.fetchOrgDetails(req.headers['tenantid'])
-			// convert the types of items to string
-
-			if (
-				!relatedOrgDetails ||
-				!relatedOrgDetails.success ||
-				!relatedOrgDetails.data ||
-				!(Object.keys(relatedOrgDetails.data).length > 0) ||
-				!(relatedOrgDetails.data.related_orgs > 0)
-			) {
-				rspObj.errCode = CONSTANTS.apiResponses.ORG_DETAILS_FETCH_UNSUCCESSFUL_CODE
-				rspObj.errMsg = CONSTANTS.apiResponses.ORG_DETAILS_FETCH_UNSUCCESSFUL_MESSAGE
-				rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
-				return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
-			}
-
-			relatedOrgDetails.data.related_orgs = relatedOrgDetails.data.related_orgs.map(String)
-			// aggregate valid orgids
-			let headerOrgIds = req.headers['orgid']?.split(',') || []
-			let relatedOrgIds = relatedOrgDetails.data.related_orgs
-			validOrgIds = headerOrgIds.filter((id) => relatedOrgIds.includes(id))
-
-			// if the valid orgids array is empty throw error
-			if (!(validOrgIds.length > 0)) {
-				rspObj.errCode = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_CODE
-				rspObj.errMsg = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_MESSAGE
-				rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
-				return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
-			}
+		if (!decodedToken) {
+			rspObj.errCode = CONSTANTS.apiResponses.TOKEN_MISSING_CODE
+			rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_MISSING_MESSAGE
+			rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
+			return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
 		}
 
-		if (adminHeader) {
-			if (adminHeader != process.env.ADMIN_ACCESS_TOKEN) {
+		// throw error if tenant_id or organization_id is not present in the decoded token
+		if (
+			!decodedToken.data.tenant_id ||
+			!(decodedToken.data.tenant_id.toString().length > 0) ||
+			!decodedToken.data.organization_id ||
+			!(decodedToken.data.organization_id.toString().length > 0)
+		) {
+			rspObj.errCode = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_CODE
+			rspObj.errMsg = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_MESSAGE
+			rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
+			return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+		}
+
+		if (performInternalAccessTokenCheck) {
+			let userRoles = decodedToken.data.roles.map((role) => role.title)
+			// throw error if normal user tries to fetch internal apis
+			if (
+				!adminHeader &&
+				!userRoles.includes(CONSTANTS.common.TENANT_ADMIN) &&
+				!userRoles.includes(CONSTANTS.common.ORG_ADMIN)
+			) {
+				rspObj.errCode = CONSTANTS.apiResponses.TOKEN_INVALID_CODE
+				rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_INVALID_MESSAGE
+				rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
 				return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
 			}
-			decodedToken.data.tenantAndOrgInfo['tenantId'] = req.headers['tenantid'].toString()
-			decodedToken.data.tenantAndOrgInfo['orgId'] = validOrgIds
-			decodedToken.data.roles.push({ title: CONSTANTS.common.ADMIN_ROLE })
-		} else if (userRoles.includes(CONSTANTS.common.TENANT_ADMIN)) {
-			// throw error if decodedToken tenant_id & header tenantId does not match for TENANT_ADMIN role
-			if (req.headers['tenantid'] !== decodedToken.data.tenant_id.toString()) {
-				rspObj.errCode = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_CODE
-				rspObj.errMsg = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_MESSAGE
-				rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
-				return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+
+			// validate SUPER_ADMIN
+			if (adminHeader) {
+				if (adminHeader != process.env.ADMIN_ACCESS_TOKEN) {
+					return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
+				}
+				decodedToken.data.roles.push({ title: CONSTANTS.common.ADMIN_ROLE })
+				userRoles.push(CONSTANTS.common.ADMIN_ROLE)
 			}
-			decodedToken.data.tenantAndOrgInfo['tenantId'] = req.headers['tenantid'].toString()
-			decodedToken.data.tenantAndOrgInfo['orgId'] = validOrgIds
-		}
-		// set the tenant & org details for ORG_ADMIN
-		else if (userRoles.includes(CONSTANTS.common.ORG_ADMIN)) {
-			decodedToken.data.tenantAndOrgInfo = {
-				orgId: [decodedToken.data.organization_id.toString()],
-				tenantId: decodedToken.data.tenant_id.toString(),
+
+			// check if tenantId and orgId is present in the header for SUPER_ADMIN & TENANT_ADMIN roles
+			if (userRoles.includes(CONSTANTS.common.ADMIN_ROLE) || userRoles.includes(CONSTANTS.common.TENANT_ADMIN)) {
+				if (
+					!req.headers['tenantid'] ||
+					!req.headers['orgid'] ||
+					!req.headers['tenantid'].length ||
+					!req.headers['orgid'].length
+				) {
+					rspObj.errCode = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_CODE
+					rspObj.errMsg = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_MESSAGE
+					rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
+					return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+				}
+			}
+			decodedToken.data['tenantAndOrgInfo'] = {}
+
+			let relatedOrgDetails = false
+			let validOrgIds = []
+			if (!userRoles.includes(CONSTANTS.common.ORG_ADMIN) && req.headers['tenantid'] !== '') {
+				// fetch the related org details using organization/read api
+				relatedOrgDetails = await userService.fetchOrgDetails(req.headers['tenantid'])
+				if (
+					!relatedOrgDetails ||
+					!relatedOrgDetails.success ||
+					!relatedOrgDetails.data ||
+					!(Object.keys(relatedOrgDetails.data).length > 0) ||
+					!(relatedOrgDetails.data.related_orgs > 0)
+				) {
+					rspObj.errCode = CONSTANTS.apiResponses.ORG_DETAILS_FETCH_UNSUCCESSFUL_CODE
+					rspObj.errMsg = CONSTANTS.apiResponses.ORG_DETAILS_FETCH_UNSUCCESSFUL_MESSAGE
+					rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
+					return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+				}
+
+				// convert the types of items to string
+				relatedOrgDetails.data.related_orgs = relatedOrgDetails.data.related_orgs.map(String)
+				// aggregate valid orgids
+				let headerOrgIds = req.headers['orgid']?.split(',') || []
+				let relatedOrgIds = relatedOrgDetails.data.related_orgs
+				validOrgIds = headerOrgIds.filter((id) => {
+					return relatedOrgIds.includes(id) || id == 'all'
+				})
+				// if the valid orgids array is empty throw error
+				if (!(validOrgIds.length > 0)) {
+					rspObj.errCode = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_CODE
+					rspObj.errMsg = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_MESSAGE
+					rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
+					return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+				}
+			}
+
+			// set the tenant & org details for ORG_ADMIN
+			if (userRoles.includes(CONSTANTS.common.ORG_ADMIN)) {
+				decodedToken.data.tenantAndOrgInfo = {
+					orgIds: [decodedToken.data.organization_id.toString()],
+					tenantId: decodedToken.data.tenant_id.toString(),
+				}
+			} else if (userRoles.includes(CONSTANTS.common.TENANT_ADMIN)) {
+				// throw error if decodedToken tenant_id & header tenantId does not match for TENANT_ADMIN role
+				if (req.headers['tenantid'] !== decodedToken.data.tenant_id.toString()) {
+					rspObj.errCode = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_CODE
+					rspObj.errMsg = CONSTANTS.apiResponses.INVALID_TENANT_AND_ORG_MESSAGE
+					rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
+					return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+				}
+				decodedToken.data.tenantAndOrgInfo['tenantId'] = req.headers['tenantid'].toString()
+				decodedToken.data.tenantAndOrgInfo['orgIds'] = validOrgIds
+			} else if (adminHeader) {
+				decodedToken.data.tenantAndOrgInfo['tenantId'] = req.headers['tenantid'].toString()
+				decodedToken.data.tenantAndOrgInfo['orgIds'] = validOrgIds
 			}
 		}
 	} catch (err) {
-		rspObj.errCode = CONSTANTS.apiResponses.TOKEN_MISSING_CODE
-		rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_MISSING_MESSAGE
-		rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
-		return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
-	}
-	if (!decodedToken) {
 		rspObj.errCode = CONSTANTS.apiResponses.TOKEN_MISSING_CODE
 		rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_MISSING_MESSAGE
 		rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status

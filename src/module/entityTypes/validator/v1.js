@@ -38,7 +38,8 @@ module.exports = (req, res) => {
 		},
 
 		find: function () {
-			req.checkBody('query').exists().withMessage('required name')
+			req.checkBody('query').exists().withMessage('required query')
+			req.checkBody('query.tenantId').exists().withMessage('required tenantId')
 		},
 	}
 

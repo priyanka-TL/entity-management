@@ -60,23 +60,21 @@ module.exports = class EntityTypes extends Abstract {
 	async list(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let tenantId
 				let organizationId
 				let query = {}
-				let userRoles = req.userDetails.userInformation.roles ? req.userDetails.userInformation.roles : []
 
 				// create query to fetch assets
 				query['tenantId'] = req.userDetails.tenantAndOrgInfo
 					? req.userDetails.tenantAndOrgInfo.tenantId
 					: req.userDetails.userInformation.tenantId
-				query['orgId'] = req.userDetails.tenantAndOrgInfo
-					? { $in: req.userDetails.tenantAndOrgInfo.orgId }
+				query['orgIds'] = req.userDetails.tenantAndOrgInfo
+					? { $in: req.userDetails.tenantAndOrgInfo.orgIds }
 					: { $in: [req.userDetails.userInformation.organizationId] }
 
 				// handle currentOrgOnly filter
 				if (req.query['currentOrgOnly'] && req.query['currentOrgOnly'] == 'true') {
 					organizationId = req.userDetails.userInformation.organizationId
-					query['orgId'] = { $in: [organizationId] }
+					query['orgIds'] = { $in: [organizationId] }
 				}
 				let result = await entityTypesHelper.list(query, { name: 1 })
 

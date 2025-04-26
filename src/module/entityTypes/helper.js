@@ -33,7 +33,7 @@ module.exports = class UserProjectsHelper {
 						try {
 							entityType = UTILS.valueParser(entityType)
 							entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
-							entityType['orgId'] = userDetails.tenantAndOrgInfo.orgId
+							entityType['orgIds'] = userDetails.tenantAndOrgInfo.orgIds
 							entityType.registryDetails = {}
 							let removedKeys = []
 
@@ -142,7 +142,7 @@ module.exports = class UserProjectsHelper {
 			try {
 				let entityType = body
 				entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
-				entityType['orgId'] = userDetails.tenantAndOrgInfo.orgId
+				entityType['orgIds'] = userDetails.tenantAndOrgInfo.orgIds
 
 				if (entityType.profileFields) {
 					entityType.profileFields = entityType.profileFields.split(',') || []
@@ -206,10 +206,11 @@ module.exports = class UserProjectsHelper {
 		})
 	}
 	/**
-	 * update single entity.
+	 * update single entityType.
 	 * @method
 	 * @name update
-	 * @param {Object} data - requested entity data.
+	 * @param {Object} entityTypeId - entity type id.
+	 * @param {Object} bodyData - requested entity data.
 	 * @param {Object} userDetails - Logged in user information.
 	 * @returns {JSON} - update single entity.
 	 *
@@ -220,7 +221,7 @@ module.exports = class UserProjectsHelper {
 			try {
 				// avoid adding manupulative data
 				delete bodyData.tenantId
-				delete bodyData.orgId
+				delete bodyData.orgIds
 
 				let tenantId = userDetails.tenantAndOrgInfo.tenantId
 
@@ -258,6 +259,7 @@ module.exports = class UserProjectsHelper {
 	static bulkUpdate(entityTypesCSVData, userDetails) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				let tenantId = userDetails.tenantAndOrgInfo.tenantId
 				// Process each entity type in the provided array asynchronously
 				const entityTypesUploadedData = await Promise.all(
 					entityTypesCSVData.map(async (entityType) => {
@@ -325,6 +327,7 @@ module.exports = class UserProjectsHelper {
 							let updateEntityType = await entityTypeQueries.findOneAndUpdate(
 								{
 									_id: ObjectId(entityType._SYSTEM_ID),
+									tenantId: tenantId,
 								},
 
 								_.merge(
