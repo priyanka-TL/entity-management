@@ -34,6 +34,7 @@ module.exports = {
 		},
 		tenantId: {
 			type: String,
+			index: true,
 			require: true,
 		},
 		orgIds: {
