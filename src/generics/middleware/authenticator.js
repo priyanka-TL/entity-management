@@ -274,7 +274,7 @@ module.exports = async function (req, res, next, token = '') {
 		 */
 		async function validateIfOrgsBelongsToTenant(tenantId, orgId) {
 			let orgIdArr = orgId?.split(',') || []
-			let orgDetails = await userService.fetchDefaultOrgDetails(tenantId)
+			let orgDetails = await userService.fetchOrgDetails(tenantId)
 			let validOrgIds = null
 
 			if (orgIdArr.includes('ALL') || orgIdArr.includes('all')) {
