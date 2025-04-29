@@ -250,6 +250,9 @@ module.exports = async function (req, res, next, token = '') {
 					userInformation[`${key}`] = keyValue
 				}
 			}
+			if (userInformation.roles && Array.isArray(userInformation.roles) && userInformation.roles.length) {
+				userInformation.roles = userInformation.roles.map((role) => role.title)
+			}
 		}
 
 		// throw error if tenant_id or organization_id is not present in the decoded token
