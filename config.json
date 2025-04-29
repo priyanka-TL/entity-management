@@ -1,0 +1,10 @@
+{
+	"authTokenUserInformation": {
+		"userId": "data.id",
+		"userName": "data.name",
+		"firstName": "data.name",
+		"roles": "data.roles",
+		"organizationId": "data.organization_id",
+		"tenantId": "data.tenant_id"
+	}
+}
