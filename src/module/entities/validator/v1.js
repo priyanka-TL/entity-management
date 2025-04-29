@@ -71,8 +71,7 @@ module.exports = (req) => {
 			req.checkParams('_id').exists().withMessage('required state location id')
 		},
 		details: function () {
-			req.checkParams('_id').exists().withMessage('required id')
-			req.checkParams('_id').exists().isMongoId().withMessage('Invalid Entity ID')
+			req.checkParams('_id').exists().withMessage('required _id or externalID')
 		},
 		list: function () {
 			req.checkQuery('type').exists().withMessage('required type')

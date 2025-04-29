@@ -1006,6 +1006,47 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "createIndex",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-auth-token",
+								"value": "{{devToken}}"
+							},
+							{
+								"key": "internal-access-token",
+								"value": "{{internal_access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"keys\": [\n        \"groups\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/entity/v1/admin/createIndex/entities",
+							"host": ["{{baseUrl}}"],
+							"path": ["entity", "v1", "admin", "createIndex", "entities"]
+						},
+						"description": "Generated from cURL: curl --location 'https://dev.sunbirdsaas.com/project/project/v1/admin/createIndex/solutions' \\\n--header 'X-auth-token: {{devToken}}' \\\n--header 'internal-access-token: {internal-access-token}' \\\n--header 'Content-Type: application/json' \\\n--data '{\n    \"keys\": [\n        \"scope.state\",\"scope.district\",\"scope.block\",\"scope.cluster\",\"scope.school\",\"scope.roles\"\n    ]\n}'"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

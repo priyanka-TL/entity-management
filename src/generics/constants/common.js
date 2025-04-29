@@ -25,6 +25,7 @@ module.exports = {
 		'/userRoleExtension/create',
 		'/userRoleExtension/update',
 		'/userRoleExtension/delete',
+		'/admin/createIndex',
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',
@@ -43,4 +44,5 @@ module.exports = {
 	ORG_ADMIN: 'org_admin',
 	TENANT_ADMIN: 'tenant_admin',
 	SERVER_TIME_OUT: 5000,
+	GUEST_URLS: ['/entities/details'],
 }
