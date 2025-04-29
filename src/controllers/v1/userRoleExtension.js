@@ -43,9 +43,7 @@ module.exports = class userRoleExtension extends Abstract {
 	 * @apiSampleRequest /v1/userRoleExtension/create
 	 * @apiUse successBody
 	 * @apiUse errorBody
-	 * @param {Object} req - The request object containing the request body and user details.
-     * @param {Object} req.body - The data for creating a new user role extension.
-     * @param {Object} req.userDetails - The details of the user making the request.
+	 * @param {Object} req - The request object.
      * @returns {Promise<Object>} - A promise that resolves with the result of the creation or rejects with an error.
 	 * 
 	 * {
@@ -100,10 +98,7 @@ module.exports = class userRoleExtension extends Abstract {
 	 * @apiSampleRequest /v1/userRoleExtension/update/663364443c990eaa179e289e
 	 * @apiUse successBody
 	 * @apiUse errorBody
-	 * @param {Object} req - The request object containing the request parameters and body.
-     * @param {Object} req.params - The request parameters.
-     * @param {string} req.params._id - The ID of the user role extension to update.
-     * @param {Object} req.body - The data for updating the user role extension.
+	 * @param {Object} req - The request object.
      * @returns {Promise<Object>} - A promise that resolves with the result of the update or rejects with an error.
 	 * 
 	 *  
@@ -155,6 +150,7 @@ module.exports = class userRoleExtension extends Abstract {
 	 * @apiVersion 1.0.0
 	 * @apiName find
 	 * @apiGroup userRoleExtension
+	 * @param {Object} req - The request object containing the request body.
 	 * @apiSampleRequest {
 		{
         "query": {
@@ -226,9 +222,6 @@ module.exports = class userRoleExtension extends Abstract {
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {Object} req - The request object containing the request body.
-     * @param {Object} req.body - The request body.
-     * @param {Object} req.body.query - The query object to filter user role extensions.
-     * @param {Array} req.body.projection - The projection array to specify which fields to include in the result.
      * @returns {Promise<Object>} - A promise that resolves with the user data or rejects with an error.
 	 * 
 	 *  

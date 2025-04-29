@@ -42,6 +42,7 @@ module.exports = class Entities extends Abstract {
 	 * @api {POST} /v1/entities/find all the API based on projection
 	 * @apiVersion 1.0.0
 	 * @apiName find
+	 * @param {Object} req - The request object.
 	 * @apiGroup Entities
 	 * @apiSampleRequest {
 		"query" : {
@@ -87,6 +88,7 @@ module.exports = class Entities extends Abstract {
       * @apiVersion 1.0.0
       * @apiName Get Related Entities
       * @apiGroup Entities
+	  * @param {Object} req - The request object.
       * @apiSampleRequest v1/entities/relatedEntities/5c0bbab881bdbe330655da7f
       * @apiUse successBody
       * @apiUse errorBody
@@ -171,6 +173,7 @@ module.exports = class Entities extends Abstract {
 	 * @apiVersion 1.0.0
 	 * @apiName entityListBasedOnEntityType
 	 * @apiGroup Entities
+	 * @param {Object} req - The request object.
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:
@@ -221,6 +224,7 @@ module.exports = class Entities extends Abstract {
 	  * @apiName createMappingCsv
 	  * @apiGroup Entities
 	  * @apiParam {File} entityCSV Mandatory entity mapping file of type CSV.
+	  * @param {Object} req - The request object.
 	  * @apiUse successBody
 	  * @apiUse errorBody
 	  * @param {Object} req - The request object containing the uploaded CSV file in `req.files.entityCSV`.
@@ -294,6 +298,7 @@ module.exports = class Entities extends Abstract {
 	  * @apiName mappingUpload
 	  * @apiGroup Entities
 	  * @apiParam {File} entityMap Mandatory entity mapping file of type CSV.
+	  * @param {Object} req - The request object.
 	  * @apiUse successBody
 	  * @apiUse errorBody
       * @param {Array} req.files.entityMap - Array of entityMap data.         
@@ -346,8 +351,6 @@ module.exports = class Entities extends Abstract {
 	  * @apiUse successBody
 	  * @apiUse errorBody
 	 * @param {Object} req - The request object containing parameters and user details.
-	 * @param {Object} req.params - The request parameters.
-	 * @param {string} req.params._id - The entity ID to filter roles.
 	 * @returns {Promise<Object>} A promise that resolves to the response containing the fetched roles or an error object.
 	 * * @returns {JSON} - Message of successfully response.
      * 
@@ -415,6 +418,7 @@ module.exports = class Entities extends Abstract {
 	 * @apiName details
 	 * @apiGroup Entities
 	 * @apiHeader {String} X-authenticated-user-token Authenticity token
+	 * @param {Object} req - The request object.
 	 * @apiSampleRequest v1/entities/details/67dcf90f97174bab15241faa?&language=hi
 	 * @apiUse successBody
 	 * @apiUse errorBody
@@ -486,9 +490,6 @@ module.exports = class Entities extends Abstract {
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {Object} req - requested entity data.
-	 * @param {String} req.query.type - entity type.
-	 * @param {String} req.params._id - entity id.
-	 * @param {Object} req.body - entity information that need to be updated.
 	 * @returns {JSON} - Updated entity information.
 	 * 
 	 *  
@@ -542,7 +543,6 @@ module.exports = class Entities extends Abstract {
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {Object} req - All requested Data.
-	 * @param {Object} req.files - requested files.
 	 * @returns {JSON} - Added entities information.
 	 * 
 	 *   "result": [
@@ -601,7 +601,6 @@ module.exports = class Entities extends Abstract {
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {Object} req - requested data.
-	 * @param {Object} req.body.locationIds - registry data.
 	 * @returns {Object} -
 	 * 
 	 *   "result": [
@@ -650,6 +649,7 @@ module.exports = class Entities extends Abstract {
 	 * @apiGroup Entities
 	 * @apiHeader {String} X-authenticated-user-token Authenticity token
 	 * @apiSampleRequest v1/entities/subEntityListBasedOnRoleAndLocation
+	 * @param {Object} req - The request object.
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {String} req.params._id - entityId.
@@ -707,7 +707,6 @@ module.exports = class Entities extends Abstract {
 	* @apiUse successBody
 	* @apiUse errorBody
 	* @param {Object} req - requested data.
-	* @param {String} req.params._id - requested entity type.
 	* @returns {JSON} - Array of entities.
 
 	"result": [
@@ -752,12 +751,7 @@ module.exports = class Entities extends Abstract {
 	* @apiSampleRequest /v1/entities/list
 	* @apiUse successBody
 	* @apiUse errorBody
-	* @param {String} req.query.type - type of entity requested.
-	* @param {String} req.params._id - requested entity id.
-	* @param {Number} req.pageSize - total size of the page.
-	* @param {Number} req.pageNo - page number.
-	* @param {string} req.query.schoolTypes - comma seperated school types.
-	* @param {string} req.query.administrationTypes - comma seperated administration types.
+	* @param {Object} req - The request object.
 	* @apiParamExample {json} Response:
 	* "result": [
 	{
@@ -888,8 +882,7 @@ module.exports = class Entities extends Abstract {
      * List of entities.
      * @method
      * @name listByIds
-	 * @param {Object} req - requested data.
-	 * @param {String} req.params._id - requested entity type.         
+	 * @param {Object} req - requested data.       
 	 * @returns {JSON} - Array of entities.
 	*/
 
@@ -924,10 +917,6 @@ module.exports = class Entities extends Abstract {
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:
 	 * @param {Object} req - requested data.
-	 * @param {String} req.query.type - requested entity type.
-	 * @param {Object} req.userDetails - logged in user details.
-	 * @param {Object} req.files.entities - entities data.
-	 * @param {Object} req.files.translationFile - translation data.
 	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
 	 * public/reports/currentDate
 	 *
@@ -1001,8 +990,6 @@ module.exports = class Entities extends Abstract {
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:
 	 * @param {Object} req - requested data.
-	 * @param {Object} req.files.entities - entities data.
-	 * @param {Object} req.files.translationFile - entities data.
 	 * @returns {CSV} - A CSV with name Entity-Upload is saved inside the folder
 	 * public/reports/currentDate
 	 *

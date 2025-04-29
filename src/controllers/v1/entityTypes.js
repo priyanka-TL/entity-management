@@ -137,7 +137,6 @@ module.exports = class EntityTypes extends Abstract {
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {Object} req -request data.
-	 * @param {Object} req.files.entityTypes -entityTypes data.
 	 * @returns {CSV}  create single  entity Types data.
 	 * 
 	 * "result": {
@@ -180,9 +179,6 @@ module.exports = class EntityTypes extends Abstract {
 	 * @apiUse successBody
 	 * @apiUse errorBody
 	 * @param {Object} req - requested entityType data.
-	 * @param {String} req.query.type - entityType type.
-	 * @param {String} req.params._id - entityType id.
-	 * @param {Object} req.body - entityType information that need to be updated.
 	 * @returns {JSON} - Updated entityType information.
 	 *  "result": {
         "profileForm": [],
@@ -237,7 +233,6 @@ module.exports = class EntityTypes extends Abstract {
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:
 	 * @param {Object} req -request data.
-	 * @param {Object} req.files.entityTypes -entityTypes data.
 	 * @returns {CSV} Bulk create entity Types data.
 	 */
 	async bulkCreate(req) {
@@ -302,7 +297,6 @@ module.exports = class EntityTypes extends Abstract {
 	 * @apiUse errorBody
 	 * @apiParamExample {json} Response:
 	 * @param {Object} req -request data.
-	 * @param {Object} req.files.entityTypes -entityTypes data.
 	 * @returns {CSV} Bulk update entity Types data.
 	 */
 	async bulkUpdate(req) {
