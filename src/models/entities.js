@@ -50,7 +50,7 @@ module.exports = {
 	},
 	compoundIndex: [
 		{
-			name: { 'metaInformation.name': 1, 'metaInformation.externalId': 1, tenantId: 1, entityTypeId: 1 },
+			name: { 'metaInformation.externalId': 1, tenantId: 1 },
 			indexType: { unique: true },
 		},
 	],
