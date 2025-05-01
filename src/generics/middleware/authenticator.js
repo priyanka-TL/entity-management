@@ -289,7 +289,7 @@ module.exports = async function (req, res, next, token = '') {
 					!orgDetails.data ||
 					!(Object.keys(orgDetails.data).length > 0) ||
 					!orgDetails.data.related_orgs ||
-					!(orgDetails.data.related_orgs > 0)
+					!(orgDetails.data.related_orgs.length > 0)
 				) {
 					let errorObj = {}
 					errorObj.errCode = CONSTANTS.apiResponses.ORG_DETAILS_FETCH_UNSUCCESSFUL_CODE
