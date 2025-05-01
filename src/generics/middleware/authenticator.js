@@ -57,6 +57,13 @@ module.exports = async function (req, res, next, token = '') {
 		})
 	)
 
+	if (guestAccess == true && !req.body['tenantId']) {
+		rspObj.errCode = CONSTANTS.apiResponses.TENANT_ID_MISSING_CODE
+		rspObj.errMsg = CONSTANTS.apiResponses.TENANT_ID_MISSING_MESSAGE
+		rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
+		return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
+	}
+
 	if (guestAccess == true && !token) {
 		next()
 		return
