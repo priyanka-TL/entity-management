@@ -15,7 +15,7 @@ module.exports = {
 		},
 		groups: Object,
 		metaInformation: {
-			externalId: { type: String, index: true, unique: true },
+			externalId: { type: String, index: true },
 			name: { type: String, index: true },
 		},
 		childHierarchyPath: Array,
@@ -37,5 +37,21 @@ module.exports = {
 			type: String,
 			default: 'SYSTEM',
 		},
+		tenantId: {
+			type: String,
+			index: true,
+			require: true,
+		},
+		orgIds: {
+			type: Array,
+			require: true,
+			index: true,
+		},
 	},
+	compoundIndex: [
+		{
+			name: { 'metaInformation.externalId': 1, tenantId: 1 },
+			indexType: { unique: true },
+		},
+	],
 }
