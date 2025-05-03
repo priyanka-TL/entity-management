@@ -47,6 +47,15 @@ let enviromentVariables = {
 		optional: true,
 		default: '../keycloakPublicKeys',
 	},
+	ADMIN_TOKEN_HEADER_NAME: {
+		message: 'Required admin access token header name',
+		optional: true,
+		default: 'admin-auth-token',
+	},
+	ADMIN_ACCESS_TOKEN: {
+		message: 'Required admin access token',
+		optional: false,
+	},
 }
 
 let success = true
