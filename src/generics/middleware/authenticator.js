@@ -66,7 +66,7 @@ module.exports = async function (req, res, next, token = '') {
 	// }
 
 	if (guestAccess == true && !token) {
-		if (!req.headers['tenantid']) {
+		if (!req.headers['tenantId']) {
 			rspObj.errCode = CONSTANTS.apiResponses.TENANT_ID_MISSING_CODE
 			rspObj.errMsg = CONSTANTS.apiResponses.TENANT_ID_MISSING_MESSAGE
 			rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
@@ -74,8 +74,8 @@ module.exports = async function (req, res, next, token = '') {
 		}
 		req.userDetails = {
 			userInformation: {
-				tenantId: req.headers['tenantid'],
-				organizationId: req.headers['orgid'] || null,
+				tenantId: req.headers['tenantId'],
+				organizationId: req.headers['orgId'] || null,
 			},
 		}
 
