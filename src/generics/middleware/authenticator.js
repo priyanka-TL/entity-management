@@ -229,17 +229,27 @@ module.exports = async function (req, res, next, token = '') {
 		}
 		// performing default token data extraction
 		if (defaultTokenExtraction) {
-			if (!decodedToken.data.organization_id) {
-				const orgId = req.get(process.env.ORG_ID_HEADER_NAME)
-				if (orgId && orgId != '') {
-					decodedToken.data.organization_id = orgId.toString()
-				} else decodedToken.data.organization_id = null
+			if (!decodedToken.data.organization_ids || !decodedToken.data.tenant_id) {
+				rspObj.errCode = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_CODE
+				rspObj.errMsg = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_MESSAGE
+				rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
+				return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+			}
+			//here assuming that req.headers['orgid'] will be a single value if multiple passed first element of the array will be taken
+			let fetchSingleOrgIdFunc = await fetchSingleOrgIdFromProvidedData(
+				decodedToken.data.tenant_id.toString(),
+				decodedToken.data.organization_ids,
+				req.headers['orgid']
+			)
+
+			if (!fetchSingleOrgIdFunc.success) {
+				return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(fetchSingleOrgIdFunc.errorObj))
 			}
 			userInformation = {
 				userId:
 					typeof decodedToken.data.id == 'string' ? decodedToken.data.id : decodedToken.data.id.toString(),
 				userName: decodedToken.data.name,
-				organizationId: decodedToken.data.organization_id ? decodedToken.data.organization_id.toString() : null,
+				organizationId: fetchSingleOrgIdFunc.orgId,
 				firstName: decodedToken.data.name,
 				roles: decodedToken.data.roles.map((role) => role.title),
 				tenantId: decodedToken.data.tenant_id.toString(),
@@ -283,7 +293,7 @@ module.exports = async function (req, res, next, token = '') {
 		 * @returns {Object} - Success with validOrgIds array or failure with error object
 		 */
 		async function validateIfOrgsBelongsToTenant(tenantId, orgId) {
-			let orgIdArr = orgId?.split(',') || []
+			let orgIdArr = Array.isArray(orgId) ? orgId : typeof orgId === 'string' ? orgId.split(',') : []
 			let orgDetails = await userService.fetchOrgDetails(tenantId)
 			let validOrgIds = null
 
@@ -323,6 +333,61 @@ module.exports = async function (req, res, next, token = '') {
 
 			return { success: true, validOrgIds: validOrgIds }
 		}
+
+		/**
+		 * Fetches a valid orgId from the provided data, checking if it's valid for the given tenant.
+		 *
+		 * @param {String} tenantId - ID of the tenant
+		 * @param {String[]} orgIdArr - Array of orgIds to choose from
+		 * @param {String} orgIdFromHeader - The orgId provided in the request headers
+		 * @returns {Promise<Object>} - Returns a promise resolving to an object containing the success status, orgId, or error details
+		 */
+		async function fetchSingleOrgIdFromProvidedData(tenantId, orgIdArr, orgIdFromHeader) {
+			try {
+				// Check if orgIdFromHeader is provided and valid
+				if (orgIdFromHeader && orgIdFromHeader != '') {
+					if (!orgIdArr.includes(orgIdFromHeader)) {
+						rspObj.errCode = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_CODE
+						rspObj.errMsg = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_MESSAGE
+						rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
+						return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+					}
+
+					let validateOrgsResult = await validateIfOrgsBelongsToTenant(tenantId, orgIdFromHeader)
+
+					if (!validateOrgsResult.success) {
+						rspObj.errCode = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_CODE
+						rspObj.errMsg = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_MESSAGE
+						rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
+						return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+					}
+
+					return { success: true, orgId: orgIdFromHeader }
+				}
+
+				// If orgIdFromHeader is not provided, check orgIdArr
+				if (orgIdArr.length > 0) {
+					return { success: true, orgId: orgIdArr[0] }
+				}
+
+				// If no orgId is found, throw error
+				rspObj.errCode = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_CODE
+				rspObj.errMsg = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_MESSAGE
+				rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
+				return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+			} catch (err) {
+				// Handle error when no valid orgId is found
+				if (orgIdArr.length > 0) {
+					return { success: true, orgId: orgIdArr[0] }
+				}
+
+				rspObj.errCode = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_CODE
+				rspObj.errMsg = CONSTANTS.apiResponses.TENANTID_AND_ORGID_REQUIRED_IN_TOKEN_MESSAGE
+				rspObj.responseCode = HTTP_STATUS_CODE['bad_request'].status
+				return res.status(HTTP_STATUS_CODE['bad_request'].status).send(respUtil(rspObj))
+			}
+		}
+
 		/**
 		 * Extract tenantId and orgId from incoming request or decoded token.
 		 *
