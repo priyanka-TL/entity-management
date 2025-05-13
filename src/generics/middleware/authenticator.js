@@ -58,14 +58,27 @@ module.exports = async function (req, res, next, token = '') {
 		})
 	)
 
-	if (guestAccess == true && !req.body['tenantId']) {
-		rspObj.errCode = CONSTANTS.apiResponses.TENANT_ID_MISSING_CODE
-		rspObj.errMsg = CONSTANTS.apiResponses.TENANT_ID_MISSING_MESSAGE
-		rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
-		return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
-	}
+	// if (guestAccess == true && !req.body['tenantId']) {
+	// 	rspObj.errCode = CONSTANTS.apiResponses.TENANT_ID_MISSING_CODE
+	// 	rspObj.errMsg = CONSTANTS.apiResponses.TENANT_ID_MISSING_MESSAGE
+	// 	rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
+	// 	return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
+	// }
 
 	if (guestAccess == true && !token) {
+		if (!req.headers['tenantid']) {
+			rspObj.errCode = CONSTANTS.apiResponses.TENANT_ID_MISSING_CODE
+			rspObj.errMsg = CONSTANTS.apiResponses.TENANT_ID_MISSING_MESSAGE
+			rspObj.responseCode = HTTP_STATUS_CODE['unauthorized'].status
+			return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
+		}
+		req.userDetails = {
+			userInformation: {
+				tenantId: req.headers['tenantid'],
+				organizationId: req.headers['orgid'] || null,
+			},
+		}
+
 		next()
 		return
 	}
@@ -97,7 +110,6 @@ module.exports = async function (req, res, next, token = '') {
 			return
 		}
 	}
-
 	if (!token) {
 		rspObj.errCode = CONSTANTS.apiResponses.TOKEN_MISSING_CODE
 		rspObj.errMsg = CONSTANTS.apiResponses.TOKEN_MISSING_MESSAGE
@@ -200,7 +212,7 @@ module.exports = async function (req, res, next, token = '') {
 		}
 
 		// Path to config.json
-		const configFilePath = path.resolve(__dirname, '../../../config.json')
+		const configFilePath = path.resolve(__dirname, '../../config.json')
 		// Initialize variables
 		let configData = {}
 		let defaultTokenExtraction = false
@@ -223,10 +235,13 @@ module.exports = async function (req, res, next, token = '') {
 			defaultTokenExtraction = true
 		}
 
+		let organizationKey = 'organization_id'
+
 		// Create user details to request
 		req.userDetails = {
 			userToken: token,
 		}
+
 		// performing default token data extraction
 		if (defaultTokenExtraction) {
 			if (!decodedToken.data.organization_ids || !decodedToken.data.tenant_id) {
@@ -255,16 +270,37 @@ module.exports = async function (req, res, next, token = '') {
 				tenantId: decodedToken.data.tenant_id.toString(),
 			}
 		} else {
-			// Iterate through each key in the config object
 			for (let key in configData) {
-				let stringTypeKeys = ['userId', 'tenantId', 'organizationId']
 				if (configData.hasOwnProperty(key)) {
 					let keyValue = getNestedValue(decodedToken, configData[key])
-					if (stringTypeKeys.includes(key)) {
-						keyValue = keyValue.toString()
+					if (key == 'userId') {
+						keyValue = keyValue?.toString()
 					}
+					if (key === organizationKey) {
+						let value = getOrgId(req.headers, decodedToken, configData[key])
+						userInformation[`organizationId`] = value.toString()
+						decodedToken.data[key] = value
+						continue
+					}
+					if (key === 'roles') {
+						let orgId = getOrgId(req.headers, decodedToken, configData[organizationKey])
+						// Now extract roles using fully dynamic path
+						const rolePathTemplate = configData['roles']
+						decodedToken.data[organizationKey] = orgId
+						const resolvedRolePath = resolvePathTemplate(rolePathTemplate, decodedToken.data)
+						const roles = getNestedValue(decodedToken, resolvedRolePath) || []
+						userInformation[`${key}`] = roles
+						decodedToken.data[key] = roles
+						continue
+					}
+
 					// For each key in config, assign the corresponding value from decodedToken
-					userInformation[`${key}`] = keyValue
+					decodedToken.data[key] = keyValue
+					if (key == 'tenant_id') {
+						userInformation[`tenantId`] = keyValue.toString()
+					} else {
+						userInformation[`${key}`] = keyValue
+					}
 				}
 			}
 			if (userInformation.roles && Array.isArray(userInformation.roles) && userInformation.roles.length) {
@@ -495,9 +531,56 @@ module.exports = async function (req, res, next, token = '') {
 	if (decodedToken.data.tenantAndOrgInfo) {
 		req.userDetails.tenantAndOrgInfo = decodedToken.data.tenantAndOrgInfo
 	}
+
 	// Helper function to access nested properties
+	function getOrgId(headers, decodedToken, orgConfigData) {
+		if (headers['organization_id']) {
+			return (orgId = headers['organization_id'].toString())
+		} else {
+			const orgIdPath = orgConfigData
+			return (orgId = getNestedValue(decodedToken, orgIdPath)?.toString())
+		}
+	}
+
 	function getNestedValue(obj, path) {
-		return path.split('.').reduce((acc, part) => acc && acc[part], obj)
+		const parts = path.split('.')
+		let current = obj
+
+		for (const part of parts) {
+			if (!current) return undefined
+
+			// Conditional match: key[?field=value]
+			const conditionalMatch = part.match(/^(\w+)\[\?(\w+)=([^\]]+)\]$/)
+			if (conditionalMatch) {
+				const [, arrayKey, field, expected] = conditionalMatch
+				const array = current[arrayKey]
+				if (!Array.isArray(array)) return undefined
+				const found = array.find((item) => String(item[field]) === String(expected))
+				if (!found) return undefined
+				current = found
+				continue
+			}
+
+			// Index match: key[0]
+			const indexMatch = part.match(/^(\w+)\[(\d+)\]$/)
+			if (indexMatch) {
+				const [, key, index] = indexMatch
+				const array = current[key]
+				if (!Array.isArray(array)) return undefined
+				current = array[parseInt(index, 10)]
+				continue
+			}
+
+			current = current[part]
+		}
+		return current
+	}
+
+	function resolvePathTemplate(template, contextObject) {
+		return template.replace(/\{\{(.*?)\}\}/g, (_, path) => {
+			const value = getNestedValue(contextObject, path.trim())
+			return value?.toString?.() ?? ''
+		})
 	}
 	next()
 }
