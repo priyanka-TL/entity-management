@@ -74,8 +74,8 @@ module.exports = async function (req, res, next, token = '') {
 		}
 		req.userDetails = {
 			userInformation: {
-				tenantId: req.headers['tenantid'],
-				organizationId: req.headers['orgid'] || null,
+				tenantId: req.headers['tenantId'],
+				organizationId: req.headers['orgId'] || 'ALL',
 			},
 		}
 
