@@ -33,7 +33,7 @@ module.exports = class UserProjectsHelper {
 						try {
 							entityType = UTILS.valueParser(entityType)
 							entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
-							entityType['orgIds'] = userDetails.tenantAndOrgInfo.orgIds
+							entityType['orgIds'] = CONSTANTS.common.ALL
 							entityType.registryDetails = {}
 							let removedKeys = []
 
@@ -142,7 +142,7 @@ module.exports = class UserProjectsHelper {
 			try {
 				let entityType = body
 				entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
-				entityType['orgIds'] = userDetails.tenantAndOrgInfo.orgIds
+				entityType['orgIds'] = CONSTANTS.common.ALL
 
 				if (entityType.profileFields) {
 					entityType.profileFields = entityType.profileFields.split(',') || []

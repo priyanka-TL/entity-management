@@ -45,4 +45,5 @@ module.exports = {
 	TENANT_ADMIN: 'tenant_admin',
 	SERVER_TIME_OUT: 5000,
 	GUEST_URLS: ['/entities/details', '/entities/entityListBasedOnEntityType', 'entities/subEntityList'],
+	ALL: 'ALL',
 }
