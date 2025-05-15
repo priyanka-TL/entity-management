@@ -43,7 +43,7 @@ module.exports = class userRoleExtensionHelper {
 					})
 				)
 				body['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
-				body['orgIds'] = userDetails.tenantAndOrgInfo.orgIds
+				body['orgIds'] = 'ALL'
 				// Call the queries function to create a new user role extension with the provided body data
 				let newUserRole = await userRoleExtensionQueries.create(body)
 
