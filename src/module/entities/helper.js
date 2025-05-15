@@ -1222,7 +1222,7 @@ module.exports = class UserProjectsHelper {
 				// Find the entities document based on the entityType in queryParams
 
 				let tenantId = userDetails.tenantAndOrgInfo.tenantId
-				let orgId = 'ALL'
+				let orgId = CONSTANTS.common.ALL
 				let entityTypeDocument = await entityTypeQueries.findOne(
 					{ name: queryParams.type, tenantId: tenantId },
 					{ _id: 1 }
@@ -1550,7 +1550,7 @@ module.exports = class UserProjectsHelper {
 
 				// Find the entity type document based on the provided entityType
 				let tenantId = userDetails.tenantAndOrgInfo.tenantId
-				let orgId = 'ALL'
+				let orgId = CONSTANTS.common.ALL
 				let entityTypeDocument = await entityTypeQueries.findOne(
 					{
 						name: entityType,
