@@ -272,11 +272,12 @@ module.exports = class Entities extends Abstract {
 	createMappingCsv(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				let tenantId = req.userDetails.userInformation.tenantId
 				// Parse CSV data from the uploaded file in the request body
 				let entityCSVData = await csv().fromString(req.files.entityCSV.data.toString())
 
 				// Process the entity mapping upload data using 'entitiesHelper.createMappingCsv'
-				let mappedEntities = await entitiesHelper.createMappingCsv(entityCSVData)
+				let mappedEntities = await entitiesHelper.createMappingCsv(entityCSVData, tenantId)
 
 				return resolve({
 					message: CONSTANTS.apiResponses.MAPPING_CSV_GENERATED,
