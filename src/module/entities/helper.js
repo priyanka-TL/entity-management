@@ -93,10 +93,11 @@ module.exports = class UserProjectsHelper {
 	 * @method
 	 * @name createMappingCsv
 	 * @param {Array<Object>} entityCSVData - Array of objects parsed from the input CSV file.
+	 * @param {String} tenantId - Tenant ID for the user.
 	 * @returns {Promise<Object>} Resolves with an object containing:
 	 */
 
-	static async createMappingCsv(entityCSVData) {
+	static async createMappingCsv(entityCSVData, tenantId) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				const parentEntityIds = []
@@ -113,6 +114,7 @@ module.exports = class UserProjectsHelper {
 						// Filter criteria to fetch entity documents based on entity type and external ID
 						const filter = {
 							'metaInformation.externalId': value,
+							tenantId: tenantId,
 						}
 
 						const entityDocuments = await entitiesQueries.entityDocuments(filter, ['_id'])
