@@ -1106,33 +1106,13 @@ module.exports = class UserProjectsHelper {
 	static find(bodyQuery, projection, pageNo, pageSize) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				// Create facet object to attain pagination
-				let facetQuery = {}
-				facetQuery['$facet'] = {}
-				facetQuery['$facet']['totalCount'] = [{ $count: 'count' }]
-				if (pageSize === '' && pageNo === '') {
-					facetQuery['$facet']['data'] = [{ $skip: 0 }]
-				} else {
-					facetQuery['$facet']['data'] = [{ $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }]
+				let result = await entitiesQueries.entityDocuments(bodyQuery, projection)
+				if (result.length > 0) {
+					let startIndex = pageSize * (pageNo - 1)
+					let endIndex = startIndex + pageSize
+					result = result.slice(startIndex, endIndex)
 				}
-				bodyQuery = convertMongoIds(bodyQuery)
-
-				// Create projection object
-				let projection1 = {}
-				if (projection.length > 0) {
-					projection.forEach((projectedData) => {
-						projection1[projectedData] = 1
-					})
-				}
-				const result = await entitiesQueries.getAggregate([
-					{ $match: bodyQuery },
-					{
-						$sort: { updatedAt: -1 },
-					},
-					{ $project: projection1 },
-					facetQuery,
-				])
-				if (!(result.length > 0) || !result[0].data || !(result[0].data.length > 0)) {
+				if (result.length < 1) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
@@ -1141,7 +1121,7 @@ module.exports = class UserProjectsHelper {
 				return resolve({
 					success: true,
 					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
-					result: result[0].data,
+					result: result,
 				})
 			} catch (error) {
 				return reject(error)
