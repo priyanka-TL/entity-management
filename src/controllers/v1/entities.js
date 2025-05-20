@@ -71,7 +71,12 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Calls the 'find' function from 'entitiesHelper' to retrieve entity data
-				let entityData = await entitiesHelper.find(req.body.query, req.body.projection)
+				let entityData = await entitiesHelper.find(
+					req.body.query,
+					req.body.projection,
+					req.pageNo,
+					req.pageSize
+				)
 				return resolve(entityData)
 			} catch (error) {
 				return reject({

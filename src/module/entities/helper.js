@@ -1099,13 +1099,20 @@ module.exports = class UserProjectsHelper {
 	 * @name find
 	 * @param {Object} bodyQuery - body data
 	 * @param {Object} projection - projection to filter data
+	 * @param {Number} pageNo - page number
+	 * @param {Number} pageSize - page limit
 	 */
 
-	static find(bodyQuery, projection) {
+	static find(bodyQuery, projection, pageNo, pageSize) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Fetch entities based on the provided query and projection
-				const result = await entitiesQueries.entityDocuments(bodyQuery, projection)
+				let result = await entitiesQueries.entityDocuments(bodyQuery, projection)
+				if (result.length > 0) {
+					let startIndex = pageSize * (pageNo - 1)
+					let endIndex = startIndex + pageSize
+					result = result.slice(startIndex, endIndex)
+				}
 				if (result.length < 1) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
