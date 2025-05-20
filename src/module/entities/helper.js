@@ -1115,7 +1115,7 @@ module.exports = class UserProjectsHelper {
 				} else {
 					facetQuery['$facet']['data'] = [{ $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }]
 				}
-				bodyQuery, projection, facetQuery
+				bodyQuery = convertMongoIds(bodyQuery)
 
 				// Create projection object
 				let projection1 = {}
@@ -1124,7 +1124,6 @@ module.exports = class UserProjectsHelper {
 						projection1[projectedData] = 1
 					})
 				}
-
 				const result = await entitiesQueries.getAggregate([
 					{ $match: bodyQuery },
 					{
@@ -2177,4 +2176,39 @@ function addTagsInEntities(entityMetaInformation) {
 		}
 	}
 	return entityMetaInformation
+}
+
+// Helper function to convert mongo ids to objectIds to facilitate proper query in aggregate function
+function convertMongoIds(query) {
+	const keysToConvert = ['_id'] // Add other fields if needed
+
+	const convertValue = (value) => {
+		if (Array.isArray(value)) {
+			return value.map((v) => (isValidObjectId(v) ? new ObjectId(v) : v))
+		} else if (isValidObjectId(value)) {
+			return new ObjectId(value)
+		}
+		return value
+	}
+
+	const isValidObjectId = (id) => {
+		return typeof id === 'string' && /^[a-fA-F0-9]{24}$/.test(id)
+	}
+
+	const recurse = (obj) => {
+		for (const key in obj) {
+			if (keysToConvert.includes(key)) {
+				if (typeof obj[key] === 'object' && obj[key] !== null && '$in' in obj[key]) {
+					obj[key]['$in'] = convertValue(obj[key]['$in'])
+				} else {
+					obj[key] = convertValue(obj[key])
+				}
+			} else if (typeof obj[key] === 'object' && obj[key] !== null) {
+				recurse(obj[key])
+			}
+		}
+	}
+
+	recurse(query)
+	return query
 }
