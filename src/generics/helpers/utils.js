@@ -238,6 +238,41 @@ function generateUniqueId() {
 	return uuidV4()
 }
 
+// Helper function to convert mongo ids to objectIds to facilitate proper query in aggregate function
+function convertMongoIds(query) {
+	const keysToConvert = ['_id'] // Add other fields if needed
+
+	const convertValue = (value) => {
+		if (Array.isArray(value)) {
+			return value.map((v) => (isValidObjectId(v) ? new ObjectId(v) : v))
+		} else if (isValidObjectId(value)) {
+			return new ObjectId(value)
+		}
+		return value
+	}
+
+	const isValidObjectId = (id) => {
+		return typeof id === 'string' && /^[a-fA-F0-9]{24}$/.test(id)
+	}
+
+	const recurse = (obj) => {
+		for (const key in obj) {
+			if (keysToConvert.includes(key)) {
+				if (typeof obj[key] === 'object' && obj[key] !== null && '$in' in obj[key]) {
+					obj[key]['$in'] = convertValue(obj[key]['$in'])
+				} else {
+					obj[key] = convertValue(obj[key])
+				}
+			} else if (typeof obj[key] === 'object' && obj[key] !== null) {
+				recurse(obj[key])
+			}
+		}
+	}
+
+	recurse(query)
+	return query
+}
+
 module.exports = {
 	camelCaseToTitleCase: camelCaseToTitleCase,
 	lowerCase: lowerCase,
@@ -251,4 +286,5 @@ module.exports = {
 	noOfElementsInArray: noOfElementsInArray,
 	operatorValidation: operatorValidation,
 	generateUniqueId: generateUniqueId,
+	convertMongoIds: convertMongoIds,
 }

@@ -368,19 +368,45 @@ module.exports = class UserProjectsHelper {
 	 * List enitity Type.
 	 * @method
 	 * @name list
-	 * @param {Object} [query = {}] - query value if required.
+	 * @param {Object} [bodyQuery = {}] - query value if required.
 	 * @param {Object} [projection = {}] - mongodb query project object
 	 * @returns {JSON} - Details of entity.
 	 */
 
-	static list(query = {}, projection = {}) {
+	static list(bodyQuery = {}, projection = [], pageNo, pageSize) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Create facet object to attain pagination
+				let facetQuery = {}
+				facetQuery['$facet'] = {}
+				facetQuery['$facet']['totalCount'] = [{ $count: 'count' }]
+				if (pageSize === '' && pageNo === '') {
+					facetQuery['$facet']['data'] = [{ $skip: 0 }]
+				} else {
+					facetQuery['$facet']['data'] = [{ $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }]
+				}
+
+				bodyQuery = UTILS.convertMongoIds(bodyQuery)
+				// Create projection object
+				let projection1 = {}
+				if (projection.length > 0) {
+					projection.forEach((projectedData) => {
+						projection1[projectedData] = 1
+					})
+				}
+
 				// Retrieve entity type data based on the provided query and projection
-				let entityTypeData = await entityTypeQueries.entityTypesDocument(query, projection)
+				const result = await entityTypeQueries.getAggregate([
+					{ $match: bodyQuery },
+					{
+						$sort: { updatedAt: -1 },
+					},
+					{ $project: projection1 },
+					facetQuery,
+				])
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_TYPES_FETCHED,
-					result: entityTypeData,
+					result: result[0].data,
 				})
 			} catch (error) {
 				return reject(error)

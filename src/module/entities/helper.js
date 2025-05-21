@@ -1106,13 +1106,34 @@ module.exports = class UserProjectsHelper {
 	static find(bodyQuery, projection, pageNo, pageSize) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let result = await entitiesQueries.entityDocuments(bodyQuery, projection)
-				if (result.length > 0) {
-					let startIndex = pageSize * (pageNo - 1)
-					let endIndex = startIndex + pageSize
-					result = result.slice(startIndex, endIndex)
+				// Create facet object to attain pagination
+				let facetQuery = {}
+				facetQuery['$facet'] = {}
+				facetQuery['$facet']['totalCount'] = [{ $count: 'count' }]
+				if (pageSize === '' && pageNo === '') {
+					facetQuery['$facet']['data'] = [{ $skip: 0 }]
+				} else {
+					facetQuery['$facet']['data'] = [{ $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }]
 				}
-				if (result.length < 1) {
+
+				bodyQuery = UTILS.convertMongoIds(bodyQuery)
+				// Create projection object
+				let projection1 = {}
+				if (projection.length > 0) {
+					projection.forEach((projectedData) => {
+						projection1[projectedData] = 1
+					})
+				}
+
+				const result = await entitiesQueries.getAggregate([
+					{ $match: bodyQuery },
+					{
+						$sort: { updatedAt: -1 },
+					},
+					{ $project: projection1 },
+					facetQuery,
+				])
+				if (!(result.length > 0) || !result[0].data || !(result[0].data.length > 0)) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
@@ -1121,7 +1142,7 @@ module.exports = class UserProjectsHelper {
 				return resolve({
 					success: true,
 					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
-					result: result,
+					result: result[0].data,
 				})
 			} catch (error) {
 				return reject(error)
@@ -2156,39 +2177,4 @@ function addTagsInEntities(entityMetaInformation) {
 		}
 	}
 	return entityMetaInformation
-}
-
-// Helper function to convert mongo ids to objectIds to facilitate proper query in aggregate function
-function convertMongoIds(query) {
-	const keysToConvert = ['_id'] // Add other fields if needed
-
-	const convertValue = (value) => {
-		if (Array.isArray(value)) {
-			return value.map((v) => (isValidObjectId(v) ? new ObjectId(v) : v))
-		} else if (isValidObjectId(value)) {
-			return new ObjectId(value)
-		}
-		return value
-	}
-
-	const isValidObjectId = (id) => {
-		return typeof id === 'string' && /^[a-fA-F0-9]{24}$/.test(id)
-	}
-
-	const recurse = (obj) => {
-		for (const key in obj) {
-			if (keysToConvert.includes(key)) {
-				if (typeof obj[key] === 'object' && obj[key] !== null && '$in' in obj[key]) {
-					obj[key]['$in'] = convertValue(obj[key]['$in'])
-				} else {
-					obj[key] = convertValue(obj[key])
-				}
-			} else if (typeof obj[key] === 'object' && obj[key] !== null) {
-				recurse(obj[key])
-			}
-		}
-	}
-
-	recurse(query)
-	return query
 }

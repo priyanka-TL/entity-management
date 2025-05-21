@@ -76,7 +76,7 @@ module.exports = class EntityTypes extends Abstract {
 					organizationId = req.userDetails.userInformation.organizationId
 					query['orgIds'] = { $in: [organizationId] }
 				}
-				let result = await entityTypesHelper.list(query, { name: 1 })
+				let result = await entityTypesHelper.list(query, ['name'], req.pageNo, req.pageSize)
 
 				return resolve(result)
 			} catch (error) {
@@ -114,7 +114,7 @@ module.exports = class EntityTypes extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call 'entityTypesHelper.list' to find entity types based on provided query, projection, and skipFields
-				let result = await entityTypesHelper.list(req.body.query, req.body.projection, req.body.skipFields)
+				let result = await entityTypesHelper.list(req.body.query, req.body.projection, req.pageNo, req.pageSize)
 
 				return resolve(result)
 			} catch (error) {
