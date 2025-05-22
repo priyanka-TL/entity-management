@@ -198,7 +198,13 @@ module.exports = class userRoleExtension extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Call the helper function to find the user role extensions
-				let userData = await userRoleExtensionHelper.find(req.body.query, req.body.projection)
+				let userData = await userRoleExtensionHelper.find(
+					req.body.query,
+					req.body.projection,
+					req.pageSize,
+					req.pageSize * (req.pageNo - 1),
+					true
+				)
 				// Resolve the promise with the found user role extensions
 				return resolve(userData)
 			} catch (error) {

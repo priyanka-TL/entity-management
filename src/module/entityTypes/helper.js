@@ -389,21 +389,32 @@ module.exports = class UserProjectsHelper {
 				bodyQuery = UTILS.convertMongoIds(bodyQuery)
 				// Create projection object
 				let projection1 = {}
-				if (projection.length > 0) {
+				let aggregateData
+				if (Array.isArray(projection) && projection.length > 0) {
+					projection1 = {}
 					projection.forEach((projectedData) => {
 						projection1[projectedData] = 1
 					})
+					aggregateData = [
+						{ $match: bodyQuery },
+						{
+							$sort: { updatedAt: -1 },
+						},
+						{ $project: projection1 },
+						facetQuery,
+					]
+				} else {
+					aggregateData = [
+						{ $match: bodyQuery },
+						{
+							$sort: { updatedAt: -1 },
+						},
+						facetQuery,
+					]
 				}
 
 				// Retrieve entity type data based on the provided query and projection
-				const result = await entityTypeQueries.getAggregate([
-					{ $match: bodyQuery },
-					{
-						$sort: { updatedAt: -1 },
-					},
-					{ $project: projection1 },
-					facetQuery,
-				])
+				const result = await entityTypeQueries.getAggregate(aggregateData)
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_TYPES_FETCHED,
 					result: result[0].data,
