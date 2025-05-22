@@ -1118,21 +1118,32 @@ module.exports = class UserProjectsHelper {
 
 				bodyQuery = UTILS.convertMongoIds(bodyQuery)
 				// Create projection object
-				let projection1 = {}
-				if (projection.length > 0) {
+				let projection1
+				let aggregateData
+				if (Array.isArray(projection) && projection.length > 0) {
+					projection1 = {}
 					projection.forEach((projectedData) => {
 						projection1[projectedData] = 1
 					})
+					aggregateData = [
+						{ $match: bodyQuery },
+						{
+							$sort: { updatedAt: -1 },
+						},
+						{ $project: projection1 },
+						facetQuery,
+					]
+				} else {
+					aggregateData = [
+						{ $match: bodyQuery },
+						{
+							$sort: { updatedAt: -1 },
+						},
+						facetQuery,
+					]
 				}
 
-				const result = await entitiesQueries.getAggregate([
-					{ $match: bodyQuery },
-					{
-						$sort: { updatedAt: -1 },
-					},
-					{ $project: projection1 },
-					facetQuery,
-				])
+				const result = await entitiesQueries.getAggregate(aggregateData)
 				if (!(result.length > 0) || !result[0].data || !(result[0].data.length > 0)) {
 					throw {
 						status: HTTP_STATUS_CODE.not_found.status,
