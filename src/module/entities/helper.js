@@ -1101,9 +1101,10 @@ module.exports = class UserProjectsHelper {
 	 * @param {Object} projection - projection to filter data
 	 * @param {Number} pageNo - page number
 	 * @param {Number} pageSize - page limit
+	 * @param {String} searchText - search text
 	 */
 
-	static find(bodyQuery, projection, pageNo, pageSize) {
+	static find(bodyQuery, projection, pageNo, pageSize, searchText) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Create facet object to attain pagination
@@ -1117,6 +1118,17 @@ module.exports = class UserProjectsHelper {
 				}
 
 				bodyQuery = UTILS.convertMongoIds(bodyQuery)
+
+				// add search filter to the bodyQuery
+				if (searchText != '') {
+					let searchData = [
+						{
+							'metaInformation.name': new RegExp(searchText, 'i'),
+						},
+					]
+					bodyQuery['$and'] = searchData
+				}
+
 				// Create projection object
 				let projection1
 				let aggregateData

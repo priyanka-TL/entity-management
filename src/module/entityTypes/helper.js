@@ -370,10 +370,13 @@ module.exports = class UserProjectsHelper {
 	 * @name list
 	 * @param {Object} [bodyQuery = {}] - query value if required.
 	 * @param {Object} [projection = {}] - mongodb query project object
+	 * @param {Number} [pageNo] - page no
+	 * @param {Number} [pageSize] - page size
+	 * @param {String} [searchText] - search text
 	 * @returns {JSON} - Details of entity.
 	 */
 
-	static list(bodyQuery = {}, projection = [], pageNo, pageSize) {
+	static list(bodyQuery = {}, projection = [], pageNo, pageSize, searchText = '') {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Create facet object to attain pagination
@@ -387,6 +390,17 @@ module.exports = class UserProjectsHelper {
 				}
 
 				bodyQuery = UTILS.convertMongoIds(bodyQuery)
+
+				// add search filter to the bodyQuery
+				if (searchText != '') {
+					let searchData = [
+						{
+							name: new RegExp(searchText, 'i'),
+						},
+					]
+					bodyQuery['$and'] = searchData
+				}
+
 				// Create projection object
 				let projection1 = {}
 				let aggregateData
