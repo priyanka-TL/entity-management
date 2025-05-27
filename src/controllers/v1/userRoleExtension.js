@@ -201,8 +201,8 @@ module.exports = class userRoleExtension extends Abstract {
 				let userData = await userRoleExtensionHelper.find(
 					req.body.query,
 					req.body.projection,
-					req.pageSize,
-					req.pageSize * (req.pageNo - 1),
+					req.pageSize, // response limit - specifies the limit of documents needed in the response
+					req.pageSize * (req.pageNo - 1), // response offset - specifies the number of documents to be skipped
 					true
 				)
 				// Resolve the promise with the found user role extensions
