@@ -207,4 +207,28 @@ module.exports = class EntityTypes {
 			}
 		})
 	}
+
+	/**
+	 * Get Aggregate of entities documents.
+	 * @method
+	 * @name getAggregate
+	 * @param {Object} [aggregateData] - aggregate Data.
+	 * @returns {Array} - entities data.
+	 */
+
+	static getAggregate(aggregateData) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Use database model 'entities' to perform aggregation using the provided aggregateData
+				let entityData = await database.models.entityTypes.aggregate(aggregateData)
+				return resolve(entityData)
+			} catch (error) {
+				return reject({
+					status: error.status || HTTP_STATUS_CODE.bad_request.status,
+					message: error.message || HTTP_STATUS_CODE.bad_request.message,
+					errorObject: error,
+				})
+			}
+		})
+	}
 }
