@@ -240,7 +240,7 @@ function generateUniqueId() {
 
 // Helper function to convert mongo ids to objectIds to facilitate proper query in aggregate function
 function convertMongoIds(query) {
-	const keysToConvert = ['_id'] // Add other fields if needed
+	const keysToConvert = ['_id', 'entityTypeId'] // Add other fields if needed
 
 	const convertValue = (value) => {
 		if (Array.isArray(value)) {
