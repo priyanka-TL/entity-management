@@ -368,19 +368,70 @@ module.exports = class UserProjectsHelper {
 	 * List enitity Type.
 	 * @method
 	 * @name list
-	 * @param {Object} [query = {}] - query value if required.
+	 * @param {Object} [bodyQuery = {}] - query value if required.
 	 * @param {Object} [projection = {}] - mongodb query project object
+	 * @param {Number} [pageNo] - page no
+	 * @param {Number} [pageSize] - page size
+	 * @param {String} [searchText] - search text
 	 * @returns {JSON} - Details of entity.
 	 */
 
-	static list(query = {}, projection = {}) {
+	static list(bodyQuery = {}, projection = [], pageNo, pageSize, searchText = '') {
 		return new Promise(async (resolve, reject) => {
 			try {
+				// Create facet object to attain pagination
+				let facetQuery = {}
+				facetQuery['$facet'] = {}
+				facetQuery['$facet']['totalCount'] = [{ $count: 'count' }]
+				if (pageSize === '' && pageNo === '') {
+					facetQuery['$facet']['data'] = [{ $skip: 0 }]
+				} else {
+					facetQuery['$facet']['data'] = [{ $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }]
+				}
+
+				bodyQuery = UTILS.convertMongoIds(bodyQuery)
+
+				// add search filter to the bodyQuery
+				if (searchText != '') {
+					let searchData = [
+						{
+							name: new RegExp(searchText, 'i'),
+						},
+					]
+					bodyQuery['$and'] = searchData
+				}
+
+				// Create projection object
+				let projection1 = {}
+				let aggregateData
+				if (Array.isArray(projection) && projection.length > 0) {
+					projection1 = {}
+					projection.forEach((projectedData) => {
+						projection1[projectedData] = 1
+					})
+					aggregateData = [
+						{ $match: bodyQuery },
+						{
+							$sort: { updatedAt: -1 },
+						},
+						{ $project: projection1 },
+						facetQuery,
+					]
+				} else {
+					aggregateData = [
+						{ $match: bodyQuery },
+						{
+							$sort: { updatedAt: -1 },
+						},
+						facetQuery,
+					]
+				}
+
 				// Retrieve entity type data based on the provided query and projection
-				let entityTypeData = await entityTypeQueries.entityTypesDocument(query, projection)
+				const result = await entityTypeQueries.getAggregate(aggregateData)
 				return resolve({
 					message: CONSTANTS.apiResponses.ENTITY_TYPES_FETCHED,
-					result: entityTypeData,
+					result: result[0].data,
 				})
 			} catch (error) {
 				return reject(error)

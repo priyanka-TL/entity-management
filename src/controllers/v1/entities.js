@@ -75,7 +75,8 @@ module.exports = class Entities extends Abstract {
 					req.body.query,
 					req.body.projection,
 					req.pageNo,
-					req.pageSize
+					req.pageSize,
+					req.searchText
 				)
 				return resolve(entityData)
 			} catch (error) {
