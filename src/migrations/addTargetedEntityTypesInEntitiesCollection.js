@@ -88,8 +88,6 @@ let professionalSubRolesInfo = {
 	'director-state-education-board': ['state'],
 }
 
-let cache = {}
-
 async function runMigration() {
 	try {
 		await dbClient.connect()
