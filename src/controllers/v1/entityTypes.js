@@ -67,9 +67,6 @@ module.exports = class EntityTypes extends Abstract {
 				query['tenantId'] = req.userDetails.tenantAndOrgInfo
 					? req.userDetails.tenantAndOrgInfo.tenantId
 					: req.userDetails.userInformation.tenantId
-				query['orgIds'] = req.userDetails.tenantAndOrgInfo
-					? { $in: req.userDetails.tenantAndOrgInfo.orgIds }
-					: { $in: [req.userDetails.userInformation.organizationId] }
 
 				// handle currentOrgOnly filter
 				if (req.query['currentOrgOnly'] && req.query['currentOrgOnly'] == 'true') {

@@ -26,6 +26,7 @@ module.exports = class UserProjectsHelper {
 	 * @returns {JSON} - uploaded entity information.
 	 */
 	static bulkCreate(entityTypesCSVData, userDetails) {
+		console.log(userDetails, '<--userDetails in bulkCreate entityTypesCSVData')
 		return new Promise(async (resolve, reject) => {
 			try {
 				const entityTypesUploadedData = await Promise.all(
@@ -33,7 +34,7 @@ module.exports = class UserProjectsHelper {
 						try {
 							entityType = UTILS.valueParser(entityType)
 							entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
-							entityType['orgIds'] = CONSTANTS.common.ALL
+							entityType['orgId'] = userDetails.tenantAndOrgInfo.orgId[0]
 							entityType.registryDetails = {}
 							let removedKeys = []
 
@@ -113,6 +114,7 @@ module.exports = class UserProjectsHelper {
 								entityType.status = CONSTANTS.apiResponses.FAILURE
 							}
 						} catch (error) {
+							console.log(error, '<--error in bulkCreate entityTypesCSVData')
 							entityType['_SYSTEM_ID'] = ''
 							entityType.status = CONSTANTS.apiResponses.FAILURE
 							entityType.message = CONSTANTS.apiResponses.FAILURE
@@ -124,6 +126,7 @@ module.exports = class UserProjectsHelper {
 
 				return resolve(entityTypesUploadedData)
 			} catch (error) {
+				console.log(error, '<--error in bulkCreate entityTypesCSVData')
 				return reject(error)
 			}
 		})
@@ -142,7 +145,7 @@ module.exports = class UserProjectsHelper {
 			try {
 				let entityType = body
 				entityType['tenantId'] = userDetails.tenantAndOrgInfo.tenantId
-				entityType['orgIds'] = CONSTANTS.common.ALL
+				entityType['orgId'] = userDetails.tenantAndOrgInfo.orgId[0]
 
 				if (entityType.profileFields) {
 					entityType.profileFields = entityType.profileFields.split(',') || []
@@ -426,6 +429,8 @@ module.exports = class UserProjectsHelper {
 						facetQuery,
 					]
 				}
+
+				console.log(bodyQuery, '<--bodyQuery')
 
 				// Retrieve entity type data based on the provided query and projection
 				const result = await entityTypeQueries.getAggregate(aggregateData)
