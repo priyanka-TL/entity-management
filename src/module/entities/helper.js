@@ -1329,23 +1329,14 @@ module.exports = class UserProjectsHelper {
 					}
 					if (singleEntity['targetedEntityTypes']) {
 						singleEntity.targetedEntityTypes = singleEntity.targetedEntityTypes.map((item) => item.trim())
+						let targetedEntityTypes = await populateTargetedEntityTypesData(
+							singleEntity.targetedEntityTypes,
+							tenantId
+						)
+						singleEntity.targetedEntityTypes = targetedEntityTypes
+					} else {
+						singleEntity.targetedEntityTypes = []
 					}
-					const formattedTargetedEntityTypes = await entityTypeQueries.entityTypesDocument(
-						{
-							name: { $in: singleEntity.targetedEntityTypes },
-							tenantId: tenantId,
-						},
-						['name', '_id']
-					)
-
-					formattedTargetedEntityTypes.forEach((entityType) => {
-						entityType['entityTypeId'] = entityType._id.toString()
-						entityType['entityType'] = entityType.name
-						delete entityType._id
-						delete entityType.name
-					})
-					singleEntity.targetedEntityTypes = formattedTargetedEntityTypes
-
 					// Construct the entity document to be created
 					let entityDoc = {
 						entityTypeId: entityTypeDocument._id,
@@ -1663,22 +1654,14 @@ module.exports = class UserProjectsHelper {
 								.replace(/^"(.*)"$/, '$1') // remove starting and ending quotes
 								.split(',')
 								.map((type) => type.trim())
-							formattedTargetedEntityTypes = await entityTypeQueries.entityTypesDocument(
-								{
-									name: { $in: entityTypesArray },
-									tenantId: tenantId,
-								},
-								['name', '_id']
+							formattedTargetedEntityTypes = await populateTargetedEntityTypesData(
+								entityTypesArray,
+								tenantId
 							)
-
-							formattedTargetedEntityTypes.forEach((entityType) => {
-								entityType['entityTypeId'] = entityType._id.toString()
-								entityType['entityType'] = entityType.name
-								delete entityType._id
-								delete entityType.name
-							})
+							singleEntity.targetedEntityTypes = formattedTargetedEntityTypes
+						} else {
+							singleEntity.targetedEntityTypes = []
 						}
-						singleEntity.targetedEntityTypes = formattedTargetedEntityTypes
 						if (singleEntity.childHierarchyPath) {
 							entityCreation['childHierarchyPath'] = JSON.parse(singleEntity['childHierarchyPath'])
 						}
@@ -1836,21 +1819,12 @@ module.exports = class UserProjectsHelper {
 							.split(',')
 							.map((item) => item.trim())
 						if (targetedEntityTypes.length > 0) {
-							const formattedTargetedEntityTypes = await entityTypeQueries.entityTypesDocument(
-								{
-									name: { $in: targetedEntityTypes },
-									tenantId: tenantId,
-								},
-								['name', '_id']
+							updateData['metaInformation.targetedEntityTypes'] = await populateTargetedEntityTypesData(
+								targetedEntityTypes,
+								tenantId
 							)
-
-							formattedTargetedEntityTypes.forEach((entityType) => {
-								entityType['entityTypeId'] = entityType._id.toString()
-								entityType['entityType'] = entityType.name
-								delete entityType._id
-								delete entityType.name
-							})
-							updateData['metaInformation.targetedEntityTypes'] = formattedTargetedEntityTypes
+						} else {
+							updateData['metaInformation.targetedEntityTypes'] = []
 						}
 						if (Object.keys(updateData).length > 0) {
 							let updateEntity = await entitiesQueries.findOneAndUpdate(
@@ -1920,22 +1894,11 @@ module.exports = class UserProjectsHelper {
 
 				if (bodyData['targetedEntityTypes']) {
 					bodyData.targetedEntityTypes = bodyData.targetedEntityTypes.map((item) => item.trim())
-					const formattedTargetedEntityTypes = await entityTypeQueries.entityTypesDocument(
-						{
-							name: { $in: bodyData.targetedEntityTypes },
-							tenantId: tenantId,
-						},
-						['name', '_id']
+					bodyData['metaInformation.targetedEntityTypes'] = await populateTargetedEntityTypesData(
+						bodyData.targetedEntityTypes,
+						tenantId
 					)
-
-					formattedTargetedEntityTypes.forEach((entityType) => {
-						entityType['entityTypeId'] = entityType._id.toString()
-						entityType['entityType'] = entityType.name
-						delete entityType._id
-						delete entityType.name
-					})
 					delete bodyData.targetedEntityTypes
-					bodyData['metaInformation.targetedEntityTypes'] = formattedTargetedEntityTypes
 				}
 				// Update the entity using findOneAndUpdate
 				let entityInformation = await entitiesQueries.findOneAndUpdate(
@@ -2279,4 +2242,22 @@ function addTagsInEntities(entityMetaInformation) {
 		}
 	}
 	return entityMetaInformation
+}
+
+async function populateTargetedEntityTypesData(targetedEntityTypes, tenantId) {
+	const formattedTargetedEntityTypes = await entityTypeQueries.entityTypesDocument(
+		{
+			name: { $in: targetedEntityTypes },
+			tenantId: tenantId,
+		},
+		['name', '_id']
+	)
+
+	formattedTargetedEntityTypes.forEach((entityType) => {
+		entityType['entityTypeId'] = entityType._id.toString()
+		entityType['entityType'] = entityType.name
+		delete entityType._id
+		delete entityType.name
+	})
+	return formattedTargetedEntityTypes
 }
