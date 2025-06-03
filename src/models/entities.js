@@ -17,6 +17,7 @@ module.exports = {
 		metaInformation: {
 			externalId: { type: String, index: true },
 			name: { type: String, index: true },
+			targetedEntityTypes: { type: Array },
 		},
 		childHierarchyPath: Array,
 		userId: {

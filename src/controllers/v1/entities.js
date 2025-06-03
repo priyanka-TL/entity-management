@@ -1060,7 +1060,7 @@ module.exports = class Entities extends Abstract {
 					translationFile = JSON.parse(req.files.translationFile.data.toString())
 				}
 				// Call 'entitiesHelper.bulkUpdate' to update entities based on CSV data and user details
-				let newEntityData = await entitiesHelper.bulkUpdate(entityCSVData, translationFile, userDetails)
+				let newEntityData = await entitiesHelper.bulkUpdate(entityCSVData, translationFile, req.userDetails)
 
 				// Check if entities were updated successfully
 				if (newEntityData.length > 0) {

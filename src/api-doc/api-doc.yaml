@@ -890,6 +890,25 @@ paths:
                     items:
                       type: object
                       properties:
+                        metaInformation:
+                          type: object
+                          properties:
+                            targetedEntityTypes:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  entityType:
+                                    type: string
+                                  entityTypeId:
+                                    type: string
+                                required:
+                                  - entityType
+                                  - entityTypeId
+                            externalId:
+                              type: string
+                            name:
+                              type: string
                         childHierarchyPath:
                           type: array
                           items:
@@ -898,6 +917,10 @@ paths:
                           type: string
                         updatedBy:
                           type: string
+                        orgIds:
+                          type: array
+                          items:
+                            type: string
                         _id:
                           type: string
                         deleted:
@@ -913,11 +936,10 @@ paths:
                               type: string
                             code:
                               type: string
-                        metaInformation:
-                          type: object
-                          properties:
-                            externalId:
-                              type: string
+                        userId:
+                          type: string
+                        tenantId:
+                          type: string
                         updatedAt:
                           type: string
                         createdAt:
@@ -930,25 +952,34 @@ paths:
                     message: ENTITY_ADDED
                     status: 200
                     result:
-                      - childHierarchyPath:
+                      - metaInformation:
+                          targetedEntityTypes:
+                            - entityType: state
+                              entityTypeId: 683953548f365ab56c8022e9
+                            - entityType: block
+                              entityTypeId: 6839535b8f365ab56c8022ed
+                          externalId: KA28
+                          name: Karnataka
+                        childHierarchyPath:
                           - district
-                          - beat
+                          - block
                           - cluster
                           - school
-                          - block
-                        createdBy: SYSTEM
-                        updatedBy: SYSTEM
-                        _id: 6634b0767411a605fdbaca71
+                        createdBy: '208'
+                        updatedBy: '208'
+                        orgIds:
+                          - ALL
+                        _id: 683996e732316a1ac4f6f150
                         deleted: false
-                        entityTypeId: 5f32d8228e0dc83124040567
-                        entityType: school
+                        entityTypeId: 683953808f365ab56c8022f5
+                        entityType: professional_role
                         registryDetails:
-                          locationId: entity123
-                          code: entity123
-                        metaInformation:
-                          externalId: entity123
-                        updatedAt: '2024-05-03T09:37:58.425Z'
-                        createdAt: '2024-05-03T09:37:58.425Z'
+                          locationId: KA28
+                          code: KA28
+                        userId: '208'
+                        tenantId: '24'
+                        updatedAt: '2025-05-30T11:30:47.909Z'
+                        createdAt: '2025-05-30T11:30:47.909Z'
                         __v: 0
         '400':
           description: Bad Request.
@@ -979,22 +1010,26 @@ paths:
                   type: string
                 name:
                   type: string
-                entityType:
-                  type: string
                 childHierarchyPath:
+                  type: array
+                  items:
+                    type: string
+                targetedEntityTypes:
                   type: array
                   items:
                     type: string
             examples:
               sampleBodyData:
                 value:
-                  externalId: entity123
-                  name: entityName
+                  externalId: KA28
+                  name: Karnataka
                   childHierarchyPath:
                     - district
-                    - beat
+                    - block
                     - cluster
                     - school
+                  targetedEntityTypes:
+                    - state
                     - block
   /v1/entities/details/{_id}?&language={code}:
     get:
@@ -1148,7 +1183,28 @@ paths:
                       metaInformation:
                         type: object
                         properties:
+                          targetedEntityTypes:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                entityType:
+                                  type: string
+                                entityTypeId:
+                                  type: string
+                              required:
+                                - entityType
+                                - entityTypeId
                           externalId:
+                            type: string
+                          name:
+                            type: string
+                      registryDetails:
+                        type: object
+                        properties:
+                          locationId:
+                            type: string
+                          code:
                             type: string
                       childHierarchyPath:
                         type: array
@@ -1158,6 +1214,10 @@ paths:
                         type: string
                       updatedBy:
                         type: string
+                      orgIds:
+                        type: array
+                        items:
+                          type: string
                       deleted:
                         type: boolean
                       _id:
@@ -1165,6 +1225,10 @@ paths:
                       entityTypeId:
                         type: string
                       entityType:
+                        type: string
+                      userId:
+                        type: string
+                      tenantId:
                         type: string
                       updatedAt:
                         type: string
@@ -1175,24 +1239,33 @@ paths:
               examples:
                 SuccessResponse:
                   value:
-                    message: ENTITY_UPDATATED
+                    message: ENTITY_UPDATED
                     status: 200
                     result:
                       metaInformation:
-                        externalId: SCH
-                        name: school
+                        targetedEntityTypes:
+                          - entityType: state
+                            entityTypeId: 683953548f365ab56c8022e9
+                          - entityType: block
+                            entityTypeId: 6839535b8f365ab56c8022ed
+                        externalId: KA28
+                        name: Karnataka
                       registryDetails:
-                        locationId: rajAPSTATEDummy4
-                        code: rajAPSTATEDummy4
+                        locationId: KA28
+                        code: KA28
                       childHierarchyPath: []
-                      createdBy: user123
-                      updatedBy: user123
+                      createdBy: '208'
+                      updatedBy: '208'
+                      orgIds:
+                        - ALL
                       deleted: false
-                      _id: 66ea64fa68cd063346a10365
-                      entityTypeId: 6672ce0fc05aa58f89ba12f1
-                      entityType: state
-                      updatedAt: '2024-09-18T10:07:39.407Z'
-                      createdAt: '2024-09-18T05:28:26.148Z'
+                      _id: 68395a55e5af17c215ce3408
+                      entityTypeId: 683953808f365ab56c8022f5
+                      entityType: professional_role
+                      userId: '208'
+                      tenantId: '24'
+                      updatedAt: '2025-05-30T11:32:35.296Z'
+                      createdAt: '2025-05-30T07:12:21.457Z'
                       __v: 0
         '400':
           description: Bad Request.
@@ -1216,26 +1289,34 @@ paths:
             schema:
               type: object
               properties:
-                metaInformation.externalId:
-                  type: string
+                metaInformation.targetedEntityTypes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      entityType:
+                        type: string
+                      entityTypeId:
+                        type: string
+                    required:
+                      - entityType
+                      - entityTypeId
                 metaInformation.name:
                   type: string
                 childHierarchyPath:
                   type: array
                   items:
                     type: string
-                createdBy:
-                  type: string
-                updatedBy:
-                  type: string
             examples:
               sampleBodyData:
                 value:
-                  metaInformation.externalId: SCH
-                  metaInformation.name: school
+                  metaInformation.targetedEntityTypes:
+                    - entityType: state
+                      entityTypeId: 683953548f365ab56c8022e9
+                    - entityType: block
+                      entityTypeId: 6839535b8f365ab56c8022ed
+                  metaInformation.name: 'Karnataka '
                   childHierarchyPath: []
-                  createdBy: user123
-                  updatedBy: user123
   /v1/entities/mappingUpload:
     post:
       summary: This endpoint will map its childEntity to its parentEntity
