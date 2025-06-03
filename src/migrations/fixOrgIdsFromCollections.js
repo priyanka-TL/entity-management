@@ -8,7 +8,10 @@
 require('dotenv').config({ path: '../.env' })
 const { MongoClient } = require('mongodb')
 const MONGODB_URL = process.env.MONGODB_URL
-const DB = process.env.DB
+
+if (!MONGODB_URL) {
+	throw new Error('Missing MONGODB_URL or DB in environment variables')
+}
 
 const dbClient = new MongoClient(MONGODB_URL)
 
@@ -17,7 +20,7 @@ const BATCH_SIZE = 100
 async function modifyCollection(collectionName) {
 	console.log(`Starting migration for collection: ${collectionName}`)
 
-	const db = dbClient.db(DB)
+	const db = dbClient.db()
 	const collection = db.collection(collectionName)
 
 	const cursor = collection.find(
@@ -32,29 +35,33 @@ async function modifyCollection(collectionName) {
 	let batch = []
 
 	while (await cursor.hasNext()) {
-		console.log(`processing for collection: ${collectionName}`)
-		const doc = await cursor.next()
-		console.log(`Processing document with _id: ${doc._id}`)
-		if (!doc.orgIds || doc.orgIds.length === 0) {
-			console.log(`Skipping _id: ${doc._id} - empty orgIds`)
-			continue
-		}
+		try {
+			console.log(`processing for collection: ${collectionName}`)
+			const doc = await cursor.next()
+			console.log(`Processing document with _id: ${doc._id}`)
+			if (!doc.orgIds || doc.orgIds.length === 0) {
+				console.log(`Skipping _id: ${doc._id} - empty orgIds`)
+				continue
+			}
 
-		batch.push({
-			updateOne: {
-				filter: { _id: doc._id },
-				update: {
-					$unset: { orgIds: '' },
-					$set: { orgId: doc.orgIds[0] },
+			batch.push({
+				updateOne: {
+					filter: { _id: doc._id },
+					update: {
+						$unset: { orgIds: '' },
+						$set: { orgId: doc.orgIds[0] },
+					},
 				},
-			},
-		})
+			})
 
-		// Process batch
-		if (batch.length >= BATCH_SIZE) {
-			await collection.bulkWrite(batch, { ordered: false })
-			console.log(`Processed ${batch.length} docs in ${collectionName}`)
-			batch = []
+			// Process batch
+			if (batch.length >= BATCH_SIZE) {
+				await collection.bulkWrite(batch, { ordered: false })
+				console.log(`Processed ${batch.length} docs in ${collectionName}`)
+				batch = []
+			}
+		} catch (err) {
+			console.log(err, '<-- Error processing document')
 		}
 	}
 
@@ -70,9 +77,12 @@ async function modifyCollection(collectionName) {
 async function runMigration() {
 	try {
 		await dbClient.connect()
-		await modifyCollection('entities')
-		await modifyCollection('entityTypes')
-		await modifyCollection('userRoleExtension')
+		const COLLECTIONS = ['entities', 'entityTypes', 'userRoleExtension']
+
+		for (const collection of COLLECTIONS) {
+			console.log('collection', collection)
+			await modifyCollection(collection)
+		}
 	} catch (err) {
 		console.error('Migration failed:', err)
 	} finally {
