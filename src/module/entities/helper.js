@@ -2255,10 +2255,6 @@ async function populateTargetedEntityTypesData(targetedEntityTypes, tenantId) {
 		})
 		return formattedTargetedEntityTypes
 	} catch (err) {
-		console.error('Error populating targeted entity types:', err)
-		return {
-			succes: false,
-			message: err.message,
-		}
+		return []
 	}
 }
