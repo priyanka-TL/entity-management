@@ -1327,7 +1327,12 @@ module.exports = class UserProjectsHelper {
 						// Convert the names in 'validatedChildHierarchy' to strings and assign them to 'childHierarchyPath'
 						childHierarchyPath = validatedChildHierarchy.map(String)
 					}
-
+					singleEntity.targetedEntityTypes = Array.isArray(singleEntity.targetedEntityTypes)
+						? await populateTargetedEntityTypesData(
+								singleEntity.targetedEntityTypes.map((item) => item.trim()),
+								tenantId
+						  )
+						: []
 					// Construct the entity document to be created
 					let entityDoc = {
 						entityTypeId: entityTypeDocument._id,
@@ -1639,6 +1644,19 @@ module.exports = class UserProjectsHelper {
 						// 	entityCreation['allowedRoles'] = await allowedRoles(singleEntity.allowedRoles)
 						// 	delete singleEntity.allowedRoles
 						// }
+						let entityTypesArray = []
+						if (singleEntity.targetedEntityTypes) {
+							entityTypesArray = singleEntity.targetedEntityTypes
+								.replace(/^"(.*)"$/, '$1') // remove starting and ending quotes
+								.split(',')
+								.map((type) => type.trim())
+						}
+
+						singleEntity.targetedEntityTypes =
+							Array.isArray(entityTypesArray) && entityTypesArray.length > 0
+								? await populateTargetedEntityTypesData(entityTypesArray, tenantId)
+								: []
+
 						if (singleEntity.childHierarchyPath) {
 							entityCreation['childHierarchyPath'] = JSON.parse(singleEntity['childHierarchyPath'])
 						}
@@ -1792,6 +1810,15 @@ module.exports = class UserProjectsHelper {
 							updateData['translations'] = translationFile[updateData['metaInformation.name']]
 						}
 
+						let targetedEntityTypes = entityCSVData[0].targetedEntityTypes
+							.split(',')
+							.map((item) => item.trim())
+
+						updateData['metaInformation.targetedEntityTypes'] =
+							Array.isArray(targetedEntityTypes) && targetedEntityTypes.length > 0
+								? await populateTargetedEntityTypesData(targetedEntityTypes, tenantId)
+								: []
+
 						if (Object.keys(updateData).length > 0) {
 							let updateEntity = await entitiesQueries.findOneAndUpdate(
 								{ _id: singleEntity['_SYSTEM_ID'], tenantId: tenantId },
@@ -1858,6 +1885,14 @@ module.exports = class UserProjectsHelper {
 					}
 				}
 
+				if (bodyData['targetedEntityTypes']) {
+					bodyData.targetedEntityTypes = bodyData.targetedEntityTypes.map((item) => item.trim())
+					bodyData['metaInformation.targetedEntityTypes'] = await populateTargetedEntityTypesData(
+						bodyData.targetedEntityTypes,
+						tenantId
+					)
+					delete bodyData.targetedEntityTypes
+				}
 				// Update the entity using findOneAndUpdate
 				let entityInformation = await entitiesQueries.findOneAndUpdate(
 					{ _id: ObjectId(entityId), tenantId: tenantId },
@@ -2200,4 +2235,26 @@ function addTagsInEntities(entityMetaInformation) {
 		}
 	}
 	return entityMetaInformation
+}
+
+async function populateTargetedEntityTypesData(targetedEntityTypes, tenantId) {
+	try {
+		const formattedTargetedEntityTypes = await entityTypeQueries.entityTypesDocument(
+			{
+				name: { $in: targetedEntityTypes },
+				tenantId: tenantId,
+			},
+			['name', '_id']
+		)
+
+		formattedTargetedEntityTypes.forEach((entityType) => {
+			entityType['entityTypeId'] = entityType._id.toString()
+			entityType['entityType'] = entityType.name
+			delete entityType._id
+			delete entityType.name
+		})
+		return formattedTargetedEntityTypes
+	} catch (err) {
+		return []
+	}
 }
