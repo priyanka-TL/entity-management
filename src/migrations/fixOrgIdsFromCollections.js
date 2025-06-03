@@ -12,43 +12,72 @@ const DB = process.env.DB
 
 const dbClient = new MongoClient(MONGODB_URL)
 
+const BATCH_SIZE = 100
+
 async function modifyCollection(collectionName) {
 	console.log(`Starting migration for collection: ${collectionName}`)
-	await dbClient.connect()
-	const db = dbClient.db(DB) // default DB from connection string
+
+	const db = dbClient.db(DB)
 	const collection = db.collection(collectionName)
 
-	const cursor = collection.find({
-		orgIds: { $exists: true, $type: 'array' },
-	})
+	const cursor = collection.find(
+		{
+			orgIds: { $exists: true, $type: 'array' },
+		},
+		{
+			projection: { _id: 1, orgIds: 1 },
+		}
+	)
+
+	let batch = []
 
 	while (await cursor.hasNext()) {
 		console.log(`processing for collection: ${collectionName}`)
 		const doc = await cursor.next()
-
 		console.log(`Processing document with _id: ${doc._id}`)
-
-		const orgIds = doc.orgIds
-
-		if (orgIds.length === 0 || !orgIds) {
-			console.log(`Skipping document with _id: ${doc._id} as it contains 'ALL' or is empty.`)
+		if (!doc.orgIds || doc.orgIds.length === 0) {
+			console.log(`Skipping _id: ${doc._id} - empty orgIds`)
 			continue
 		}
 
-		let dataToBeUpdated = {}
-		dataToBeUpdated['orgId'] = orgIds[0]
-		await collection.updateOne({ _id: doc._id }, { $unset: { orgIds: '' }, $set: { ...dataToBeUpdated } })
+		batch.push({
+			updateOne: {
+				filter: { _id: doc._id },
+				update: {
+					$unset: { orgIds: '' },
+					$set: { orgId: doc.orgIds[0] },
+				},
+			},
+		})
+
+		// Process batch
+		if (batch.length >= BATCH_SIZE) {
+			await collection.bulkWrite(batch, { ordered: false })
+			console.log(`Processed ${batch.length} docs in ${collectionName}`)
+			batch = []
+		}
 	}
 
-	await dbClient.close()
+	// Final remaining batch
+	if (batch.length > 0) {
+		await collection.bulkWrite(batch, { ordered: false })
+		console.log(`Processed remaining ${batch.length} docs in ${collectionName}`)
+	}
+
 	console.log(`Collection "${collectionName}" migration completed.`)
 }
 
 async function runMigration() {
-	// Example call, you can call modifyCollection with different collection names
-	await modifyCollection('entities')
-	await modifyCollection('entityTypes')
-	await modifyCollection('userRoleExtension')
+	try {
+		await dbClient.connect()
+		await modifyCollection('entities')
+		await modifyCollection('entityTypes')
+		await modifyCollection('userRoleExtension')
+	} catch (err) {
+		console.error('Migration failed:', err)
+	} finally {
+		await dbClient.close()
+	}
 }
 
 runMigration()
