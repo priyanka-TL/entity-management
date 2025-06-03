@@ -1327,33 +1327,23 @@ module.exports = class UserProjectsHelper {
 						// Convert the names in 'validatedChildHierarchy' to strings and assign them to 'childHierarchyPath'
 						childHierarchyPath = validatedChildHierarchy.map(String)
 					}
-
-					const formattedTargetedEntityTypes = []
-					if (singleEntity.targetedEntityTypes) {
-						for (const entityType of singleEntity.targetedEntityTypes) {
-							try {
-								const entityTypeDocument = await entityTypeQueries.findOne(
-									{ name: entityType, tenantId: tenantId },
-									{ _id: 1 }
-								)
-
-								if (entityTypeDocument) {
-									formattedTargetedEntityTypes.push({
-										entityType: entityType,
-										entityTypeId: entityTypeDocument._id.toString(),
-									})
-								} else {
-									throw {
-										status: HTTP_STATUS_CODE.bad_request.status,
-										message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
-									}
-								}
-							} catch (error) {
-								return reject(error)
-							}
-						}
+					if (singleEntity['targetedEntityTypes']) {
+						singleEntity.targetedEntityTypes = singleEntity.targetedEntityTypes.map((item) => item.trim())
 					}
+					const formattedTargetedEntityTypes = await entityTypeQueries.entityTypesDocument(
+						{
+							name: { $in: singleEntity.targetedEntityTypes },
+							tenantId: tenantId,
+						},
+						['name', '_id']
+					)
 
+					formattedTargetedEntityTypes.forEach((entityType) => {
+						entityType['entityTypeId'] = entityType._id.toString()
+						entityType['entityType'] = entityType.name
+						delete entityType._id
+						delete entityType.name
+					})
 					singleEntity.targetedEntityTypes = formattedTargetedEntityTypes
 
 					// Construct the entity document to be created
@@ -1667,34 +1657,26 @@ module.exports = class UserProjectsHelper {
 						// 	entityCreation['allowedRoles'] = await allowedRoles(singleEntity.allowedRoles)
 						// 	delete singleEntity.allowedRoles
 						// }
-						const formattedTargetedEntityTypes = []
+						let formattedTargetedEntityTypes = []
 						if (singleEntity.targetedEntityTypes) {
 							const entityTypesArray = singleEntity.targetedEntityTypes
 								.replace(/^"(.*)"$/, '$1') // remove starting and ending quotes
 								.split(',')
 								.map((type) => type.trim())
-							for (const entityType of entityTypesArray) {
-								try {
-									const entityTypeDocument = await entityTypeQueries.findOne(
-										{ name: entityType, tenantId: tenantId },
-										{ _id: 1 }
-									)
+							formattedTargetedEntityTypes = await entityTypeQueries.entityTypesDocument(
+								{
+									name: { $in: entityTypesArray },
+									tenantId: tenantId,
+								},
+								['name', '_id']
+							)
 
-									if (entityTypeDocument) {
-										formattedTargetedEntityTypes.push({
-											entityType: entityType,
-											entityTypeId: entityTypeDocument._id.toString(),
-										})
-									} else {
-										throw {
-											status: HTTP_STATUS_CODE.bad_request.status,
-											message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
-										}
-									}
-								} catch (error) {
-									return reject(error)
-								}
-							}
+							formattedTargetedEntityTypes.forEach((entityType) => {
+								entityType['entityTypeId'] = entityType._id.toString()
+								entityType['entityType'] = entityType.name
+								delete entityType._id
+								delete entityType.name
+							})
 						}
 						singleEntity.targetedEntityTypes = formattedTargetedEntityTypes
 						if (singleEntity.childHierarchyPath) {
@@ -1850,28 +1832,26 @@ module.exports = class UserProjectsHelper {
 							updateData['translations'] = translationFile[updateData['metaInformation.name']]
 						}
 
-						if (entityCSVData.targetedEntityTypes) {
-							await Promise.all(
-								entityCSVData.targetedEntityTypes.map(async (entityTypeData) => {
-									// Validate that both entityType and entityTypeId exist in the entityType DB
-									let entityTypeFilterQuery = {
-										name: entityTypeData.entityType,
-										_id: ObjectId(entityTypeData.entityTypeId),
-										tenantId: tenantId,
-									}
-									let existingEntityType = await entityTypeQueries.findOne(entityTypeFilterQuery)
-
-									if (!existingEntityType) {
-										// If any entityType is invalid, reject the request
-										throw {
-											status: HTTP_STATUS_CODE.bad_request.status,
-											message: `EntityType '${entityTypeData.entityType}' with ID '${entityTypeData.entityTypeId}' & tenantId ${tenantId} does not exist.`,
-										}
-									}
-								})
+						let targetedEntityTypes = entityCSVData[0].targetedEntityTypes
+							.split(',')
+							.map((item) => item.trim())
+						if (targetedEntityTypes.length > 0) {
+							const formattedTargetedEntityTypes = await entityTypeQueries.entityTypesDocument(
+								{
+									name: { $in: targetedEntityTypes },
+									tenantId: tenantId,
+								},
+								['name', '_id']
 							)
-						}
 
+							formattedTargetedEntityTypes.forEach((entityType) => {
+								entityType['entityTypeId'] = entityType._id.toString()
+								entityType['entityType'] = entityType.name
+								delete entityType._id
+								delete entityType.name
+							})
+							updateData['metaInformation.targetedEntityTypes'] = formattedTargetedEntityTypes
+						}
 						if (Object.keys(updateData).length > 0) {
 							let updateEntity = await entitiesQueries.findOneAndUpdate(
 								{ _id: singleEntity['_SYSTEM_ID'], tenantId: tenantId },
@@ -1937,28 +1917,26 @@ module.exports = class UserProjectsHelper {
 						}
 					}
 				}
-				if (bodyData['metaInformation.targetedEntityTypes']) {
-					await Promise.all(
-						bodyData['metaInformation.targetedEntityTypes'].map(async (entityTypeData) => {
-							// Validate that both entityType and entityTypeId exist in the entityType DB
-							let entityTypeFilterQuery = {
-								name: entityTypeData.entityType,
-								_id: ObjectId(entityTypeData.entityTypeId),
-								tenantId: tenantId,
-							}
-							let existingEntityType = await entityTypeQueries.findOne(entityTypeFilterQuery)
 
-							if (!existingEntityType) {
-								// If any entityType is invalid, reject the request
-								throw {
-									status: HTTP_STATUS_CODE.bad_request.status,
-									message: `EntityType '${entityTypeData.entityType}' with ID '${entityTypeData.entityTypeId}' & tenantId ${tenantId} does not exist.`,
-								}
-							}
-						})
+				if (bodyData['targetedEntityTypes']) {
+					bodyData.targetedEntityTypes = bodyData.targetedEntityTypes.map((item) => item.trim())
+					const formattedTargetedEntityTypes = await entityTypeQueries.entityTypesDocument(
+						{
+							name: { $in: bodyData.targetedEntityTypes },
+							tenantId: tenantId,
+						},
+						['name', '_id']
 					)
-				}
 
+					formattedTargetedEntityTypes.forEach((entityType) => {
+						entityType['entityTypeId'] = entityType._id.toString()
+						entityType['entityType'] = entityType.name
+						delete entityType._id
+						delete entityType.name
+					})
+					delete bodyData.targetedEntityTypes
+					bodyData['metaInformation.targetedEntityTypes'] = formattedTargetedEntityTypes
+				}
 				// Update the entity using findOneAndUpdate
 				let entityInformation = await entitiesQueries.findOneAndUpdate(
 					{ _id: ObjectId(entityId), tenantId: tenantId },
