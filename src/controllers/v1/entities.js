@@ -71,6 +71,7 @@ module.exports = class Entities extends Abstract {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Calls the 'find' function from 'entitiesHelper' to retrieve entity data
+				req.body.query = UTILS.stripOrgIds(req.body.query)
 				let entityData = await entitiesHelper.find(
 					req.body.query,
 					req.body.projection,

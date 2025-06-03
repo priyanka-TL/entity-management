@@ -339,12 +339,11 @@ module.exports = async function (req, res, next, token = '') {
 				validOrgIds = ['ALL']
 			} else {
 				if (
-					!orgDetails ||
-					!orgDetails.success ||
-					!orgDetails.data ||
-					!(Object.keys(orgDetails.data).length > 0) ||
-					!orgDetails.data.organizations ||
-					!(orgDetails.data.organizations.length > 0)
+					!orgDetails?.success ||
+					!orgDetails?.data ||
+					Object.keys(orgDetails.data).length === 0 ||
+					!Array.isArray(orgDetails.data.organizations) ||
+					orgDetails.data.organizations.length === 0
 				) {
 					let errorObj = {}
 					errorObj.errCode = CONSTANTS.apiResponses.ORG_DETAILS_FETCH_UNSUCCESSFUL_CODE
@@ -353,10 +352,8 @@ module.exports = async function (req, res, next, token = '') {
 					return { success: false, errorObj: errorObj }
 				}
 
-				// convert the types of items to string
-				orgDetails.data.related_orgs = orgDetails.data.organizations.map((data) => {
-					return data.code.toString()
-				})
+				orgDetails.data.related_orgs = UTILS.convertOrgIdsToString(orgDetails.data.related_orgs)
+
 				// aggregate valid orgids
 
 				let relatedOrgIds = orgDetails.data.related_orgs
@@ -515,8 +512,8 @@ module.exports = async function (req, res, next, token = '') {
 				req.headers['tenantid'] = decodedToken.data.tenant_id.toString()
 				req.headers['orgid'] = [decodedToken.data.organization_id.toString()]
 			} else {
-				rspObj.errCode = CONSTANTS.apiResponses.INVALID_ROLE_FOR_CREATION_ERR
-				rspObj.errMsg = CONSTANTS.apiResponses.INVALID_ROLE_FOR_CREATION_MSG
+				rspObj.errCode = CONSTANTS.apiResponses.ROLE_PERMISSION_DENIED_ERR
+				rspObj.errMsg = CONSTANTS.apiResponses.ROLE_PERMISSION_DENIED_MSG
 				return res.status(HTTP_STATUS_CODE['unauthorized'].status).send(respUtil(rspObj))
 			}
 

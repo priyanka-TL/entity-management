@@ -110,6 +110,7 @@ module.exports = class EntityTypes extends Abstract {
 	async find(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				req.body.query = UTILS.stripOrgIds(req.body.query)
 				// Call 'entityTypesHelper.list' to find entity types based on provided query, projection, and skipFields
 				let result = await entityTypesHelper.list(
 					req.body.query,
