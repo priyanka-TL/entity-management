@@ -428,8 +428,6 @@ module.exports = class UserProjectsHelper {
 					]
 				}
 
-				console.log(bodyQuery, '<--bodyQuery')
-
 				// Retrieve entity type data based on the provided query and projection
 				const result = await entityTypeQueries.getAggregate(aggregateData)
 				return resolve({
