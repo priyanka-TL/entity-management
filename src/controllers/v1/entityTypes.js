@@ -67,14 +67,11 @@ module.exports = class EntityTypes extends Abstract {
 				query['tenantId'] = req.userDetails.tenantAndOrgInfo
 					? req.userDetails.tenantAndOrgInfo.tenantId
 					: req.userDetails.userInformation.tenantId
-				query['orgIds'] = req.userDetails.tenantAndOrgInfo
-					? { $in: req.userDetails.tenantAndOrgInfo.orgIds }
-					: { $in: [req.userDetails.userInformation.organizationId] }
 
 				// handle currentOrgOnly filter
 				if (req.query['currentOrgOnly'] && req.query['currentOrgOnly'] == 'true') {
 					organizationId = req.userDetails.userInformation.organizationId
-					query['orgIds'] = { $in: [organizationId] }
+					query['orgId'] = { $in: [organizationId] }
 				}
 				let result = await entityTypesHelper.list(query, ['name'], req.pageNo, req.pageSize, req.searchText)
 
@@ -113,6 +110,7 @@ module.exports = class EntityTypes extends Abstract {
 	async find(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				req.body.query = UTILS.stripOrgIds(req.body.query)
 				// Call 'entityTypesHelper.list' to find entity types based on provided query, projection, and skipFields
 				let result = await entityTypesHelper.list(
 					req.body.query,

@@ -1274,7 +1274,7 @@ module.exports = class UserProjectsHelper {
 				// Find the entities document based on the entityType in queryParams
 
 				let tenantId = userDetails.tenantAndOrgInfo.tenantId
-				let orgId = CONSTANTS.common.ALL
+				let orgId = userDetails.tenantAndOrgInfo.orgId[0]
 				let entityTypeDocument = await entityTypeQueries.findOne(
 					{ name: queryParams.type, tenantId: tenantId },
 					{ _id: 1 }
@@ -1345,7 +1345,7 @@ module.exports = class UserProjectsHelper {
 						createdBy: userDetails.userInformation.userId,
 						userId: userDetails.userInformation.userId,
 						tenantId: tenantId,
-						orgIds: orgId,
+						orgId: orgId,
 					}
 
 					entityDocuments.push(entityDoc)
@@ -1607,7 +1607,7 @@ module.exports = class UserProjectsHelper {
 
 				// Find the entity type document based on the provided entityType
 				let tenantId = userDetails.tenantAndOrgInfo.tenantId
-				let orgId = CONSTANTS.common.ALL
+				let orgId = userDetails.tenantAndOrgInfo.orgId[0]
 				let entityTypeDocument = await entityTypeQueries.findOne(
 					{
 						name: entityType,
@@ -1638,7 +1638,7 @@ module.exports = class UserProjectsHelper {
 							updatedBy: userId,
 							createdBy: userId,
 							tenantId: tenantId,
-							orgIds: orgId,
+							orgId: orgId,
 						}
 						// if (singleEntity.allowedRoles && singleEntity.allowedRoles.length > 0) {
 						// 	entityCreation['allowedRoles'] = await allowedRoles(singleEntity.allowedRoles)
