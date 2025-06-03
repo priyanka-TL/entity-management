@@ -80,7 +80,6 @@ async function runMigration() {
 		const COLLECTIONS = ['entities', 'entityTypes', 'userRoleExtension']
 
 		for (const collection of COLLECTIONS) {
-			console.log('collection', collection)
 			await modifyCollection(collection)
 		}
 	} catch (err) {
