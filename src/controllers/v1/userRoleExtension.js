@@ -197,6 +197,7 @@ module.exports = class userRoleExtension extends Abstract {
 	find(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				req.body.query = UTILS.stripOrgIds(req.body.query)
 				// Call the helper function to find the user role extensions
 				let userData = await userRoleExtensionHelper.find(
 					req.body.query,
