@@ -71,7 +71,7 @@ module.exports = class EntityTypes extends Abstract {
 				// handle currentOrgOnly filter
 				if (req.query['currentOrgOnly'] && req.query['currentOrgOnly'] == 'true') {
 					organizationId = req.userDetails.userInformation.organizationId
-					query['orgIds'] = { $in: [organizationId] }
+					query['orgId'] = { $in: [organizationId] }
 				}
 				let result = await entityTypesHelper.list(query, ['name'], req.pageNo, req.pageSize, req.searchText)
 
