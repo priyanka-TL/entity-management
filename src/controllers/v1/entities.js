@@ -68,6 +68,7 @@ module.exports = class Entities extends Abstract {
 	 */
 
 	find(req) {
+		console.log('Reached in find controller')
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Calls the 'find' function from 'entitiesHelper' to retrieve entity data
