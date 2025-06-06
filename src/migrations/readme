@@ -1,0 +1,33 @@
+# MongoDB Entity Data Cleanup Script
+
+This Node.js script deletes all documents from the MongoDB `entities` collection where `entityType` is one of `state`, `district`, `block`, `cluster`, or `school`. It processes deletions in batches for efficiency and supports MongoDB 4.x with the MongoDB Node.js driver v3.x. The script accepts a MongoDB URL as a command-line argument or falls back to an environment variable.
+
+## Prerequisites
+
+-   **Node.js**: Version 14 or later.
+-   **MongoDB Server**: Version 4.x (e.g., 4.0 or 4.2).
+-   **NPM Packages**: `mongodb@3.6.12`, `dotenv`.
+-   **MongoDB URL**: A valid connection string (e.g., `mongodb://localhost:27017/elevate-entity`).
+
+## Usage
+
+The script can be executed **outside** or **inside** a Docker container. It deletes documents in batches of 1000 (configurable) and logs progress.
+
+### Option 1: Run Outside Docker
+
+1. Save the script as `cleanUpEntityData.js` (provided in the repository or separately).
+
+2. Run the script with a MongoDB URL as a command-line argument:
+    ```bash
+    node cleanUpEntityData.js mongodb://localhost:27017/prod-saas-elevate-entity
+    ```
+
+### Option 2: Run Inside Docker
+
+1. Save the script as `cleanUpEntityData.js` inside entity service docker container
+
+2. Run the container with the MongoDB URL as an argument:
+
+    ```bash
+    node cleanUpEntityData.js
+    ```
