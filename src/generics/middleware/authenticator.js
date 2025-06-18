@@ -352,8 +352,9 @@ module.exports = async function (req, res, next, token = '') {
 					return { success: false, errorObj: errorObj }
 				}
 
-				orgDetails.data.related_orgs = UTILS.convertOrgIdsToString(orgDetails.data.related_orgs)
-
+				orgDetails.data.related_orgs = orgDetails.data.organizations.map((data) => {
+					return data.code.toString()
+				})
 				// aggregate valid orgids
 
 				let relatedOrgIds = orgDetails.data.related_orgs
