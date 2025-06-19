@@ -56,6 +56,15 @@ let enviromentVariables = {
 		message: 'Required admin access token',
 		optional: false,
 	},
+	INTERFACE_SERVICE_URL: {
+		message: 'Required  interface service url',
+		optional: false,
+	},
+	USER_SERVICE_BASE_URL: {
+		message: 'Required  user service base url',
+		optional: true,
+		default: '/user',
+	},
 }
 
 let success = true
