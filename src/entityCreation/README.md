@@ -41,12 +41,12 @@ This guide provides step-by-step instructions to manage entities in the SAAS pla
 <summary>Login API</summary>
 
 ```bash
-curl --location 'https://saas-qa.tekdinext.com/user/v1/account/login' \
+curl --location '{{baseURL}}/user/v1/account/login' \
 --header 'Content-Type: application/json' \
 --header 'origin: shikshalokam-qa.tekdinext.com' \
 --data-raw '{
-  "identifier": "orgadmin@sl.com",
-  "password": "PASSword###11"
+  "identifier": "email/phone",
+  "password": "password"
 }'
 ```
 
@@ -63,7 +63,7 @@ If you are a Super Admin, please include the corresponding values from the Super
 <summary>Add Entity Type API</summary>
 
 ```bash
-curl --location 'https://saas-qa.tekdinext.com/entity-management/v1/entityTypes/create' \
+curl --location '{{baseURL}}/entity-management/v1/entityTypes/create' \
 --header 'internal-access-token: {internal-access-token}' \
 --header 'content-type: application/json' \
 --header 'X-auth-token: {{tokenToPass}}' \
@@ -92,7 +92,7 @@ curl --location 'https://saas-qa.tekdinext.com/entity-management/v1/entityTypes/
 <summary>Bulk Upload API</summary>
 
 ```bash
-curl --location 'https://saas-qa.tekdinext.com/entity-management/v1/entities/bulkCreate?type=school' \
+curl --location '{{baseURL}}/entity-management/v1/entities/bulkCreate?type=school' \
 --header 'internal-access-token: {internal-access-token}' \
 --header 'content-type: multipart/form-data' \
 --header 'x-auth-token: {{TokenToPass}}' \
@@ -111,7 +111,7 @@ curl --location 'https://saas-qa.tekdinext.com/entity-management/v1/entities/bul
 <summary>Generate Mapping CSV API</summary>
 
 ```bash
-curl --location 'https://saas-qa.tekdinext.com/admin-entity-management/v1/entities/createMappingCsv' \
+curl --location '{{baseURL}}/entity-management/v1/entities/createMappingCsv' \
 --header 'x-auth-token: {{TokenToPass}}' \
 --header 'content-type: multipart/form-data' \
 --header 'internal-access-token: {internal-access-token}' \
@@ -132,7 +132,7 @@ curl --location 'https://saas-qa.tekdinext.com/admin-entity-management/v1/entiti
 <summary>Mapping Upload API</summary>
 
 ```bash
-curl --location 'https://saas-qa.tekdinext.com/entity-management/v1/entities/mappingUpload' \
+curl --location '{{baseURL}}/entity-management/v1/entities/mappingUpload' \
 --header 'internal-access-token: {internal-access-token}' \
 --header 'x-auth-token: {{TokenToPass}}' \
 --form 'entityMap=@"/home/user4/Downloads/base64-to-csv-converter (8).csv"'

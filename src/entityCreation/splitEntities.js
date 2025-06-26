@@ -2,7 +2,7 @@ const fs = require('fs')
 const csv = require('csv-parser')
 const { createObjectCsvWriter } = require('csv-writer')
 
-const inputFilePath = 'input3.csv' // Input file name
+const inputFilePath = 'input.csv' // Input file name
 const rowsPerFile = 5000 // Split size
 const allRows = []
 
