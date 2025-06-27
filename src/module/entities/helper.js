@@ -1460,6 +1460,13 @@ module.exports = class UserProjectsHelper {
 				// Fetch entity documents based on constructed query
 				let entityDocument = await entitiesQueries.entityDocuments(query, 'all')
 
+				if (!entityDocument.length) {
+					throw {
+						status: HTTP_STATUS_CODE.bad_request.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
+
 				// Initialize variables for parent entity details
 				let entityDocumentForParent
 				let parentInformation = {}
