@@ -1099,14 +1099,14 @@ module.exports = class Entities extends Abstract {
 	}
 
 	/**
-	* @api {post} /v1/entities/getAggregate Fetch entity data
+	* @api {post} /v1/entities/fetch Fetch entity data
 	* @apiVersion 1.0.0
 	* @apiGroup Entities
 	* @apiHeader {String} internal-access-token Internal Access Token
-	* @apiSampleRequest /v1/entities/getAggregate
+	* @apiSampleRequest /v1/entities/fetch
 	* @apiSampleRequestBody
 	*
-		[
+		query = [
 			{
 				"$match": {
 					"_id": {
@@ -1184,11 +1184,11 @@ module.exports = class Entities extends Abstract {
 			}
 		]
     */
-	getAggregate(req) {
+	fetch(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				const aggregatePipeline = req.body.pipelineData
-				let entityData = await entitiesHelper.getAggregate(aggregatePipeline)
+				const filterQuery = req.body.query
+				let entityData = await entitiesHelper.fetch(filterQuery)
 				return resolve(entityData)
 			} catch (error) {
 				return reject({

@@ -2180,20 +2180,20 @@ module.exports = class UserProjectsHelper {
 	/**
 	 * Fetch entities.
 	 * @method
-	 * @name getAggregate
-	 * @param {Array} aggregatePipeline - entity type.
+	 * @name fetch
+	 * @param {Array} bodyData - entity type.
 	 * @returns {JSON} - Details of entity.
 	 */
 
-	static getAggregate(aggregatePipeline) {
+	static fetch(bodyData) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Convert the ids to mongoIds
-				aggregatePipeline = UTILS.convertMongoIds(aggregatePipeline)
-				let entityData = await entitiesQueries.getAggregate(aggregatePipeline)
+				bodyData = UTILS.convertMongoIds(bodyData)
+				let entityData = await entitiesQueries.getAggregate(bodyData)
 				if (!entityData.length) {
 					throw {
-						status: HTTP_STATUS_CODE.not_found.status,
+						status: HTTP_STATUS_CODE.bad_request.status,
 						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
 					}
 				}
