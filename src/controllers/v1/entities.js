@@ -280,7 +280,7 @@ module.exports = class Entities extends Abstract {
 	createMappingCsv(req) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let tenantId = req.userDetails.userInformation.tenantId
+				let tenantId = req.userDetails.tenantAndOrgInfo.tenantId
 				// Parse CSV data from the uploaded file in the request body
 				let entityCSVData = await csv().fromString(req.files.entityCSV.data.toString())
 
