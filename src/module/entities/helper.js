@@ -2176,6 +2176,40 @@ module.exports = class UserProjectsHelper {
 			}
 		})
 	}
+
+	/**
+	 * Fetch entities.
+	 * @method
+	 * @name list
+	 * @param {Array} aggregatePipeline - entity type.
+	 * @returns {JSON} - Details of entity.
+	 */
+
+	static getAggregate(aggregatePipeline) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Convert the ids to mongoIds
+				aggregatePipeline = UTILS.convertMongoIds(aggregatePipeline)
+				let entityData = await entitiesQueries.getAggregate(aggregatePipeline)
+				if (!entityData.length) {
+					throw {
+						status: HTTP_STATUS_CODE.not_found.status,
+						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+					}
+				}
+
+				const count = entityData.length
+				const result = entityData
+				return resolve({
+					message: CONSTANTS.apiResponses.ENTITY_INFORMATION_FETCHED,
+					result,
+					count,
+				})
+			} catch (err) {
+				return reject(err)
+			}
+		})
+	}
 }
 
 /**

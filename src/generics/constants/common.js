@@ -26,6 +26,7 @@ module.exports = {
 		'/userRoleExtension/update',
 		'/userRoleExtension/delete',
 		'/admin/createIndex',
+		'/entities/getAggregate',
 	],
 	SYSTEM: 'SYSTEM',
 	SUCCESS: 'SUCCESS',
