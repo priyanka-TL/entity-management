@@ -2180,7 +2180,7 @@ module.exports = class UserProjectsHelper {
 	/**
 	 * Fetch entities.
 	 * @method
-	 * @name list
+	 * @name getAggregate
 	 * @param {Array} aggregatePipeline - entity type.
 	 * @returns {JSON} - Details of entity.
 	 */

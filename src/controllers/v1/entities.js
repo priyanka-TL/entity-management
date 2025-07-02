@@ -8,7 +8,6 @@
 // Dependencies
 const entitiesHelper = require(MODULES_BASE_PATH + '/entities/helper')
 const csv = require('csvtojson')
-const { ObjectId } = require('mongodb')
 const FileStream = require(PROJECT_ROOT_DIRECTORY + '/generics/file-stream')
 const entitiesQueries = require(DB_QUERY_BASE_PATH + '/entities')
 
