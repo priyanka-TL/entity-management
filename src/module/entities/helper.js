@@ -1165,7 +1165,6 @@ module.exports = class UserProjectsHelper {
 												$regex: searchText,
 												$options: 'i', // case-insensitive search
 											},
-											// $text: { $search: searchText }
 										},
 									},
 							  ]
