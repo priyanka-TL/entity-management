@@ -1101,11 +1101,12 @@ module.exports = class UserProjectsHelper {
 	 * @param {Object} projection - projection to filter data
 	 * @param {Number} pageNo - page number
 	 * @param {Number} pageSize - page limit
-	 * @param {String} searchText - search text
-	 * @param {String} aggregateValue - aggregate group value
-	 * @param {Boolean} aggregateStaging - is aggregate staging present
-	 * @param {Boolean} aggregateSort - is sorting present in aggregate staging
-	 * @param {Array} aggregateProjection - projection fields for aggregation
+	 * @param {String} searchText - Text string used for filtering entities using a search.
+	 * @param {String} aggregateValue - Path to the field to aggregate (e.g., 'groups.school') used for grouping or lookups.
+	 * @param {Boolean} aggregateStaging - Flag indicating whether aggregation stages should be used in the pipeline (true = include stages).
+	 * @param {Boolean} aggregateSort - Flag indicating whether sorting is required within the aggregation pipeline.
+	 * @param {Array} aggregateProjection - Array of projection fields to apply within the aggregation pipeline (used when `aggregateStaging` is true).
+	 * @returns {Array} Entity Documents
 	 */
 
 	static find(
