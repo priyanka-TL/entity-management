@@ -1102,6 +1102,10 @@ module.exports = class UserProjectsHelper {
 	 * @param {Number} pageNo - page number
 	 * @param {Number} pageSize - page limit
 	 * @param {String} searchText - search text
+	 * @param {String} aggregateValue - aggregate group value
+	 * @param {Boolean} aggregateStaging - is aggregate staging present
+	 * @param {Boolean} aggregateSort - is sorting present in aggregate staging
+	 * @param {Array} aggregateProjection - projection fields for aggregation
 	 */
 
 	static find(
@@ -1218,8 +1222,6 @@ module.exports = class UserProjectsHelper {
 					aggregateData.push({ $sort: { updateAt: -1 } })
 				}
 
-				// console.log(aggregateData)
-				// console.log(JSON.stringify(aggregateData, null, 2))
 				let result = await entitiesQueries.getAggregate(aggregateData)
 				if (aggregateStaging == true) {
 					if (!Array.isArray(result) || !(result.length > 0)) {
