@@ -78,7 +78,11 @@ module.exports = class Entities extends Abstract {
 					req.body.projection,
 					req.pageNo,
 					req.pageSize,
-					req.searchText
+					req.searchText,
+					req.query.aggregateValue ? req.query.aggregateValue : null,
+					req.query.aggregateStaging == 'true' ? true : false,
+					req.query.aggregateSort == 'true' ? true : false,
+					req.body.aggregateProjection ? req.body.aggregateProjection : []
 				)
 				return resolve(entityData)
 			} catch (error) {
@@ -1088,108 +1092,6 @@ module.exports = class Entities extends Abstract {
 				} else {
 					throw new Error(CONSTANTS.apiResponses.SOMETHING_WENT_WRONG)
 				}
-			} catch (error) {
-				return reject({
-					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
-					message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
-					errorObject: error,
-				})
-			}
-		})
-	}
-
-	/**
-	* @api {post} /v1/entities/fetch Fetch entity data
-	* @apiVersion 1.0.0
-	* @apiGroup Entities
-	* @apiHeader {String} internal-access-token Internal Access Token
-	* @apiSampleRequest /v1/entities/fetch
-	* @apiSampleRequestBody
-	*
-		query = [
-			{
-				"$match": {
-					"_id": {
-						"$in": []
-					}
-				}
-			},
-			{
-				"$project": {
-					"groupIds": "$groups.school"
-				}
-			},
-			// Unwind the array so we don't hold all in memory
-			{
-				"$unwind": "$groupIds"
-			},
-			// Replace the root so we can lookup directly
-			{
-				"$replaceRoot": {
-					"newRoot": {
-						"_id": "$groupIds"
-					}
-				}
-			},
-			// Lookup actual school entity details
-			{
-				"$lookup": {
-					"from": "entities",
-					"localField": "_id",
-					"foreignField": "_id",
-					"as": "groupEntityData"
-				}
-			},
-			{
-				"$unwind": "$groupEntityData"
-			},
-			{
-				"$skip": 50
-			},
-			{
-				"$limit": 2
-			},
-			{
-				"$replaceRoot": {
-					"newRoot": "$groupEntityData"
-				}
-			},
-			{
-				"$project": {
-					"_id": 1,
-					"entityType": 1,
-					"metaInformation.externalId": 1,
-					"metaInformation.name": 1
-				}
-			}
-		]
-	* @param {Object} req - The request object.
-	* @apiParamExample {json} Response:
-	* "result": [
-			{
-				_id: 67c82d9553812588916410d9,
-				entityType: 'school',
-				metaInformation: {
-				externalId: '29020100501',
-				name: 'GOVT- KANNADA BOYS HIGHER PRIMARY SCHOOL ALLUR SP'
-				}
-			},
-			{
-				_id: 67c82da9538125889165479f,
-				entityType: 'school',
-				metaInformation: {
-				externalId: '29334100922',
-				name: 'SHRI HARI INDPENDENT PU COLLEGE YADAGIRI'
-				}
-			}
-		]
-    */
-	fetch(req) {
-		return new Promise(async (resolve, reject) => {
-			try {
-				const filterQuery = req.body.query
-				let entityData = await entitiesHelper.fetch(filterQuery)
-				return resolve(entityData)
 			} catch (error) {
 				return reject({
 					status: error.status || HTTP_STATUS_CODE.internal_server_error.status,

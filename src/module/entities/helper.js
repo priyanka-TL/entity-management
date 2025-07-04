@@ -1104,68 +1104,144 @@ module.exports = class UserProjectsHelper {
 	 * @param {String} searchText - search text
 	 */
 
-	static find(bodyQuery, projection, pageNo, pageSize, searchText) {
+	static find(
+		bodyQuery,
+		projection,
+		pageNo,
+		pageSize,
+		searchText,
+		aggregateValue,
+		aggregateStaging,
+		aggregateSort,
+		aggregateProjection = []
+	) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				// Create facet object to attain pagination
-				let facetQuery = {}
-				facetQuery['$facet'] = {}
-				facetQuery['$facet']['totalCount'] = [{ $count: 'count' }]
-				if (pageSize === '' && pageNo === '') {
-					facetQuery['$facet']['data'] = [{ $skip: 0 }]
-				} else {
-					facetQuery['$facet']['data'] = [{ $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }]
-				}
-
+				let aggregateData
 				bodyQuery = UTILS.convertMongoIds(bodyQuery)
 
-				// add search filter to the bodyQuery
-				if (searchText != '') {
-					let searchData = [
-						{
-							'metaInformation.name': new RegExp(searchText, 'i'),
-						},
-					]
-					bodyQuery['$and'] = searchData
-				}
-
-				// Create projection object
-				let projection1
-				let aggregateData
-				if (Array.isArray(projection) && projection.length > 0) {
-					projection1 = {}
-					projection.forEach((projectedData) => {
-						projection1[projectedData] = 1
-					})
+				if (aggregateStaging == true) {
+					let skip = (pageNo - 1) * pageSize
+					let projection1 = {}
+					if (aggregateProjection.length > 0) {
+						aggregateProjection.forEach((value) => {
+							projection1[value] = 1
+						})
+					}
 					aggregateData = [
-						{ $match: bodyQuery },
 						{
-							$sort: { updatedAt: -1 },
+							$match: bodyQuery,
 						},
-						{ $project: projection1 },
-						facetQuery,
+						{
+							$project: {
+								groupIds: aggregateValue,
+							},
+						},
+						// Unwind the array so we don't hold all in memory
+						{
+							$unwind: '$groupIds',
+						},
+						// Replace the root so we can lookup directly
+						{
+							$replaceRoot: { newRoot: { _id: '$groupIds' } },
+						},
+						// Lookup actual school entity details
+						{
+							$lookup: {
+								from: 'entities',
+								localField: '_id',
+								foreignField: '_id',
+								as: 'groupEntityData',
+							},
+						},
+						{
+							$unwind: '$groupEntityData',
+						},
+						...(searchText
+							? [
+									{
+										$match: {
+											'groupEntityData.metaInformation.name': {
+												$regex: searchText,
+												$options: 'i', // case-insensitive search
+											},
+											// $text: { $search: searchText }
+										},
+									},
+							  ]
+							: []),
+						{
+							$skip: skip,
+						},
+						{
+							$limit: pageSize,
+						},
+						{
+							$replaceRoot: { newRoot: '$groupEntityData' },
+						},
+						...(aggregateProjection.length > 0 ? [{ $project: projection1 }] : []),
 					]
 				} else {
-					aggregateData = [
-						{ $match: bodyQuery },
-						{
-							$sort: { updatedAt: -1 },
-						},
-						facetQuery,
-					]
+					// Create facet object to attain pagination
+					let facetQuery = {}
+					facetQuery['$facet'] = {}
+					facetQuery['$facet']['totalCount'] = [{ $count: 'count' }]
+					if (pageSize === '' && pageNo === '') {
+						facetQuery['$facet']['data'] = [{ $skip: 0 }]
+					} else {
+						facetQuery['$facet']['data'] = [{ $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }]
+					}
+
+					// add search filter to the bodyQuery
+					if (searchText != '') {
+						let searchData = [
+							{
+								'metaInformation.name': new RegExp(searchText, 'i'),
+							},
+						]
+						bodyQuery['$and'] = searchData
+					}
+
+					// Create projection object
+					let projection1
+					if (Array.isArray(projection) && projection.length > 0) {
+						projection1 = {}
+						projection.forEach((projectedData) => {
+							projection1[projectedData] = 1
+						})
+						aggregateData = [{ $match: bodyQuery }, { $project: projection1 }, facetQuery]
+					} else {
+						aggregateData = [{ $match: bodyQuery }, facetQuery]
+					}
 				}
 
-				const result = await entitiesQueries.getAggregate(aggregateData)
-				if (!(result.length > 0) || !result[0].data || !(result[0].data.length > 0)) {
-					throw {
-						status: HTTP_STATUS_CODE.not_found.status,
-						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+				if (aggregateSort == true) {
+					aggregateData.push({ $sort: { updateAt: -1 } })
+				}
+
+				// console.log(aggregateData)
+				// console.log(JSON.stringify(aggregateData, null, 2))
+				let result = await entitiesQueries.getAggregate(aggregateData)
+				if (aggregateStaging == true) {
+					if (!Array.isArray(result) || !(result.length > 0)) {
+						throw {
+							status: HTTP_STATUS_CODE.not_found.status,
+							message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+						}
 					}
+				} else {
+					if (!(result.length > 0) || !result[0].data || !(result[0].data.length > 0)) {
+						throw {
+							status: HTTP_STATUS_CODE.not_found.status,
+							message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
+						}
+					}
+					result = result[0].data
 				}
 				return resolve({
 					success: true,
 					message: CONSTANTS.apiResponses.ASSETS_FETCHED_SUCCESSFULLY,
-					result: result[0].data,
+					result: result,
 				})
 			} catch (error) {
 				return reject(error)
@@ -2173,40 +2249,6 @@ module.exports = class UserProjectsHelper {
 				})
 			} catch (error) {
 				return reject(error)
-			}
-		})
-	}
-
-	/**
-	 * Fetch entities.
-	 * @method
-	 * @name fetch
-	 * @param {Array} bodyData - entity type.
-	 * @returns {JSON} - Details of entity.
-	 */
-
-	static fetch(bodyData) {
-		return new Promise(async (resolve, reject) => {
-			try {
-				// Convert the ids to mongoIds
-				bodyData = UTILS.convertMongoIds(bodyData)
-				let entityData = await entitiesQueries.getAggregate(bodyData)
-				if (!entityData.length) {
-					throw {
-						status: HTTP_STATUS_CODE.bad_request.status,
-						message: CONSTANTS.apiResponses.ENTITY_NOT_FOUND,
-					}
-				}
-
-				const count = entityData.length
-				const result = entityData
-				return resolve({
-					message: CONSTANTS.apiResponses.ENTITY_INFORMATION_FETCHED,
-					result,
-					count,
-				})
-			} catch (err) {
-				return reject(err)
 			}
 		})
 	}
