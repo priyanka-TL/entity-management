@@ -108,13 +108,6 @@ module.exports = (req) => {
 		registryMappingUpload: function () {
 			req.checkQuery('entityType').exists().withMessage('required entity type')
 		},
-		fetch: function () {
-			req.checkBody('query')
-				.exists()
-				.withMessage('Query required in req.body.')
-				.custom((value) => Array.isArray(value) && value.length > 0)
-				.withMessage('Query must be a non-empty array.')
-		},
 	}
 
 	if (entitiesValidator[req.params.method]) {
