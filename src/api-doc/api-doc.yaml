@@ -1709,6 +1709,34 @@ paths:
                       - location: body
                         param: query
                         msg: required query
+    parameters:
+      - in: query
+        name: page
+        description: Page number for pagination
+        schema: &ref_4
+          type: number
+      - in: query
+        name: limit
+        description: Number of documents to return per page
+        schema: *ref_4
+      - in: query
+        name: search
+        description: Optional search string for text-based filtering
+        schema: &ref_5
+          type: string
+      - in: query
+        name: aggregateValue
+        description: Field path to be used for aggregation
+        schema: *ref_5
+      - in: query
+        name: aggregateStaging
+        description: Whether to apply aggregation stages in the pipeline
+        schema: &ref_6
+          type: boolean
+      - in: query
+        name: aggregateSort
+        description: Whether to apply sorting within the aggregation pipeline
+        schema: *ref_6
   /v1/entities/list/_id?page={page_no}&limit={page_limit}&type={entity_type}:
     get:
       summary: List entities based on entity id
