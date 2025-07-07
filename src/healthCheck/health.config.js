@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-	name: 'EntityManagementService',
+	name: process.env.SERVICE_NAME,
 	version: '1.0.0',
 	checks: {
 		mongodb: {
@@ -16,19 +16,18 @@ module.exports = {
 		microservices: [
 			{
 				name: 'UserService',
-				url: 'http://localhost:3001/user/health?serviceName=EntityManagementService', // Replace with actual URL - use environment variable if needed
+				url: `${process.env.USER_SERVICE_URL}/user/health?serviceName=${process.env.SERVICE_NAME}`,
 				enabled: true,
 				request: {
 					method: 'GET',
-					header: {
-						'internal-access-token': process.env.INTERNAL_TOKEN,
-					},
+					header: {},
 					body: {},
 				},
 
 				expectedResponse: {
 					status: 200,
 					'params.status': 'successful',
+					'result.healthy': true,
 				},
 			},
 		],
