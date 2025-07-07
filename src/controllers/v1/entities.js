@@ -43,6 +43,17 @@ module.exports = class Entities extends Abstract {
 	 * @apiVersion 1.0.0
 	 * @apiName find
 	 * @param {Object} req - The request object.
+	 * @param {Object} req.body.query - MongoDB filter query to match specific entity documents.
+	 * @param {Object} req.body.projection - Fields to include or exclude in the result set.
+	 * @param {Number} req.pageNo - Page number for pagination.
+	 * @param {Number} req.pageSize - Number of documents to return per page.
+	 * @param {String} req.searchText - Optional search string for text-based filtering.
+	 * @param {String|null} req.query.aggregateValue - Field path to be used for aggregation (e.g., "groups.school"); set to `null` if not used.
+	 * @param {Boolean} req.query.aggregateStaging - Whether to apply aggregation stages in the pipeline.
+	 * @param {Boolean} req.query.aggregateSort - Whether to apply sorting within the aggregation pipeline.
+	 * @param {Array<Object>} req.body.aggregateProjection - Optional array of projection stages for aggregation.
+	 * 
+	 * @returns {Promise<Object>} - A Promise resolving to a list of matched entity documents with pagination.
 	 * @apiGroup Entities
 	 * @apiSampleRequest {
 		"query" : {
@@ -78,7 +89,11 @@ module.exports = class Entities extends Abstract {
 					req.body.projection,
 					req.pageNo,
 					req.pageSize,
-					req.searchText
+					req.searchText,
+					req.query.aggregateValue ? req.query.aggregateValue : null,
+					req.query.aggregateStaging == 'true' ? true : false,
+					req.query.aggregateSort == 'true' ? true : false,
+					req.body.aggregateProjection ? req.body.aggregateProjection : []
 				)
 				return resolve(entityData)
 			} catch (error) {
