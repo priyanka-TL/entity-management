@@ -1,3 +1,10 @@
+/**
+ * name : splitEntities.js
+ * author : Mallanagouda R Biradar
+ * created-date : 24-June-2025
+ * Description : Split the entities based on the limit pass.
+ */
+
 const fs = require('fs')
 const csv = require('csv-parser')
 const { createObjectCsvWriter } = require('csv-writer')

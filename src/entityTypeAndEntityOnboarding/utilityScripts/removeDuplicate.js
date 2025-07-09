@@ -1,3 +1,10 @@
+/**
+ * name : removeDuplicate.js
+ * author : Mallanagouda R Biradar
+ * created-date : 24-June-2025
+ * Description : Remove Duplicates.
+ */
+
 const fs = require('fs')
 const csv = require('csv-parser')
 const createCsvWriter = require('csv-writer').createObjectCsvWriter
