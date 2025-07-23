@@ -17,7 +17,7 @@ on:
 env:
   DOCKER_IMAGE_NAME: elevate-entity-management
   DOCKER_REGISTRY: docker.io
-  DOCKER_NAMESPACE: shikshalokamqa
+  DOCKER_NAMESPACE: priyanka2171
 
 jobs:
   build-and-push:
